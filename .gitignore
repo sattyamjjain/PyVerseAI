@@ -1,0 +1,17 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# IDE configurations
+SensorHub-MQTT-Dockerized/.idea/
+.vscode/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/

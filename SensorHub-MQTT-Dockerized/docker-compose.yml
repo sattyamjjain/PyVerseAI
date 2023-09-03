@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - "1885:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27019:27017"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6381:6379"
+
+  publisher:
+    build:
+      context: ./mqtt/publisher
+    depends_on:
+      - mosquitto
+
+  subscriber:
+    build:
+      context: ./mqtt/subscriber
+    depends_on:
+      - mosquitto
+      - mongodb
+      - redis
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+      - redis

@@ -8,14 +8,25 @@ logger = utils.get_logger(__name__)
 
 
 def fetch_news_data(url):
-    """Fetch news data from the Y-combinator and return a list of news items."""
+    """
+    Fetch news data from the Y-combinator and return a list of news items.
+
+    Parameters:
+    - url (str): The URL from which the news data is to be scraped.
+
+    Returns:
+    - list: A list of dictionaries, with each dictionary representing a news item.
+    """
     data_list = []
+
+    # Making a GET request to the provided URL
     response = requests.get(url)
 
+    # Checking for successful response
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, "html.parser")
 
-        # Extracting main tables based on their unique attributes
+        # Extracting the main table based on its unique attributes
         table2 = soup.find(
             "table",
             {
@@ -27,7 +38,7 @@ def fetch_news_data(url):
             },
         )
 
-        # Iterating through each row to extract relevant data
+        # Iterating through each row of the table to extract relevant data
         for row in table2.find_all("tr"):
             data = {
                 "id": None,
@@ -38,23 +49,32 @@ def fetch_news_data(url):
                 "user": None,
                 "time": None,
             }
+
+            # Extracting the ID attribute from the row, if present
             tr_id = row.get("id")
             if tr_id:
                 data["id"] = tr_id
+
+            # Extracting news title and its URL
             title_line_tag = row.find("span", class_="titleline")
-            if title_line_tag is not None:
+            if title_line_tag:
                 a_tag = title_line_tag.find("a")
                 data["title_url"] = a_tag.attrs["href"]
                 data["title"] = a_tag.text
-                if title_line_tag.find("span", class_="sitebit comhead") is not None:
+
+                # Extracting the site text (e.g., domain name)
+                if title_line_tag.find("span", class_="sitebit comhead"):
                     site_span = title_line_tag.find(
                         "span", class_="sitebit comhead"
                     ).find("span", class_="sitestr")
                     data["site_text"] = site_span.text
+
+            # Extracting additional details like score, user, and time
             elif row.find("span", class_="subline"):
                 sub_line_tag = row.find("span", class_="subline")
                 score_tag = sub_line_tag.find("span", class_="score")
                 if score_tag and "id" in score_tag.attrs:
+                    # Matching the news item's ID to append additional details
                     for _data in data_list:
                         if _data["id"] in score_tag["id"]:
                             data = {
@@ -69,18 +89,23 @@ def fetch_news_data(url):
             else:
                 continue
 
+            # Removing older entries with the same ID
             for index, _data in enumerate(data_list):
                 if _data["id"] == data["id"]:
                     data_list.pop(index)
                     break
 
+            # Appending the extracted data to the results list
             data_list.append(data)
     else:
+        # Logging an error in case of unsuccessful response
         logger.error(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
+
     return data_list
 
 
 if __name__ == "__main__":
+    # Fetching the news data and storing it in a JSON file
     news = fetch_news_data(config.WEB_URL)
 
     with open("scrape_news.json", "w") as outfile:

@@ -1,0 +1,14 @@
+# EC2 Configuration
+ec2:
+  instance_name: ec2-crawler
+  ami_id: ami-06f621d90fa29f6d0
+  instance_type: t2.micro
+  region: ap-south-1
+  key_name: ec2-crawler
+
+# Network Configuration
+network:
+  subnet_id: subnet-06cc12064f42f024b
+
+crawler:
+  web_url: "https://news.ycombinator.com/"

@@ -12,15 +12,16 @@ TOPIC_HUMIDITY = "sensors/humidity"
 MONGO_CONNECTION_STRING = "mongodb://mongodb:27017/"
 
 REDIS_PORT = 6379
-REDIS_HOST = 'redis'
+REDIS_HOST = "redis"
 
 client = mqtt.Client("Subscriber")
 mongo_client = MongoClient(MONGO_CONNECTION_STRING)
 db = mongo_client.sensors_database
-redis_client = redis.StrictRedis(host='redis', port=6379, db=0)
+redis_client = redis.StrictRedis(host="redis", port=6379, db=0)
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class JSONEncoder(json.JSONEncoder):

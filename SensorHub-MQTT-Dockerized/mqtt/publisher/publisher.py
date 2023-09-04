@@ -11,18 +11,25 @@ TOPIC_TEMPERATURE = "sensors/temperature"
 TOPIC_HUMIDITY = "sensors/humidity"
 
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def generate_sensor_reading(sensor_id):
     logging.debug(f"Generating sensor reading for {sensor_id}")
-    reading_value = random.randint(20, 30) if sensor_id == "temp_sensor_1" else random.randint(50, 70)
-    return json.dumps({
-        "sensor_id": sensor_id,
-        "value": reading_value,
-        "timestamp": datetime.now().isoformat()
-    })
+    reading_value = (
+        random.randint(20, 30)
+        if sensor_id == "temp_sensor_1"
+        else random.randint(50, 70)
+    )
+    return json.dumps(
+        {
+            "sensor_id": sensor_id,
+            "value": reading_value,
+            "timestamp": datetime.now().isoformat(),
+        }
+    )
 
 
 client = mqtt.Client("Publisher")

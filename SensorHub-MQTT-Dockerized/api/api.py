@@ -33,17 +33,28 @@ def get_readings(sensor_id: str, start_time: str, end_time: str):
     logging.info(start_date_in_str)
     logging.info(end_date_in_str)
     if sensor_id == "temp_sensor_1":
-        readings = list(db.temperature.find(
-            {"timestamp": {"$gte": start_date_in_str, "$lte": end_date_in_str}}
-        ))
+        readings = list(
+            db.temperature.find(
+                {"timestamp": {"$gte": start_date_in_str, "$lte": end_date_in_str}}
+            )
+        )
     elif sensor_id == "humidity_sensor_1":
-        readings = list(db.humidity.find(
-            {"timestamp": {"$gte": start_date_in_str, "$lte": end_date_in_str}}
-        ))
+        readings = list(
+            db.humidity.find(
+                {"timestamp": {"$gte": start_date_in_str, "$lte": end_date_in_str}}
+            )
+        )
     else:
         raise HTTPException(status_code=400, detail="Invalid sensor_id.")
-    return [{'id': str(reading['_id']), 'sensor_id': reading['sensor_id'], 'value': reading['value'],
-                 'timestamp': reading['timestamp']} for reading in readings]
+    return [
+        {
+            "id": str(reading["_id"]),
+            "sensor_id": reading["sensor_id"],
+            "value": reading["value"],
+            "timestamp": reading["timestamp"],
+        }
+        for reading in readings
+    ]
 
 
 @app.get("/latest_readings/{sensor_id}")

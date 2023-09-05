@@ -43,7 +43,9 @@ def main():
                 elif ec2_choice == "4":
                     break
                 else:
-                    _logger.warning("Invalid EC2 manager choice. Please choose a valid option.")
+                    _logger.warning(
+                        "Invalid EC2 manager choice. Please choose a valid option."
+                    )
 
         elif choice == "2":
             _logger.info("Starting web scraping...")

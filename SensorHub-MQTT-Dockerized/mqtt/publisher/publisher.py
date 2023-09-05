@@ -29,7 +29,7 @@ def generate_sensor_reading(sensor_id):
         {
             "sensor_id": sensor_id,
             "value": reading_value,
-            "timestamp": datetime.now(tz=pytz.timezone('Asia/Kolkata')).isoformat(),
+            "timestamp": datetime.now(tz=pytz.timezone("Asia/Kolkata")).isoformat(),
         }
     )
 

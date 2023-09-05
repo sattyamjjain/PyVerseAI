@@ -5,6 +5,8 @@ from datetime import datetime
 import random
 import logging
 
+import pytz
+
 BROKER_ADDRESS = "mosquitto"
 PORT = 1883
 TOPIC_TEMPERATURE = "sensors/temperature"
@@ -27,7 +29,7 @@ def generate_sensor_reading(sensor_id):
         {
             "sensor_id": sensor_id,
             "value": reading_value,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now(tz=pytz.timezone('Asia/Kolkata')).isoformat(),
         }
     )
 

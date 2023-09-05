@@ -32,20 +32,16 @@ class JSONEncoder(json.JSONEncoder):
 
 
 def on_message(client, userdata, message):
-    logging.debug(f"Received message on topic {message.topic}")
+    logging.debug(f"Received message {message} on topic {message.topic}")
     payload = json.loads(message.payload)
     topic = message.topic
 
     if topic == TOPIC_TEMPERATURE:
-        logging.debug("Writing temperature data to MongoDB...")
         db.temperature.insert_one(payload)
-        logging.debug("Temperature data written to MongoDB.")
         redis_client.lpush("temperature", json.dumps(payload, cls=JSONEncoder))
         redis_client.ltrim("temperature", 0, 9)
     elif topic == TOPIC_HUMIDITY:
-        logging.debug("Writing humidity data to MongoDB...")
         db.humidity.insert_one(payload)
-        logging.debug("Humidity data written to MongoDB.")
         redis_client.lpush("humidity", json.dumps(payload, cls=JSONEncoder))
         redis_client.ltrim("humidity", 0, 9)
 

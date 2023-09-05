@@ -28,18 +28,20 @@ def get_datetime_from_millis(ms: int):
 
 @app.get("/readings")
 def get_readings(sensor_id: str, start_time: str, end_time: str):
-    start_datetime = get_datetime_from_millis(int(start_time))
-    end_datetime = get_datetime_from_millis(int(end_time))
+    start_date_in_str = get_datetime_from_millis(int(start_time)).isoformat()
+    end_date_in_str = get_datetime_from_millis(int(end_time)).isoformat()
+    logging.info(start_date_in_str)
+    logging.info(end_date_in_str)
     if sensor_id == "temp_sensor_1":
         readings = db.temperature.find(
-            {"timestamp": {"$gte": start_datetime, "$lte": end_datetime}}
+            {"timestamp": {"$gte": start_date_in_str, "$lte": end_date_in_str}}
         )
         logging.info(readings)
         for reading in readings:
             logging.info("reading", reading)
     elif sensor_id == "humidity_sensor_1":
         readings = db.humidity.find(
-            {"timestamp": {"$gte": start_datetime, "$lte": end_datetime}}
+            {"timestamp": {"$gte": start_date_in_str, "$lte": end_date_in_str}}
         )
         logging.info(readings)
         for reading in readings:

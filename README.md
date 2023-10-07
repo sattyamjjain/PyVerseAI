@@ -28,6 +28,16 @@ SensorHub is an MQTT-based system simulating the behavior of sensors, monitoring
 
 [Detailed setup and usage for SensorHub-MQTT-Dockerized](./SensorHub-MQTT-Dockerized/README.md)
 
+### Tokenized-Session-APIs
+
+`Tokenized-Session-APIs` is a backend system designed to manage and facilitate session bookings between students and deans in a university context. Key features include:
+- User authentication and token-based security.
+- API endpoints for session viewing and booking.
+- Flexible database structure for user data and session management.
+
+[Detailed setup and usage for Tokenized-Session-APIs](./Tokenized-Session-APIs/README.md)
+
+
 ### Future Projects
 
 Stay tuned for more exciting projects in the PyVerseAI universe!

@@ -1,6 +1,14 @@
 from typing import Optional, List
 from datetime import datetime
-from mongoengine import Document, StringField, DateTimeField, DoesNotExist, connect, BooleanField, IntField
+from mongoengine import (
+    Document,
+    StringField,
+    DateTimeField,
+    DoesNotExist,
+    connect,
+    BooleanField,
+    IntField,
+)
 from config import MONGO_CONNECTION_STRING
 from utils import IST
 
@@ -30,17 +38,22 @@ class SessionRepo:
             cls.__connected = True
 
     @staticmethod
-    def get(_id: int = None, is_paid: bool = False, dean_name: str = None, student_name: str = None) -> Optional[List[Session]]:
+    def get(
+        _id: int = None,
+        is_paid: bool = False,
+        dean_name: str = None,
+        student_name: str = None,
+    ) -> Optional[List[Session]]:
         try:
             _query = {}
             if _id:
-                _query['_id'] = _id
+                _query["_id"] = _id
             if is_paid:
-                _query['is_paid'] = is_paid
+                _query["is_paid"] = is_paid
             if dean_name:
-                _query['dean_name'] = dean_name
+                _query["dean_name"] = dean_name
             if student_name:
-                _query['student_name'] = student_name
+                _query["student_name"] = student_name
             return Session.objects(__raw__=_query)
         except DoesNotExist as e:
             return None
@@ -55,7 +68,7 @@ class SessionRepo:
             _id=Session.objects.count() + 1,
             dean_name=dean_name,
             is_available=True,
-            is_paid=is_paid
+            is_paid=is_paid,
         ).save()
 
     @staticmethod

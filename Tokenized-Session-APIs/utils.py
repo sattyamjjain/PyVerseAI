@@ -5,7 +5,7 @@ from functools import wraps
 
 import pytz
 
-IST = pytz.timezone('Asia/Kolkata')
+IST = pytz.timezone("Asia/Kolkata")
 
 
 def get_datetime_from_millis(ms: int):
@@ -39,7 +39,7 @@ def catch_exp():
             try:
                 return f(*args, **kwargs)
             except Exception as e:
-                return {"statusCode": 500, "body": {'message': str(e)}}
+                return {"statusCode": 500, "body": {"message": str(e)}}
 
         return _handler
 

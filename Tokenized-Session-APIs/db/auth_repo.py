@@ -13,7 +13,9 @@ class Auth(Document):
     password: str = StringField(required=True)
     token: str = StringField(required=True)
     role: str = StringField()
-    registered_at = DateTimeField(default=datetime.now(tz=pytz.timezone("Asia/Kolkata")))
+    registered_at = DateTimeField(
+        default=datetime.now(tz=pytz.timezone("Asia/Kolkata"))
+    )
 
 
 class AuthRepo:
@@ -58,5 +60,5 @@ class AuthRepo:
             university_id=uni_id,
             password=pwd,
             token=token,
-            role=role
+            role=role,
         ).save()

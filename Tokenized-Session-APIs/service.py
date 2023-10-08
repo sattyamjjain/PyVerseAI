@@ -41,9 +41,9 @@ def list_session(auth: Auth) -> List[dict]:
             sess_as_dict["start_time"] = sess_as_dict["start_time"].astimezone(IST)
         if sess_as_dict.get("end_time"):
             sess_as_dict["end_time"] = sess_as_dict["end_time"].astimezone(IST)
-        if not sess_as_dict["is_booked"] and __is_session_available(
-                sess_as_dict.get("start_time")
-        ):
+        if __is_session_available(sess_as_dict.get("start_time")):
+            if auth.role == 'STUDENT' and sess_as_dict["is_booked"]:
+                continue
             sessions.append(sess_as_dict)
     return sessions
 

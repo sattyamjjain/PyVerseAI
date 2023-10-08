@@ -1,4 +1,6 @@
 from flask import request, Flask
+
+from db.auth_repo import Auth
 from service import register, login, list_session, book_slot, create_slot
 from utils import catch_exp
 from auth import token_required
@@ -30,7 +32,7 @@ def handle_student_login():
 @app.route("/sessions", methods=["GET"])
 @token_required
 @catch_exp()
-def handle_list_sessions(auth):
+def handle_list_sessions(auth: Auth):
     return {"statusCode": 200, "body": {"sessions": list_session(auth)}}
 
 

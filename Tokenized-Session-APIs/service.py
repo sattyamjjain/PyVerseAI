@@ -7,10 +7,10 @@ from db.session_repo import SessionRepo
 from utils import convert_to_hash, get_datetime_from_millis, IST
 
 
-def __is_session_available(end_time: Optional[datetime.datetime]) -> bool:
-    if end_time is None:
+def __is_session_available(start_time: Optional[datetime.datetime]) -> bool:
+    if start_time is None:
         return True
-    return end_time <= datetime.datetime.now(tz=IST)
+    return start_time >= datetime.datetime.now(tz=IST)
 
 
 def register(name: str, uni_id: str, pwd: str, role: str):
@@ -20,7 +20,7 @@ def register(name: str, uni_id: str, pwd: str, role: str):
     _pwd_hash = convert_to_hash(pwd)
     _auth = _ar.get_auth_by_id(_pwd_hash)
     if _auth:
-        raise AssertionError(f"Student {_auth.name} already registered")
+        raise AssertionError(f"{_auth.name} already registered")
     _ar.add_auth(_pwd_hash, name, uni_id, pwd, str(uuid.uuid4()), role)
 
 
@@ -35,14 +35,14 @@ def list_session(auth: Auth) -> List[dict]:
     _sr = SessionRepo()
 
     sessions = []
-    for sess in _sr.list() if auth.role == "STUDENT" else _sr.get(dean_name=auth.name):
+    for sess in _sr.get() if auth.role == "STUDENT" else _sr.get(dean_name=auth.name):
         sess_as_dict = sess.to_mongo().to_dict()
         if sess_as_dict.get("start_time"):
             sess_as_dict["start_time"] = sess_as_dict["start_time"].astimezone(IST)
         if sess_as_dict.get("end_time"):
             sess_as_dict["end_time"] = sess_as_dict["end_time"].astimezone(IST)
-        if sess_as_dict["is_available"] and __is_session_available(
-            sess_as_dict.get("end_time")
+        if not sess_as_dict["is_booked"] and __is_session_available(
+            sess_as_dict.get("start_time")
         ):
             sessions.append(sess_as_dict)
     return sessions
@@ -74,6 +74,11 @@ def book_slot(_id: int, st_name: str, start_time: int, end_time: int = None):
     ):
         raise AssertionError("Not allowed to book for past time")
     _sr = SessionRepo()
-    _slot = _sr.get(_id=_id)
-    if len(_slot) > 0:
-        _sr.edit_session(_id, st_name, start_time, end_time)
+    _slot = _sr.get_by_id(_id=_id)
+    if _slot is None:
+        raise AssertionError(f"Not a valid session id {_id}")
+    if _slot.is_booked:
+        if _slot.student_name == st_name:
+            raise AssertionError(f"Already exists a booked slot")
+        _id = _sr.add_session(_slot.dean_name, _slot.is_paid).id
+    _sr.edit_session(_id, st_name, start_time, end_time)

@@ -2,7 +2,7 @@ from flask import request, Flask
 
 from db.auth_repo import Auth
 from service import register, login, list_session, book_slot, create_slot
-from utils import catch_exp
+from utils import catch_exp, get_datetime_from_millis
 from auth import token_required
 
 app = Flask(__name__)
@@ -40,6 +40,8 @@ def handle_list_sessions(auth: Auth):
 @token_required
 @catch_exp()
 def handle_create_session(auth):
+    if auth.role != 'DEAN':
+        raise AssertionError('Not allowed to create session')
     req_json = request.json
     create_slot(req_json["dean_name"], req_json.get("is_paid", False))
     return {"statusCode": 200, "body": {"message": "Session created successfully"}}
@@ -49,11 +51,13 @@ def handle_create_session(auth):
 @token_required
 @catch_exp()
 def handle_book_slot(auth):
+    if auth.role != 'STUDENT':
+        raise AssertionError('Not allowed to book slot')
     req_json = request.json
     book_slot(
         req_json["id"],
         req_json["student_name"],
-        req_json["start_time"],
+        get_datetime_from_millis(req_json["start_time"]),
         req_json.get("end_time"),
     )
     return {"statusCode": 200, "body": {"message": "Slot booked successfully"}}

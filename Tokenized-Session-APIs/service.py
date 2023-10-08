@@ -42,7 +42,7 @@ def list_session(auth: Auth) -> List[dict]:
         if sess_as_dict.get("end_time"):
             sess_as_dict["end_time"] = sess_as_dict["end_time"].astimezone(IST)
         if not sess_as_dict["is_booked"] and __is_session_available(
-            sess_as_dict.get("start_time")
+                sess_as_dict.get("start_time")
         ):
             sessions.append(sess_as_dict)
     return sessions
@@ -52,33 +52,34 @@ def create_slot(dean_name: str, is_paid: bool = False):
     SessionRepo().add_session(dean_name, is_paid)
 
 
-def book_slot(_id: int, st_name: str, start_time: int, end_time: int = None):
-    start_time = get_datetime_from_millis(start_time)
-    if (
-        start_time.strftime("%A") not in ["Thursday", "Friday"]
-        or start_time.hour != 10
-        or start_time.minute != 0
-        or start_time.second != 0
-    ):
-        raise AssertionError(f"Not applicable slots for {start_time}")
+def _get_end_time(start_time: datetime, end_time: int = None):
     if end_time:
-        end_time = get_datetime_from_millis(end_time)
+        _end_time = get_datetime_from_millis(end_time)
         if end_time < start_time or end_time - start_time != datetime.timedelta(
-            hours=1
+                hours=1
         ):
             raise AssertionError("End time should be in difference of max 1 hour")
     else:
-        end_time = start_time + datetime.timedelta(hours=1)
-    if start_time < datetime.datetime.now(tz=IST) or end_time < datetime.datetime.now(
-        tz=IST
-    ):
+        _end_time = start_time + datetime.timedelta(hours=1)
+    if start_time < datetime.datetime.now(tz=IST) or _end_time < datetime.datetime.now(tz=IST):
         raise AssertionError("Not allowed to book for past time")
+    return _end_time
+
+
+def book_slot(_id: int, st_name: str, start_time: datetime, end_time: int = None):
     _sr = SessionRepo()
     _slot = _sr.get_by_id(_id=_id)
     if _slot is None:
         raise AssertionError(f"Not a valid session id {_id}")
+    if (
+            start_time.strftime("%A") not in ["Thursday", "Friday"]
+            or start_time.hour != 10
+            or start_time.minute != 0
+            or start_time.second != 0
+    ):
+        raise AssertionError(f"Not applicable slots for {start_time}")
     if _slot.is_booked:
-        if _slot.student_name == st_name:
+        if _slot.student_name == st_name or _slot.start_time.date() == start_time.date():
             raise AssertionError(f"Already exists a booked slot")
         _id = _sr.add_session(_slot.dean_name, _slot.is_paid).id
-    _sr.edit_session(_id, st_name, start_time, end_time)
+    _sr.edit_session(_id, st_name, start_time, _get_end_time(start_time, end_time))

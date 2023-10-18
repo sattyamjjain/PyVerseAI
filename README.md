@@ -38,6 +38,17 @@ SensorHub is an MQTT-based system simulating the behavior of sensors, monitoring
 [Detailed setup and usage for Tokenized-Session-APIs](./Tokenized-Session-APIs/README.md)
 
 
+### E-Commerce Scraper Suite
+
+The E-Commerce Scraper Suite is a web scraping tool designed to extract product data from leading e-commerce platforms such as Amazon and Flipkart. This suite efficiently extracts details like item name, price, discount, image, and the product company name, storing them in a structured database. Key features include:
+- Targeted scraping for Amazon and Flipkart.
+- Structured data storage in a database.
+- Configuration-driven approach for scraper settings.
+- Integration with databases for efficient data storage.
+
+[Detailed setup and usage for E-Commerce Scraper Suite](./E-Commerce-Scraper-Suite/README.md)
+
+
 ### Future Projects
 
 Stay tuned for more exciting projects in the PyVerseAI universe!

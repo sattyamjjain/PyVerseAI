@@ -1,4 +1,4 @@
 # Database Configuration
 mongodb:
-  conn_str: conn-str
+  conn_str: mongodb+srv://mindfreek:%24S%40ttyam96@yogya1.qevmw.mongodb.net/PyverseAI
 

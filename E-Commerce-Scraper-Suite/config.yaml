@@ -1,0 +1,8 @@
+# DB Configuration
+db:
+  url: postgresql://postgres:PASSWORD@localhost:5434/pyverseai
+
+# URL to scrape Configuration
+url:
+  amazon: https://www.amazon.in/gp/bestsellers/watches/ref=zg_bs_watches_sm
+  flipkart: https://www.flipkart.com/search?q=watches

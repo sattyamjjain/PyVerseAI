@@ -1,0 +1,7 @@
+psycopg2
+SQLAlchemy
+PyYAML
+pytz
+pandas
+paho-mqtt
+Flask

@@ -40,8 +40,8 @@ def handle_list_sessions(auth: Auth):
 @token_required
 @catch_exp()
 def handle_create_session(auth):
-    if auth.role != 'DEAN':
-        raise AssertionError('Not allowed to create session')
+    if auth.role != "DEAN":
+        raise AssertionError("Not allowed to create session")
     req_json = request.json
     create_slot(req_json["dean_name"], req_json.get("is_paid", False))
     return {"statusCode": 200, "body": {"message": "Session created successfully"}}
@@ -51,8 +51,8 @@ def handle_create_session(auth):
 @token_required
 @catch_exp()
 def handle_book_slot(auth):
-    if auth.role != 'STUDENT':
-        raise AssertionError('Not allowed to book slot')
+    if auth.role != "STUDENT":
+        raise AssertionError("Not allowed to book slot")
     req_json = request.json
     book_slot(
         req_json["id"],

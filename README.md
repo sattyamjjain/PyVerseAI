@@ -48,6 +48,11 @@ The E-Commerce Scraper Suite is a web scraping tool designed to extract product 
 
 [Detailed setup and usage for E-Commerce Scraper Suite](./E-Commerce-Scraper-Suite/README.md)
 
+### Real-Time-Telemetry
+A real-time telemetry system capturing and processing meter values from various charge points using MQTT.
+
+[Detailed setup and usage for Real time telemetry](./Real-Time-Telemetry/README.md)
+
 
 ### Future Projects
 

@@ -1,17 +1,40 @@
 # Byte-compiled files
 __pycache__/
 *.py[cod]
+*.pyo
+*.egg-info/
+*.cache
+*.log
+
+# Django specific
+*.pot
+*.pyc
+db.sqlite3
+media/
 
 # Virtual environments
 .venv/
 env/
 venv/
+ENV/
 
 # IDE configurations
-SensorHub-MQTT-Dockerized/.idea/
+*.idea/
 .vscode/
 
 # Distribution / packaging
-*.egg-info/
 dist/
 build/
+
+# Database
+*.db
+*.sqlite3
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Others
+*.DS_Store
+*.swp
+*~

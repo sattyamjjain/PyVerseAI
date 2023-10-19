@@ -1,0 +1,7 @@
+django
+djangorestframework
+mysqlclient
+celery
+redis
+gunicorn
+pytest-django

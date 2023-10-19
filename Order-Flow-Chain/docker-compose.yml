@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: pizzeria
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6380:6379"
+
+  celery:
+    build: .
+    command: celery -A orderflowchain worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis

@@ -34,3 +34,12 @@ services:
     depends_on:
       - db
       - redis
+
+  beat:
+    build: .
+    command: celery -A orderflowchain beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis

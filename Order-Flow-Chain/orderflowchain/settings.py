@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,3 +99,11 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
+
+CELERY_BEAT_SCHEDULE = {
+    'update_all_orders': {
+        'task': 'pizzas.tasks.update_all_orders_status',
+        'schedule': timedelta(minutes=1),  # Run every 1 minute. Adjust as needed.
+    },
+}
+

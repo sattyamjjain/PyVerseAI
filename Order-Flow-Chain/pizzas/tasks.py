@@ -5,21 +5,24 @@ from .models import Order
 
 
 @shared_task
-def update_order_status(order_id):
-    order = Order.objects.get(id=order_id)
+def update_all_orders_status():
+    orders_to_update = Order.objects.exclude(status="DE").values_list('id', flat=True)
 
-    if order.status == "PL" and now() > order.timestamp + timedelta(minutes=1):
-        order.status = "AC"
-        order.save()
+    for order_id in orders_to_update:
+        order = Order.objects.get(id=order_id)
 
-    elif order.status == "AC" and now() > order.timestamp + timedelta(minutes=2):
-        order.status = "PR"
-        order.save()
+        if order.status == "PL" and now() > order.timestamp + timedelta(minutes=1):
+            order.status = "AC"
+            order.save()
 
-    elif order.status == "PR" and now() > order.timestamp + timedelta(minutes=5):
-        order.status = "DI"
-        order.save()
+        elif order.status == "AC" and now() > order.timestamp + timedelta(minutes=2):
+            order.status = "PR"
+            order.save()
 
-    elif order.status == "DI" and now() > order.timestamp + timedelta(minutes=10):
-        order.status = "DE"
-        order.save()
+        elif order.status == "PR" and now() > order.timestamp + timedelta(minutes=5):
+            order.status = "DI"
+            order.save()
+
+        elif order.status == "DI" and now() > order.timestamp + timedelta(minutes=10):
+            order.status = "DE"
+            order.save()

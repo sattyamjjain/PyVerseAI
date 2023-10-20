@@ -101,9 +101,42 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 
 CELERY_BEAT_SCHEDULE = {
-    'update_all_orders': {
-        'task': 'pizzas.tasks.update_all_orders_status',
-        'schedule': timedelta(minutes=1),  # Run every 1 minute. Adjust as needed.
+    "update_all_orders": {
+        "task": "pizzas.tasks.update_all_orders_status",
+        "schedule": timedelta(minutes=1),  # Run every 1 minute. Adjust as needed.
     },
 }
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "pizzas": {  # For your pizzas app
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+    },
+}

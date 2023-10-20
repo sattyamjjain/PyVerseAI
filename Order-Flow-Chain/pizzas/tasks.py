@@ -6,7 +6,7 @@ from .models import Order
 
 @shared_task
 def update_all_orders_status():
-    orders_to_update = Order.objects.exclude(status="DE").values_list('id', flat=True)
+    orders_to_update = Order.objects.exclude(status="DE").values_list("id", flat=True)
 
     for order_id in orders_to_update:
         order = Order.objects.get(id=order_id)

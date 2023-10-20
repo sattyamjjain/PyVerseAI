@@ -29,9 +29,6 @@ class PizzaListCreateView(generics.ListCreateAPIView):
     serializer_class = PizzaSerializer
 
 
-# View to place an order:
-
-
 class OrderListCreateView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer

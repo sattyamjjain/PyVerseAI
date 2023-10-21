@@ -62,6 +62,17 @@ An order management system to simulate a pizza ordering process. The project all
 [Detailed setup and usage for Order Flow Chain](./Order-Flow-Chain/README.md)
 
 
+### Thermal Sensor Visualization
+
+Embark on a journey through temperature landscapes with real-time thermal imaging. This project takes raw sensor data and transforms it into enlightening and interactive thermal visuals. Dive into:
+- Converting raw data into 2D thermal imagery.
+- Real-time visualization with dynamic color scales reflecting temperature gradients.
+- Image enhancement techniques to sharpen clarity.
+- Automated pinpointing of temperature extremities within the visuals.
+
+[Learn more about Thermal Sensor Visualization](./Thermal-Sensor-Visualization/README.md)
+
+
 ### Future Projects
 
 Stay tuned for more exciting projects in the PyVerseAI universe!

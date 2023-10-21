@@ -40,7 +40,7 @@
 
 1. **Clone the Repository**:
    ```bash
-   git clone [repository-link]
+   git clone https://github.com/sattyamjjain/PyVerseAI.git
    cd Tokenized-Session-APIs
    ```
 

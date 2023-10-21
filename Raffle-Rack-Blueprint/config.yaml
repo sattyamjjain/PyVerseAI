@@ -1,0 +1,3 @@
+# DB Configuration
+db:
+  url: postgresql://postgres:PASSWORD@localhost:5434/pyverseai

@@ -6,7 +6,7 @@ A system to simulate the behavior of sensors, monitor their readings, and provid
 ## Setup and Usage
 
 1. **Prerequisites**: Ensure you have Docker and Docker Compose installed on your machine.
-2. Clone this repository: `git clone <repository_url>`
+2. Clone this repository: `git clone https://github.com/sattyamjjain/PyVerseAI.git`
 3. Navigate to the project directory: `cd SensorHub-MQTT-Dockerized`
 4. Build and start the services: `docker-compose up -d`
 5. The FastAPI application will be available at `http://localhost:8000/`. You can access the API documentation at `http://localhost:8000/docs`.

@@ -73,6 +73,24 @@ Embark on a journey through temperature landscapes with real-time thermal imagin
 [Learn more about Thermal Sensor Visualization](./Thermal-Sensor-Visualization/README.md)
 
 
+### Raffle Rack Blueprint
+
+The Raffle Rack Blueprint is a comprehensive solution designed to simulate a raffle draw system. Users can buy tickets, start new draws, and run raffles to determine winners. The project supports two modes:
+
+- **Database mode**: Uses a PostgreSQL database to persistently store user data, tickets, and draw results.
+- **In-memory mode**: A lightweight version that operates entirely in memory without any database dependencies. 
+
+Key features include:
+- User ticket purchasing with ticket numbers displayed upon purchase.
+- Dynamic pot size calculation based on the number of tickets bought.
+- Raffle execution that determines winners based on ticket matches.
+- Structured prize distribution based on the number of matches with the winning ticket.
+- Comprehensive unittests ensuring the functionality and reliability of the system.
+
+[Detailed setup and usage for Raffle Rack Blueprint](./Raffle-Rack-Blueprint/README.md)
+
+
+
 ### Future Projects
 
 Stay tuned for more exciting projects in the PyVerseAI universe!

@@ -88,6 +88,28 @@ class TestScheduleGeneration(unittest.TestCase):
         ]
         self.assertEqual(repayment_schedule.to_dict()["schedules"], expected_schedules)
 
+    def test_start_date_october_7(self):
+        principal = 10000
+        irpa = 12
+        start_date = "2023-10-07"
+        repayment_schedule = generate_repayment_schedule(principal, irpa, start_date)
+        expected_schedules = [
+            {"2023-11-07": 82.19},
+            {"2023-12-07": 98.63},
+            {"2024-01-07": 101.92},
+            {"2024-02-07": 101.64},
+            {"2024-03-07": 95.08},
+            {"2024-04-07": 101.64},
+            {"2024-05-07": 98.36},
+            {"2024-06-07": 101.64},
+            {"2024-07-07": 98.36},
+            {"2024-08-07": 101.64},
+            {"2024-09-07": 101.64},
+            {"2024-10-07": 98.36},
+            {"2024-10-31": 10101.64},
+        ]
+        self.assertEqual(repayment_schedule.to_dict()["schedules"], expected_schedules)
+
 
 if __name__ == "__main__":
     unittest.main()

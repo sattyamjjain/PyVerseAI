@@ -104,6 +104,31 @@ class TestScheduleGenerationWithPartPayment(unittest.TestCase):
         ]
         self.assertEqual(repayment_schedule.to_dict()["schedules"], expected_schedules)
 
+    def test_start_date_october_24_with_part_payment(self):
+        principal = 5000
+        irpa = 12
+        start_date = "2023-10-24"
+        part_payment_date = "2024-01-15"
+        remaining_amount = 2500
+        repayment_schedule = generate_repayment_schedule(
+            principal, irpa, start_date, part_payment_date, remaining_amount
+        )
+        expected_schedules = [
+            {"2023-12-07": 62.47},
+            {"2024-01-07": 50.96},
+            {"2024-02-07": 36.89},
+            {"2024-03-07": 23.77},
+            {"2024-04-07": 25.41},
+            {"2024-05-07": 24.59},
+            {"2024-06-07": 25.41},
+            {"2024-07-07": 24.59},
+            {"2024-08-07": 25.41},
+            {"2024-09-07": 25.41},
+            {"2024-10-07": 24.59},
+            {"2024-10-31": 2525.41},
+        ]
+        self.assertEqual(repayment_schedule.to_dict()["schedules"], expected_schedules)
+
 
 if __name__ == "__main__":
     unittest.main()

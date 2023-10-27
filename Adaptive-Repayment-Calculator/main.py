@@ -15,6 +15,28 @@ _TOTAL_MONTH_IN_SCHEDULE = 12
 _logger = get_logger(__name__)
 
 
+def __get_part_interest(
+    principal: float,
+    remaining_amount: float,
+    irpa: float,
+    part_payment_date: datetime,
+    start_date: datetime,
+    end_date: datetime,
+):
+    part_payment_interest = get_interest(
+        principal,
+        irpa,
+        start_date,
+        part_payment_date - timedelta(days=1),
+    )
+    return part_payment_interest + get_interest(
+        remaining_amount,
+        irpa,
+        part_payment_date,
+        end_date,
+    )
+
+
 @pre_check_scheduler
 def generate_repayment_schedule(
     principal: float,
@@ -45,16 +67,12 @@ def generate_repayment_schedule(
         <= part_payment_date
         <= last_day_of_previous_month(first_payment_date)
     ):
-        part_payment_interest = get_interest(
+        schedule_interest = __get_part_interest(
             principal,
-            irpa,
-            start_date,
-            part_payment_date - timedelta(days=1),
-        )
-        schedule_interest = part_payment_interest + get_interest(
             remaining_amount,
             irpa,
             part_payment_date,
+            start_date,
             last_day_of_previous_month(first_payment_date),
         )
         principal = remaining_amount
@@ -77,16 +95,12 @@ def generate_repayment_schedule(
         if part_payment_date and current_date.replace(
             day=1
         ) <= part_payment_date <= last_day_of_month(current_date):
-            part_payment_interest = get_interest(
+            schedule_interest = __get_part_interest(
                 principal,
-                irpa,
-                current_date.replace(day=1),
-                part_payment_date - timedelta(days=1),
-            )
-            schedule_interest = part_payment_interest + get_interest(
                 remaining_amount,
                 irpa,
                 part_payment_date,
+                current_date.replace(day=1),
                 last_day_of_month(current_date),
             )
             principal = remaining_amount

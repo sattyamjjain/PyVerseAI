@@ -45,7 +45,7 @@ python main.py <principal> <irpa> <start_date> [--part_payment_date] [--remainin
 
 ## Running Tests
 
-To run the tests, navigate to the `tests` directory and run:
+To run the tests, navigate to the root directory and run:
 
 ```bash
 python -m unittest -v

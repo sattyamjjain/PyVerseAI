@@ -32,7 +32,7 @@ def get_logger(name: str):
     return logging.getLogger(name)
 
 
-def catch_exp_v2():
+def catch_exp():
     def catcher(f: Callable) -> Callable:
         @wraps(f)
         def _handler(*args, **kwargs):

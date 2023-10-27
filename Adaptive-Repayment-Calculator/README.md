@@ -34,7 +34,7 @@ python main.py
 You can also provide command-line arguments to specify the loan details:
 
 ```bash
-python main.py <principal> <irpa> <start_date> [--part_payment_date] [--remaining_amount]
+python main.py <--principal> <--irpa> <--start_date> [--part_payment_date] [--remaining_amount]
 ```
 
 - `principal`: The principal loan amount

@@ -4,6 +4,10 @@ from functools import wraps
 from typing import Callable
 
 
+class InvalidInputException(Exception):
+    pass
+
+
 def last_day_of_month(date):
     return date.replace(
         day=1, month=date.month % 12 + 1, year=date.year + date.month // 12

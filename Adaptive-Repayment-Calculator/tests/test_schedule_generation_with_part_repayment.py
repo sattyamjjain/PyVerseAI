@@ -104,7 +104,7 @@ class TestScheduleGenerationWithPartPayment(unittest.TestCase):
         ]
         self.assertEqual(repayment_schedule.to_dict()["schedules"], expected_schedules)
 
-    def test_start_date_october_24_with_part_payment(self):
+    def test_start_date_october_24(self):
         principal = 5000
         irpa = 12
         start_date = "2023-10-24"

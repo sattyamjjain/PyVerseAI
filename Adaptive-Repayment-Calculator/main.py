@@ -23,6 +23,7 @@ def __get_part_interest(
     start_date: datetime,
     end_date: datetime,
 ):
+    _logger.debug("Calculating part payment interest")
     part_payment_interest = get_interest(
         principal,
         irpa,
@@ -45,6 +46,9 @@ def generate_repayment_schedule(
     part_payment_date: datetime = None,
     remaining_amount: float = None,
 ):
+    _logger.info(
+        f"Generating repayment schedule for principal {principal} and {irpa}% interest from {start_date.date()}"
+    )
     first_payment_date = (
         start_date + relativedelta(months=2, day=7)
         if start_date.day > 10
@@ -67,6 +71,7 @@ def generate_repayment_schedule(
         <= part_payment_date
         <= last_day_of_previous_month(first_payment_date)
     ):
+        _logger.info("Handling part payment before the first schedule date")
         schedule_interest = __get_part_interest(
             principal,
             remaining_amount,
@@ -86,6 +91,7 @@ def generate_repayment_schedule(
 
     current_date = first_payment_date
     while current_date <= end_date:
+        _logger.debug(f"Processing date: {current_date}")
         schedule_interest = get_interest(
             principal,
             irpa,
@@ -95,6 +101,7 @@ def generate_repayment_schedule(
         if part_payment_date and current_date.replace(
             day=1
         ) <= part_payment_date <= last_day_of_month(current_date):
+            _logger.info("Handling part payment")
             schedule_interest = __get_part_interest(
                 principal,
                 remaining_amount,
@@ -166,6 +173,7 @@ if __name__ == "__main__":
             _args.part_payment_date,
             _args.remaining_amount,
         )
+        _logger.info("Repayment schedule generated successfully")
         _logger.info(repayment_schedule.to_dict())
     except Exception as exc:
-        _logger.error(f"{exc.__class__.__name__}: {str(exc)}")
+        _logger.error(f"An error occurred: {exc.__class__.__name__}: {str(exc)}")

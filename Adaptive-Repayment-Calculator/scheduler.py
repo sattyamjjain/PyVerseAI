@@ -2,6 +2,8 @@ from datetime import datetime
 from functools import wraps
 from typing import List, Optional, Callable
 
+from utils import InvalidInputException
+
 
 class Schedule:
     def __init__(self, schedule_date: datetime, interest: float):
@@ -44,19 +46,17 @@ def pre_check_scheduler(func: Callable) -> Callable:
         try:
             start_date = datetime.strptime(start_date, "%Y-%m-%d")
         except ValueError:
-            return {
-                "error": "ValueError",
-                "message": "Invalid start date. Please provide the date in 'YYYY-MM-DD' format.",
-            }
+            raise InvalidInputException(
+                "Invalid start date. Please provide the date in 'YYYY-MM-DD' format."
+            )
 
         if part_payment_date:
             try:
                 part_payment_date = datetime.strptime(part_payment_date, "%Y-%m-%d")
             except ValueError:
-                return {
-                    "error": "ValueError",
-                    "message": "Invalid part payment date. Please provide the date in 'YYYY-MM-DD' format.",
-                }
+                raise InvalidInputException(
+                    "Invalid part payment date. Please provide the date in 'YYYY-MM-DD' format."
+                )
 
             assert (
                 part_payment_date > start_date

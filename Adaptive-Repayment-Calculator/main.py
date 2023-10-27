@@ -69,7 +69,11 @@ def generate_repayment_schedule(
             )
             principal = remaining_amount
 
-        if len(repayment_schedules) == _TOTAL_MONTH_IN_SCHEDULE - 1:
+        if len(repayment_schedules) == (
+            _TOTAL_MONTH_IN_SCHEDULE - 1
+            if start_date.day > 10
+            else _TOTAL_MONTH_IN_SCHEDULE
+        ):
             repayment_schedules.append(
                 Schedule(
                     schedule_date=last_day_of_month(current_date),

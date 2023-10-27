@@ -32,15 +32,37 @@ def generate_repayment_schedule(
         years=1, day=calendar.monthrange(start_date.year + 1, start_date.month)[1]
     )
 
+    schedule_interest = get_interest(
+        principal,
+        irpa,
+        start_date,
+        last_day_of_previous_month(first_payment_date),
+    )
+
+    if (
+        part_payment_date
+        and start_date
+        <= part_payment_date
+        <= last_day_of_previous_month(first_payment_date)
+    ):
+        part_payment_interest = get_interest(
+            principal,
+            irpa,
+            start_date,
+            part_payment_date - timedelta(days=1),
+        )
+        schedule_interest = part_payment_interest + get_interest(
+            remaining_amount,
+            irpa,
+            part_payment_date,
+            last_day_of_previous_month(first_payment_date),
+        )
+        principal = remaining_amount
+
     repayment_schedules = [
         Schedule(
             schedule_date=first_payment_date,
-            interest=get_interest(
-                principal,
-                irpa,
-                start_date,
-                last_day_of_previous_month(first_payment_date),
-            ),
+            interest=schedule_interest,
         )
     ]
 

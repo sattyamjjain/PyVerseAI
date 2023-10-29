@@ -86,7 +86,6 @@ class TestScheduleGenerationWithPartPayment(unittest.TestCase):
         repayment_schedule = generate_repayment_schedule(
             self.principal, self.irpa, start_date, part_payment_date, remaining_amount
         )
-        print(repayment_schedule.to_dict()["schedules"])
         expected_schedules = [
             {"2024-02-07": 101.64},
             {"2024-03-07": 95.08},

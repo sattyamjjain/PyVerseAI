@@ -1,0 +1,7 @@
+# DB Configuration
+db:
+  url: postgresql://postgres:PASSWORD@localhost:5434/pyverseai
+
+celery:
+  broker_url: redis://localhost:6379/0
+  celery_result_backend: redis://localhost:6379/0

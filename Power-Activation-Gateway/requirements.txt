@@ -2,4 +2,5 @@ PyYAML
 Flask
 pytz
 celery
+Flask-Login
 Flask-SocketIO

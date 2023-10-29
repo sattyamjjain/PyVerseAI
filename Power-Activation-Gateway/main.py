@@ -1,7 +1,7 @@
 from time import sleep
 from flask import Flask, request, jsonify
 from celery import Celery
-from config import BROKER_URL
+from config import BROKER_URL, CELERY_RESULT_BACKEND
 from flask_socketio import SocketIO, join_room
 from utils import get_logger
 from db import PowerActivationRepo, PowerActivationStatus
@@ -18,6 +18,7 @@ celery = Celery(
     broker_connection_retry_on_startup=True,
 )
 celery.conf.update(app.config)
+celery.conf.result_backend = CELERY_RESULT_BACKEND
 
 
 @app.route("/activate", methods=["POST"])
@@ -49,14 +50,22 @@ def activate_power(stone_id, user_id, power_duration):
     record = power_activation_repo.activate_power(stone_id, user_id)
     socketio.emit(
         "activation_update",
-        {"status": PowerActivationStatus.ACTIVATED.value, "user_id": user_id, "stone_id": stone_id},
+        {
+            "status": PowerActivationStatus.ACTIVATED.value,
+            "user_id": user_id,
+            "stone_id": stone_id,
+        },
         namespace="/",
     )
     sleep(power_duration)
     power_activation_repo.deactivate_power(record.id)
     socketio.emit(
         "activation_update",
-        {"status": PowerActivationStatus.DEACTIVATED.value, "user_id": user_id, "stone_id": stone_id},
+        {
+            "status": PowerActivationStatus.DEACTIVATED.value,
+            "user_id": user_id,
+            "stone_id": stone_id,
+        },
         namespace="/",
     )
     _logger.info(f"Power of stone {stone_id} has been deactivated.")

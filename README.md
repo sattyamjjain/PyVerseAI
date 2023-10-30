@@ -78,7 +78,7 @@ Embark on a journey through temperature landscapes with real-time thermal imagin
 The Raffle Rack Blueprint is a comprehensive solution designed to simulate a raffle draw system. Users can buy tickets, start new draws, and run raffles to determine winners. The project supports two modes:
 
 - **Database mode**: Uses a PostgreSQL database to persistently store user data, tickets, and draw results.
-- **In-memory mode**: A lightweight version that operates entirely in memory without any database dependencies. 
+- **In-memory mode**: A lightweight version that operates entirely in memory without any database dependencies.
 
 Key features include:
 - User ticket purchasing with ticket numbers displayed upon purchase.
@@ -89,7 +89,15 @@ Key features include:
 
 [Detailed setup and usage for Raffle Rack Blueprint](./Raffle-Rack-Blueprint/README.md)
 
+### Power Activation Gateway
 
+A backend service for managing and activating the 'Infinity Stones' powers, providing real-time feedback and persistent status tracking.
+
+- Asynchronous task processing for efficient handling of activation requests.
+- Real-time updates to users via WebSockets.
+- Persistent storage of activation statuses and user interactions.
+
+[Detailed setup and usage for Power Activation Gateway](./Power-Activation-Gateway/README.md)
 
 ### Future Projects
 

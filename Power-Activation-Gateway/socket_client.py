@@ -1,5 +1,6 @@
 import socketio
 from utils import get_logger
+from config import SOCKET_TOKEN
 
 sio = socketio.Client()
 _logger = get_logger(__name__)
@@ -22,4 +23,5 @@ def activation_update(data):
 
 if __name__ == "__main__":
     sio.connect("http://localhost:5000")
+    sio.emit("authenticate", {"token": SOCKET_TOKEN})
     sio.wait()

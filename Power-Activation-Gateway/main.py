@@ -1,12 +1,15 @@
 from time import sleep
 from flask import Flask, request, jsonify
 from celery import Celery
-from config import BROKER_URL, CELERY_RESULT_BACKEND
+from config import BROKER_URL, CELERY_RESULT_BACKEND, SOCKET_TOKEN
 from flask_socketio import SocketIO, join_room
+
+from socket_client import disconnect
 from utils import get_logger
 from db import PowerActivationRepo, PowerActivationStatus
 
 _logger = get_logger(__name__)
+authenticated_sessions = set()
 
 app = Flask(__name__)
 
@@ -74,6 +77,20 @@ def activate_power(stone_id, user_id, power_duration):
 @socketio.on("connect")
 def handle_connect():
     _logger.info("Client connected")
+    if request.sid not in authenticated_sessions:
+        _logger.warn("Client not authenticated. Disconnecting...")
+        disconnect()
+
+
+@socketio.on("authenticate")
+def handle_authenticate(data):
+    token = data.get("token")
+    if token == SOCKET_TOKEN:
+        authenticated_sessions.add(request.sid)
+        _logger.info("Client authenticated")
+    else:
+        _logger.error("Invalid authentication token")
+        disconnect()
 
 
 @socketio.on("disconnect")

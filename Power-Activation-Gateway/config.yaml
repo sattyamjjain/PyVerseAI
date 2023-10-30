@@ -4,4 +4,7 @@ db:
 
 celery:
   broker_url: redis://localhost:6379/0
-  celery_result_backend: redis://localhost:6379/0
+  celery_result_backend: db+postgresql://postgres:PASSWORD@localhost:5434/pyverseai
+
+socket:
+  token: c11c88b85373d33ecf78a18754822935

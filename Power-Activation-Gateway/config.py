@@ -7,3 +7,4 @@ with open("config.yaml", "r") as file:
 DATABASE_URL = config["db"]["url"]
 BROKER_URL = config["celery"]["broker_url"]
 CELERY_RESULT_BACKEND = config["celery"]["celery_result_backend"]
+SOCKET_TOKEN = config["socket"]["token"]

@@ -1,93 +1,78 @@
-
 # Power Activation Gateway
 
-This backend service allows users to activate the powers of the 'Infinity Stones' by making requests to the API. The service handles activation requests asynchronously, provides real-time updates through WebSockets, and tracks the activation statuses using a persistent database.
+## Description
+
+The Power Activation Gateway is a backend service designed to manage and activate the powers of the 'Infinity Stones'. Users can interact with the service to activate the unique powers of each stone, with real-time updates provided through WebSockets. The service is built using Flask, Celery, and Flask-SocketIO.
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Reference](#api-reference)
-- [Real-time Communication](#real-time-communication)
-- [Environment Variables](#environment-variables)
-- [Database](#database)
-- [Running the Application](#running-the-application)
-- [Tech Stack](#tech-stack)
-- [Contributing](#contributing)
+1. [Installation](#installation)
+2. [Configuration](#configuration)
+3. [Usage](#usage)
+4. [API Endpoints](#api-endpoints)
+5. [WebSocket Events](#websocket-events)
+6. [Running the Application](#running-the-application)
+7. [Testing](#testing)
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.8+
-- pip (Python package installer)
-
-### Steps
+To set up the project on your local machine, follow these steps:
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/sattyamjjain/PyVerseAI.git
    ```
-2. Navigate to the project directory:
-   ```bash
+   git clone https://github.com/sattyamjjain/PyVerseAI.git
    cd Power-Activation-Gateway
    ```
-3. Install the required packages:
-   ```bash
+
+2. Create a virtual environment and activate it:
+   ```
+   python -m venv venv
+   source venv/bin/activate
+   ```
+
+3. Install the required dependencies:
+   ```
    pip install -r requirements.txt
    ```
 
+## Configuration
+
+Update the database URL and Celery configurations in the `config.yaml`.
+
 ## Usage
 
-To use the service, start the Flask application and Celery worker. Then, make HTTP requests to the API endpoint to activate stone powers, and connect to the WebSocket to receive real-time updates.
+### API Endpoints
 
-## API Reference
+- **Activate Stone Power**: `POST /activate`
+  - **Parameters**:
+    - `stone_id`: The unique identifier of the stone.
+    - `user_id`: The ID of the user making the activation request.
+    - `power_duration`: The duration (in seconds) the power should remain active.
 
-### Activate Stone Power
+### WebSocket Events
 
-```http
-POST /activate
-```
-
-```json
-{
-    "stone_id": "5235",
-    "user_id": "21431",
-    "power_duration":10
-}
-```
-
-## Real-time Communication
-
-The service provides real-time updates on the status of stone power activations via WebSockets. Connect to the WebSocket at `ws://[server address]:5000` to receive updates.
-
-## Environment Variables
-
-- `BROKER_URL`: URL for the Celery broker
-- `DATABASE_URL`: URL for the database connection
-
-## Database
-
-The service uses a SQL database to track the activation statuses of the infinity stones. The database schema includes fields such as `stone_id`, `user_id`, `activation_start`, and `activation_end`.
+- **Connect**: Establish a WebSocket connection.
+- **Disconnect**: Disconnect from the WebSocket server.
+- **Authenticate**: Send authentication credentials.
+- **Activation Update**: Receive real-time updates on stone power activations.
 
 ## Running the Application
 
 1. Start the Flask application:
-   ```bash
-   python main.py
    ```
+   python3 main.py
+   ```
+
 2. Start the Celery worker:
-   ```bash
+   ```
    celery -A main.celery worker --loglevel=info
    ```
 
-## Tech Stack
+3. Start the WebSocket client (optional):
+   ```
+   python socket_client.py
+   ```
 
-- Flask: Web framework
-- Celery: Asynchronous task queue
-- SQLAlchemy: SQL toolkit and ORM
-- Flask-SocketIO: Flask extension for handling WebSockets
+## Testing
 
-## Contributing
-
-Contributions are welcome! If you have suggestions or want to improve the code, feel free to create an issue or submit a pull request.
+Describe how to run the automated tests for this system.

@@ -99,6 +99,16 @@ A backend service for managing and activating the 'Infinity Stones' powers, prov
 
 [Detailed setup and usage for Power Activation Gateway](./Power-Activation-Gateway/README.md)
 
+### Verilog Hierarchy Analyzer
+
+Verilog Hierarchy Analyzer is a Python tool designed to parse Verilog netlists, extract module hierarchies, and count instances of modules and primitives in the design. It provides insight into the composition of Verilog designs, aiding in understanding, debugging, and documenting digital circuits.
+
+- Extracts the hierarchy of modules and their instances from a Verilog netlist.
+- Counts the number of instances of each primitive and module in the specified hierarchy.
+- Recognizes and counts various Verilog primitives such as `invN1`, `nand2N1`, and `nor2N1`.
+
+[Detailed setup and usage for Verilog Hierarchy Analyzer](./Verilog-Hierarchy-Analyzer/README.md)
+
 ### Future Projects
 
 Stay tuned for more exciting projects in the PyVerseAI universe!

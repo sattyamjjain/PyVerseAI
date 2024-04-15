@@ -117,6 +117,10 @@ Stay tuned for more exciting projects in the PyVerseAI universe!
 
 Each project within PyVerseAI has its own setup and configuration instructions. Please refer to the respective project directories and their README files for detailed steps.
 
+## Repo Activity
+
+![Alt](https://repobeats.axiom.co/api/embed/64f90f4ca357403c31f35508e91f81f9a83cddda.svg "Repobeats analytics image")
+
 ## Contribution
 
 Contributions to PyVerseAI are always welcome. Whether it's enhancements to existing projects, bug fixes, documentation, or the addition of entirely new projects, your efforts are appreciated.

@@ -4,34 +4,43 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('pizzas', '0001_initial'),
+        ("pizzas", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Topping',
-            new_name='Toppings',
+            old_name="Topping",
+            new_name="Toppings",
         ),
         migrations.RenameField(
-            model_name='pizza',
-            old_name='cheese',
-            new_name='cheese_type',
+            model_name="pizza",
+            old_name="cheese",
+            new_name="cheese_type",
         ),
         migrations.RenameField(
-            model_name='pizza',
-            old_name='base',
-            new_name='pizza_base',
+            model_name="pizza",
+            old_name="base",
+            new_name="pizza_base",
         ),
         migrations.AlterField(
-            model_name='order',
-            name='status',
-            field=models.CharField(choices=[('PL', 'Placed'), ('AC', 'Accepted'), ('PR', 'Preparing'), ('DI', 'Dispatched'), ('DE', 'Delivered')], default='PL', max_length=2),
+            model_name="order",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("PL", "Placed"),
+                    ("AC", "Accepted"),
+                    ("PR", "Preparing"),
+                    ("DI", "Dispatched"),
+                    ("DE", "Delivered"),
+                ],
+                default="PL",
+                max_length=2,
+            ),
         ),
         migrations.AlterField(
-            model_name='pizza',
-            name='price',
+            model_name="pizza",
+            name="price",
             field=models.DecimalField(decimal_places=2, max_digits=5),
         ),
     ]

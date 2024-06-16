@@ -1,6 +1,6 @@
 requests
 beautifulsoup4
-psycopg2
+psycopg2-binary
 SQLAlchemy
 PyYAML
 pytz

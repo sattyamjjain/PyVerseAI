@@ -1,5 +1,4 @@
 Flask
 PyYAML
 mongoengine
-hashlib
 pytz

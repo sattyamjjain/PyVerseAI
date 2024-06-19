@@ -1,0 +1,10 @@
+openai:
+  api_key: api-key
+  model: gpt-4-turbo
+
+logging:
+  file: llm-chat-flow.log
+
+paths:
+  input_dir: sample_inputs
+  output_dir: sample_outputs

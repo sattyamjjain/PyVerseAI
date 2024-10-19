@@ -1,0 +1,9 @@
+langchain
+transformers
+neo4j
+pandas
+scikit-learn
+networkx
+torch
+flask
+black

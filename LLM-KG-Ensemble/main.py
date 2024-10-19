@@ -1,4 +1,6 @@
 import os
+
+import pandas as pd
 from dotenv import load_dotenv
 from src.knowledge_graph.neo4j_connection import Neo4jConnection
 from src.entity_extraction.entity_extraction import extract_entities
@@ -7,6 +9,7 @@ from src.data_ingestion.sam_gov_ingestion import fetch_sam_gov_opportunities
 
 # Load environment variables from the .env file
 load_dotenv()
+
 
 # Define the main workflow function
 def run_workflow():
@@ -46,21 +49,19 @@ def run_workflow():
     conn.create_document_country_relationships_from_csv(sam_gov_data_path)
 
     # Step 4: Entity extraction from sample or actual text (expand as needed)
-    print("Extracting entities from text...")
-    sample_text = """
-    The energy project in Pakistan focuses on renewable energy sources. 
-    The infrastructure development project in Vietnam includes road construction.
-    """
-    extracted_entities = extract_entities(sample_text)
+    print("Extracting entities from World Bank data...")
+    extract_and_ingest_entities_from_data(conn, world_bank_data_path, "document_type")
 
-    # Step 5: Insert extracted entities into Neo4j
-    print("Inserting extracted entities into Neo4j...")
-    for entity in extracted_entities:
-        conn.create_entity_node(entity['word'], entity['entity'])
+    print("Extracting entities from SAM.gov data...")
+    extract_and_ingest_entities_from_data(conn, sam_gov_data_path, "document_type")
+
+    print("Ingesting SAM.gov organizations and awards into Neo4j...")
+    ingest_additional_sam_gov_data(conn, sam_gov_data_path)
 
     # Step 6: Close the Neo4j connection
     conn.close()
     print("Workflow completed successfully!")
+
 
 # Fetch World Bank data and save to processed directory
 def fetch_and_save_world_bank_data():
@@ -72,9 +73,10 @@ def fetch_and_save_world_bank_data():
     else:
         print("Failed to fetch World Bank data.")
 
+
 # Fetch SAM.gov data and save to processed directory
 def fetch_and_save_sam_gov_data():
-    print("SAM.gov data file missing, fetching data from SAM.gov API...")
+    print("Fetching data from SAM.gov API...")
 
     # Define the date range for fetching the SAM.gov data
     posted_from = "01/01/2023"
@@ -84,10 +86,47 @@ def fetch_and_save_sam_gov_data():
     df = fetch_sam_gov_opportunities(posted_from, posted_to)
 
     if df is not None and not df.empty:
+        os.makedirs("data/processed", exist_ok=True)
         df.to_csv("data/processed/sam_gov_opportunities.csv", index=False)
         print("SAM.gov data saved to data/processed/sam_gov_opportunities.csv")
     else:
         print("No data fetched from SAM.gov.")
+
+
+# Ingest additional SAM.gov data (e.g., organizations and awards) into Neo4j
+def ingest_additional_sam_gov_data(conn, file_path):
+    df = pd.read_csv(file_path)
+    if df is not None and not df.empty:
+        print("Ingesting additional SAM.gov data into Neo4j...")
+        for index, row in df.iterrows():
+            if pd.notna(row["organization_name"]):
+                conn.create_organization_node(row["organization_name"])
+            if pd.notna(row["awardee_name"]):
+                conn.create_award_node(
+                    awardee=row["awardee_name"],
+                    amount=row["award_amount"],
+                    city=row["awardee_city"],
+                    state=row["awardee_state"],
+                    zip_code=row["awardee_zip"],
+                    country=row["awardee_country"],
+                )
+        print("Additional SAM.gov data ingested successfully.")
+    else:
+        print("No additional SAM.gov data to ingest.")
+
+
+# Entity extraction and ingestion function
+def extract_and_ingest_entities_from_data(conn, file_path, column_name):
+    df = pd.read_csv(file_path)
+    for index, row in df.iterrows():
+        text = row.get(column_name, "")
+        if pd.notna(text) and text.strip():
+            extracted_entities = extract_entities(text)
+            for entity in extracted_entities:
+                conn.create_entity_node(entity["word"], entity["entity"])
+        else:
+            print(f"Skipping empty or missing text in row {index}")
+
 
 # Execute the workflow
 if __name__ == "__main__":

@@ -1,7 +1,14 @@
-from transformers import pipeline
+from transformers import BertForTokenClassification, BertTokenizer, pipeline
 
-# Load the pre-trained NER model
-ner_pipeline = pipeline("ner", model="dbmdz/bert-large-cased-finetuned-conll03-english")
+# Load model and tokenizer
+model = BertForTokenClassification.from_pretrained(
+    "dbmdz/bert-large-cased-finetuned-conll03-english",
+    ignore_mismatched_sizes=True  # This will suppress the weight mismatch warning
+)
+tokenizer = BertTokenizer.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english")
+
+# Initialize NER pipeline with model and tokenizer
+ner_pipeline = pipeline("ner", model=model, tokenizer=tokenizer)
 
 def extract_entities(text):
     """
@@ -9,16 +16,3 @@ def extract_entities(text):
     """
     entities = ner_pipeline(text)
     return entities
-
-if __name__ == "__main__":
-    # Sample text for entity extraction
-    text = """
-    The energy project in Pakistan focuses on renewable energy sources. The infrastructure development project in Vietnam includes road construction.
-    """
-
-    # Perform entity extraction
-    extracted_entities = extract_entities(text)
-
-    # Display the extracted entities
-    for entity in extracted_entities:
-        print(f"Entity: {entity['word']}, Type: {entity['entity']}, Score: {entity['score']:.2f}")

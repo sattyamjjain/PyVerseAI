@@ -26,9 +26,16 @@ class Neo4jConnection:
     def ingest_documents_from_csv(self, file_path):
         df = pd.read_csv(file_path)
         for index, row in df.iterrows():
-            self.create_document_node(
-                row["document_date"], row["document_type"], row["country"]
-            )
+            try:
+                document_date = row["document_date"]
+                document_type = row["document_type"]
+                country = row["country"]
+            except KeyError as e:
+                print(f"Missing column in row {index}: {e}")
+                continue  # Skip rows with missing columns
+
+            # Proceed with creating the document node
+            self.create_document_node(document_date, document_type, country)
 
     def create_country_node(self, country):
         query = """
@@ -100,3 +107,32 @@ class Neo4jConnection:
                     country=country,
                 )
             )
+
+    def create_document_entity_relationship(self, document_type, entity_name):
+        query = """
+        MATCH (d:Document {type: $document_type}), (e:Entity {name: $entity_name})
+        MERGE (e)-[:MENTIONED_IN]->(d)
+        """
+        with self.driver.session() as session:
+            session.write_transaction(
+                lambda tx: tx.run(
+                    query, document_type=document_type, entity_name=entity_name
+                )
+            )
+
+    # New Methods for Entity Relationships
+    def create_entity_relationship(self, entity1, entity2, relationship):
+        query = f"""
+        MATCH (e1:Entity {{name: $entity1}}), (e2:Entity {{name: $entity2}})
+        MERGE (e1)-[:{relationship}]->(e2)
+        """
+        with self.driver.session() as session:
+            session.write_transaction(
+                lambda tx: tx.run(query, entity1=entity1, entity2=entity2)
+            )
+
+    def create_collaboration_relationship(self, entity1, entity2):
+        self.create_entity_relationship(entity1, entity2, "COLLABORATES_WITH")
+
+    def create_working_relationship(self, entity1, entity2):
+        self.create_entity_relationship(entity1, entity2, "WORKS_WITH")

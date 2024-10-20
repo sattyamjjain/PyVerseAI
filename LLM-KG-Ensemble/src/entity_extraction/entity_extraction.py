@@ -1,21 +1,9 @@
-from transformers import BertForTokenClassification, BertTokenizer, pipeline
-
-# Load model and tokenizer
-model = BertForTokenClassification.from_pretrained(
-    "dbmdz/bert-large-cased-finetuned-conll03-english",
-    ignore_mismatched_sizes=True,  # This will suppress the weight mismatch warning
-)
-tokenizer = BertTokenizer.from_pretrained(
-    "dbmdz/bert-large-cased-finetuned-conll03-english"
-)
-
-# Initialize NER pipeline with model and tokenizer
-ner_pipeline = pipeline("ner", model=model, tokenizer=tokenizer)
+from src.entity_extraction.ensemble_extraction import ensemble_entity_extraction
 
 
 def extract_entities(text):
     """
-    Extract named entities from the input text using a pre-trained BERT model.
+    Extract named entities from the input text using an ensemble of BERT and RoBERTa models.
     """
-    entities = ner_pipeline(text)
+    entities = ensemble_entity_extraction(text)
     return entities

@@ -9,6 +9,7 @@ from src.data_ingestion.open_tenders_ingestion import fetch_open_tenders
 from src.data_ingestion.ocds_ingestion import fetch_ocds_data
 from src.data_ingestion.sam_gov_ingestion import fetch_sam_gov_opportunities
 from src.query_interface.query_interface import Neo4jQueryInterface
+from src.chatbot.chatbot import chatbot_app
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -72,6 +73,12 @@ def run_workflow():
     # Step 5: Close the Neo4j connection
     conn.close()
     print("Workflow completed successfully!")
+
+
+# Function to run the chatbot using Flask
+def run_chatbot():
+    print("Starting chatbot server...")
+    chatbot_app.run(debug=True, port=5001)
 
 
 # Function to query Neo4j after ingestion
@@ -257,6 +264,17 @@ def extract_and_ingest_entities_from_data(conn, file_path, column_name):
             print(f"Skipping empty or missing text in row {index}")
 
 
-# Execute the workflow
+# Main function to prompt user to choose between workflow or chatbot
 if __name__ == "__main__":
-    run_workflow()
+    print("Welcome! What would you like to do?")
+    print("1. Run data ingestion workflow")
+    print("2. Start the chatbot")
+
+    choice = input("Enter your choice (1 or 2): ")
+
+    if choice == "1":
+        run_workflow()
+    elif choice == "2":
+        run_chatbot()
+    else:
+        print("Invalid choice. Please choose 1 or 2.")

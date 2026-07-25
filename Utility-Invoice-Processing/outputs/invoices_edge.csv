@@ -1,0 +1,4 @@
+﻿vendor_name,invoice_date,service_address,utility_type,usage_amount,usage_unit,billing_period_start,billing_period_end,currency,total_amount,meter_id,read_type,usage_source,document_type,language,extraction_status,validation_flags,source_file
+,,,,,,,,,,,,,other,es,failed,no_readings,cub-comed-us-electric-es.pdf
+,,,,,,,,EUR,,,,,other,es,failed,no_readings,lapalma-es-electricity-es.pdf
+PPL Electric Utilities,,"123 SERVICE RD, ALLENTOWN PA 18100",electricity,598800,kWh,2024-05-02,2024-06-03,USD,3133.19,300000000,actual,stated_total,consumption_invoice,en,review,,ppl-us-electric-en.pdf

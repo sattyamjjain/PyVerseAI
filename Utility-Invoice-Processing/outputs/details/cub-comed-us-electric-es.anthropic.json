@@ -1,0 +1,42 @@
+{
+  "source_file": "cub-comed-us-electric-es.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 10415,
+  "output_tokens": 237,
+  "latency_s": 3.79,
+  "cost_usd": 0.0348,
+  "language": "es",
+  "document_type": "other",
+  "notes": "This document is an educational/explainer guide about how to read electricity bills (CUB), not an actual invoice. All numeric fields in the sample bill image are placeholders (00000.0000, 000.00, etc.), so no usage or billing data can be extracted.",
+  "fields": {
+    "vendor_name": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "invoice_date": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": "Enero 2025",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    }
+  },
+  "readings": [],
+  "n_pages": 4,
+  "n_text_chars": 23641
+}

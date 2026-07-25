@@ -167,8 +167,10 @@ class InvoiceExtraction(BaseModel):
         description=(
             "The SUPPLY/service address where the utility is delivered (Service Address, "
             "dirección de suministro, Verbrauchsstelle, espace/point de livraison) as one "
-            "line. This is often NOT the mailing or payment address — if only a mailing "
-            "address exists, return null with status not_found rather than substituting."
+            "line. This is often NOT the mailing or payment address, and NEVER the utility "
+            "company's own corporate/remittance address (typically printed near their logo "
+            "or on the payment stub). If no customer service address exists, return null "
+            "with status not_found rather than substituting."
         )
     )
     total_amount: Extracted = Field(

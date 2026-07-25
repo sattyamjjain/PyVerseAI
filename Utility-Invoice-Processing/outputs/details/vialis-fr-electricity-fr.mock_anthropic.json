@@ -1,0 +1,55 @@
+{
+  "source_file": "vialis-fr-electricity-fr.pdf",
+  "provider": "mock:anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 9218,
+  "output_tokens": 546,
+  "latency_s": 0.0,
+  "cost_usd": 0.035844,
+  "language": "fr",
+  "document_type": "consumption_invoice",
+  "notes": "The invoice includes a historical consumption graph and detailed tariff-component breakdown (Pointe, Heures pleines hiver, Heures creuses hiver) which restate the same 48,469 kWh total; the stated total was used rather than summing components.",
+  "fields": {
+    "vendor_name": {
+      "value": "Vialis S.A.E.M.",
+      "status": "confident",
+      "source_quote": "Vialis S.A.E.M.",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2019-01-08",
+      "status": "confident",
+      "source_quote": "facture n° 1234V du 08/01/2019",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": "SA ENTREPRISE, 10 RUE DES BONNES GENS, COLMAR",
+      "status": "confident",
+      "source_quote": "SA ENTREPRISE\n10 RUE DES BONNES GENS\nCOLMAR",
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": "7015.13",
+      "status": "confident",
+      "source_quote": "total TTC           7 015,13",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "48 469",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh",
+      "period_quote": "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "quote_unverified_service_address"
+      ]
+    }
+  ],
+  "n_pages": 2,
+  "n_text_chars": 32518
+}

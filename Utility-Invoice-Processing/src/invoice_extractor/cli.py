@@ -80,7 +80,8 @@ def main(argv: list[str] | None = None) -> int:
     csv_path = write_rows(summary.rows, Path(args.output))
     write_details(summary, config.OUTPUTS_DIR / "details")
     report = build_run_report(summary, csv_path)
-    report_path = config.OUTPUTS_DIR / "run_report.json"
+    report_name = f"run_report.{args.provider}{'.mock' if args.mock else ''}.json"
+    report_path = config.OUTPUTS_DIR / report_name
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 

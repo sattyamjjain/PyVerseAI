@@ -130,6 +130,13 @@ def test_parse_iso_date(value, expected):
         ("2019-02-11", "du 02/02/2019 au 11/02/2019", "fr", False),
         # the LLM swapped day/month -> caught
         ("2018-08-05", "Periodo de facturación: del 08/05/2018 a 10/06/2018", "es", True),
+        # pdfplumber layout mode merges kerned words; both dates must still verify
+        ("2021-05-25", "CurrentBillingPeriod May25,2021-Jun22,2021", "en", False),
+        ("2021-06-22", "CurrentBillingPeriod May25,2021-Jun22,2021", "en", False),
+        # ...and a real swap is still caught on mashed text
+        ("2021-05-26", "CurrentBillingPeriod May25,2021-Jun22,2021", "en", True),
+        # Spanish month-name date ("13 de junio de 2018")
+        ("2018-06-13", "Fecha de emisión de factura 13 de junio de 2018", "es", False),
         # no independently parseable date in the quote -> no evidence, no flag
         ("2021-05-25", "as stated on your bill", "en", False),
         ("2021-05-25", None, "en", False),

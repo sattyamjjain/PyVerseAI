@@ -1,0 +1,65 @@
+{
+  "source_file": "sfpuc-us-water-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 15263,
+  "output_tokens": 1109,
+  "latency_s": 10.57,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "en",
+    "currency": "USD",
+    "vendor_name": {
+      "source_quote": "SAN FRANCISCO WATER, POWER AND SEWER Services of the San Francisco Public Utilities Commission",
+      "value": "San Francisco Water, Power and Sewer (SFPUC)",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": "Bill Date: 01/02/2017",
+      "value": "2017-01-02",
+      "status": "confident"
+    },
+    "service_address": {
+      "source_quote": "Service Address: 525 Golden Gate Ave",
+      "value": "525 Golden Gate Ave",
+      "status": "confident"
+    },
+    "total_amount": {
+      "source_quote": "Total Amount Due $247.25",
+      "value": "247.25",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "water",
+        "usage_quote": "Total consumption in units of water 6.40",
+        "usage_amount_raw": "6.40",
+        "usage_unit_raw": "units",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": "1234567890",
+        "period_quote": "Meter Reading 12/02/2016 - 01/02/2017",
+        "billing_period_start": "2016-12-02",
+        "billing_period_end": "2017-01-02",
+        "period_status": "confident"
+      },
+      {
+        "utility_type": "sewer",
+        "usage_quote": "Total Discharge units 5.76 (6.40 units x 90%)",
+        "usage_amount_raw": "5.76",
+        "usage_unit_raw": "units",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "computed",
+        "meter_id": null,
+        "period_quote": "Service from 12/02/2016 to 01/02/2017",
+        "billing_period_start": "2016-12-02",
+        "billing_period_end": "2017-01-02",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "This is a labeled 'SAMPLE BILL' from SFPUC covering both water and sewer charges; sewer usage (5.76 units) is a computed 90% wastewater flow factor applied to the metered water consumption (6.40 units), not a separate meter reading."
+  }
+}

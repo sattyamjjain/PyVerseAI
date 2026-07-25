@@ -1,0 +1,63 @@
+{
+  "source_file": "weenergies-us-electric-gas-en.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 4001,
+  "output_tokens": 1105,
+  "latency_s": 10.71,
+  "cost_usd": 0.026578,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "Gas usage is stated both as metered volume (79 CCF) and billing energy (83.9 Therms); the Therms total is reported because it is the account-summary usage and billing unit.",
+  "fields": {
+    "vendor_name": {
+      "value": "We Energies",
+      "status": "confident",
+      "source_quote": "We Energies",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2026-02-03",
+      "status": "confident",
+      "source_quote": "Bill Date  Account Number Next Meter Read Date Amount Due  Payment Transfer Date\n      02/03/2026                  03/03/2026        $246.40          02/25/2026",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": "246.40",
+      "status": "confident",
+      "source_quote": "Amount Due  Payment Transfer Date\n      02/03/2026                  03/03/2026        $246.40          02/25/2026",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "669",
+      "usage_unit_raw": "KWH",
+      "usage_quote": "Total Electric Use 669 KWH",
+      "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": []
+    },
+    {
+      "utility_type": "gas",
+      "usage_amount_raw": "83.9",
+      "usage_unit_raw": "Therms",
+      "usage_quote": "Therms Used 83.9 83.1 92.1",
+      "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+      "usage_status": "ambiguous",
+      "period_status": "confident",
+      "flags": []
+    }
+  ],
+  "n_pages": 1,
+  "n_text_chars": 8339
+}

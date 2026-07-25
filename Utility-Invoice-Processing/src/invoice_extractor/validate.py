@@ -33,10 +33,18 @@ DAILY_BANDS: dict[str, tuple[float, float]] = {
 def verify_quote(quote: str | None, folded_document: str) -> bool:
     """A value is only as trustworthy as its evidence: the model's verbatim
     quote must actually appear in the document text (whitespace/case folded).
-    If it does not, the field is treated as unverified regardless of status."""
+    If it does not, the field is treated as unverified regardless of status.
+
+    The final check is space-INSENSITIVE on both sides: pdfplumber's layout
+    mode merges tightly-kerned words ("CurrentBillingPeriod") and models
+    sometimes strip spaces when quoting — neither is a hallucination. A
+    fabricated quote still cannot appear in the de-spaced document."""
     if not quote or not quote.strip():
         return False
-    return fold_text(quote) in folded_document
+    folded_quote = fold_text(quote)
+    if folded_quote in folded_document:
+        return True
+    return folded_quote.replace(" ", "") in folded_document.replace(" ", "")
 
 
 def reading_flags(

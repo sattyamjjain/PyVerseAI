@@ -1,0 +1,36 @@
+{
+  "source_file": "lapalma-es-electricity-es.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 18321,
+  "output_tokens": 265,
+  "latency_s": 3.73,
+  "extraction": {
+    "document_type": "other",
+    "language": "es",
+    "currency": "EUR",
+    "vendor_name": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "invoice_date": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "service_address": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "total_amount": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "readings": [],
+    "notes": "This document is an educational guide explaining how to interpret a Spanish electricity bill ('Cómo interpretar tu factura de la luz'), not an actual invoice. All figures (129 kWh, 3,45kW, dates like 31/05/2024) are illustrative examples used for teaching purposes, not real billing data, so no fields were extracted."
+  }
+}

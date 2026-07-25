@@ -1,0 +1,51 @@
+{
+  "source_file": "swm-de-electricity-de.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 4422,
+  "output_tokens": 509,
+  "latency_s": 5.13,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "de",
+    "currency": "EUR",
+    "vendor_name": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "invoice_date": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "service_address": {
+      "source_quote": "Verbrauchsstelle: Mustermannstraße 1, 80992 München 1",
+      "value": "Mustermannstraße 1, 80992 München",
+      "status": "confident"
+    },
+    "total_amount": {
+      "source_quote": "Bruttobetrag                                 460,03 Euro",
+      "value": "460,03",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "Gesamt                           859 kWh",
+        "usage_amount_raw": "859",
+        "usage_unit_raw": "kWh",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "mixed",
+        "meter_id": "T12345",
+        "period_quote": "Vom 01.06.2022 – 31.05.2023: 859 kWh (365 Tage)",
+        "billing_period_start": "2022-06-01",
+        "billing_period_end": "2023-05-31",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "Eine Zählerzeile enthält den offenbar widersprüchlichen Zeitraum „01.07.2023 – 31.12.2022“; der ausdrücklich angegebene Jahreszeitraum wird für die Abrechnungsperiode verwendet."
+  }
+}

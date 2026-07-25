@@ -1,0 +1,51 @@
+{
+  "source_file": "centralhudson-us-electric-en.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 6078,
+  "output_tokens": 599,
+  "latency_s": 8.02,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "en",
+    "currency": "USD",
+    "vendor_name": {
+      "source_quote": "CentralHudsonGas&ElectricCorporation",
+      "value": "Central Hudson Gas & Electric Corporation",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "service_address": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "total_amount": {
+      "source_quote": "TotalAmount Due Now                          $218.10",
+      "value": "218.10",
+      "status": "ambiguous"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "Electricity Used (kWh)                458",
+        "usage_amount_raw": "458",
+        "usage_unit_raw": "kWh",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "estimated",
+        "meter_id": "00000000",
+        "period_quote": "CurrentBillingPeriod                May25,2021-Jun22,2021",
+        "billing_period_start": "2021-05-25",
+        "billing_period_end": "2021-06-22",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "Total Amount Due Now includes previous billed amounts and a billing adjustment, so it may not represent only this billing period's charges."
+  }
+}

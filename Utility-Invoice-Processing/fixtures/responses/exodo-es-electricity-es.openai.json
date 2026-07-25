@@ -1,0 +1,51 @@
+{
+  "source_file": "exodo-es-electricity-es.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 6306,
+  "output_tokens": 600,
+  "latency_s": 6.34,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "es",
+    "currency": "EUR",
+    "vendor_name": {
+      "source_quote": "IBERDROLA CLIENTES, S.A.U.",
+      "value": "IBERDROLA CLIENTES, S.A.U.",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": "Fecha de emisión de factura 13 de junio de 2018",
+      "value": "2018-06-13",
+      "status": "confident"
+    },
+    "service_address": {
+      "source_quote": "Dirección de suministro: Trav SAN MATEO, 8 esc. EXT, 2º Dch\n28004 MADRID",
+      "value": "Trav SAN MATEO, 8 esc. EXT, 2º Dch, 28004 MADRID",
+      "status": "confident"
+    },
+    "total_amount": {
+      "source_quote": "TOTAL IMPORTE FACTURA:  80,95 €",
+      "value": "80,95",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "PUNTA      08/05/2018 006308 10/06/2018 006471 163 kWh\nVALLE      08/05/2018 007888 10/06/2018 008075 187 kWh",
+        "usage_amount_raw": "350",
+        "usage_unit_raw": "kWh",
+        "usage_source": "summed_components",
+        "usage_status": "inferred",
+        "read_type": "actual",
+        "meter_id": "0043073635",
+        "period_quote": "Periodo de facturación 08/05/2018 - 10/06/2018",
+        "billing_period_start": "2018-05-08",
+        "billing_period_end": "2018-06-10",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "El consumo total de 350 kWh se infiere sumando los registros horarios disjuntos PUNTA (163 kWh) y VALLE (187 kWh), ya que no se imprime un total único para todo el período."
+  }
+}

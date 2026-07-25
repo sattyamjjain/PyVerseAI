@@ -160,6 +160,20 @@ def parse_iso_date(value: str | None) -> date | None:
 
 # Numeric date shapes: 08/05/2018, 01.07.2023, 2018-05-08, 5-6-18 ...
 _NUMERIC_DATE = re.compile(r"\b\d{1,4}[./\-]\s?\d{1,2}[./\-]\s?\d{1,4}\b")
+# Month-name shapes, tolerant of missing spaces (PDF extractors merge kerned
+# words): "May 25, 2021", "May25,2021", "13 de junio de 2018", "25 juin 2021".
+_MONTH_FIRST = re.compile(r"[^\W\d_]{3,}\.?\s*\d{1,2}\s*,?\s*\d{4}")
+_DAY_FIRST = re.compile(r"\d{1,2}\s*\.?\s*(?:de\s+)?[^\W\d_]{3,}\.?\s*(?:de\s+)?,?\s*\d{4}")
+_LETTER_DIGIT_SEAM = re.compile(r"(?<=[^\W\d_])(?=\d)|(?<=\d)(?=[^\W\d_])")
+
+
+def _date_tokens(quote: str) -> list[str]:
+    tokens = list(_NUMERIC_DATE.findall(quote))
+    for pattern in (_DAY_FIRST, _MONTH_FIRST):
+        for match in pattern.findall(quote):
+            # re-insert the spaces the extractor may have swallowed
+            tokens.append(_LETTER_DIGIT_SEAM.sub(" ", match))
+    return tokens
 
 
 def crosscheck_date(iso_value: str | None, quote: str | None, language: str | None) -> str | None:
@@ -182,14 +196,14 @@ def crosscheck_date(iso_value: str | None, quote: str | None, language: str | No
     settings = {"DATE_ORDER": order, "REQUIRE_PARTS": ["day", "month", "year"]}
 
     candidates: set[date] = set()
-    for token in _NUMERIC_DATE.findall(quote):
+    for token in _date_tokens(quote):
         try:
             found = dateparser.parse(token, languages=langs, settings=settings)
         except Exception:
             found = None
         if found:
             candidates.add(found.date())
-    if not candidates:  # month-name formats ("May 25, 2021", "25 juin 2021")
+    if not candidates:  # last resort: dateparser's own (quirkier) segmentation
         try:
             found_all = dateparser.search.search_dates(quote, languages=langs, settings=settings)
         except Exception:

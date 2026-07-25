@@ -1,0 +1,63 @@
+{
+  "source_file": "weenergies-us-electric-gas-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 5912,
+  "output_tokens": 636,
+  "latency_s": 6.93,
+  "cost_usd": 0.027276,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "Gas usage is reported both as 79 CCF (raw meter volume) and 83.9 Therms (converted, billed unit); Therms was chosen as it matches the billed energy amount used for charges.",
+  "fields": {
+    "vendor_name": {
+      "value": "We Energies",
+      "status": "confident",
+      "source_quote": "We Energies",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2026-02-03",
+      "status": "confident",
+      "source_quote": "02/03/2026",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": "123 MAIN ST, NEENAH WI 54956-1802",
+      "status": "confident",
+      "source_quote": "123 MAIN ST NEENAH WI 54956-1802",
+      "quote_verified": true
+    },
+    "total_amount": {
+      "value": "246.40",
+      "status": "confident",
+      "source_quote": "Total Current Charges                      $246.40",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "669",
+      "usage_unit_raw": "KWH",
+      "usage_quote": "Total Electric Use 669 KWH",
+      "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": []
+    },
+    {
+      "utility_type": "gas",
+      "usage_amount_raw": "83.9",
+      "usage_unit_raw": "Therms",
+      "usage_quote": "79 CCF x 1.062 BTU = 83.9 Therms",
+      "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": []
+    }
+  ],
+  "n_pages": 1,
+  "n_text_chars": 8339
+}

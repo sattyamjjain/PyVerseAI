@@ -1,0 +1,65 @@
+{
+  "source_file": "midamerican-us-electric-en.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 7538,
+  "output_tokens": 858,
+  "latency_s": 8.74,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "en",
+    "currency": "USD",
+    "vendor_name": {
+      "source_quote": "MidAmerican EnergyCompany",
+      "value": "MidAmerican Energy Company",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": "Date(cid:1)Billed:(cid:1)04/04/25",
+      "value": "2025-04-04",
+      "status": "confident"
+    },
+    "service_address": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "total_amount": {
+      "source_quote": "Total Amount Due by04/28/25  $106.82",
+      "value": "106.82",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "TotalkWh       389",
+        "usage_amount_raw": "389",
+        "usage_unit_raw": "kWh",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": null,
+        "period_quote": "CompanyReading 04/04/25 55129\nCompanyReading 03/06/25 54740",
+        "billing_period_start": "2025-03-06",
+        "billing_period_end": "2025-04-04",
+        "period_status": "inferred"
+      },
+      {
+        "utility_type": "gas",
+        "usage_quote": "TotalTherms     61",
+        "usage_amount_raw": "61",
+        "usage_unit_raw": "Therms",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": null,
+        "period_quote": "CompanyReading 04/04/25 423\nCompanyReading 03/06/25 364",
+        "billing_period_start": "2025-03-06",
+        "billing_period_end": "2025-04-04",
+        "period_status": "inferred"
+      }
+    ],
+    "notes": "Gas detail states both 59 ccf and 61 Therms; the explicitly labelled billed usage total in Therms was selected."
+  }
+}

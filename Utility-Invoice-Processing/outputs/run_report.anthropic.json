@@ -1,0 +1,134 @@
+{
+  "generated_at": "2026-07-25T14:05:00+00:00",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mock": false,
+  "csv": "outputs/invoices.csv",
+  "files": 8,
+  "rows": 11,
+  "row_status_counts": {
+    "ok": 2,
+    "review": 9,
+    "failed": 0
+  },
+  "languages": [
+    "de",
+    "en",
+    "es",
+    "fr"
+  ],
+  "utility_types": [
+    "electricity",
+    "gas",
+    "sewer",
+    "water"
+  ],
+  "input_tokens": 87335,
+  "output_tokens": 8735,
+  "cost_usd": 0.393,
+  "cost_per_invoice_usd": 0.0491,
+  "wall_s": 91.3,
+  "per_file": [
+    {
+      "file": "centralhudson-us-electric-en.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "quote_unverified_service_address"
+      ],
+      "cost_usd": 0.035862,
+      "error": null
+    },
+    {
+      "file": "edf-fr-electricity-fr.pdf",
+      "mode": "vision",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "vision_mode_quotes_unverifiable"
+      ],
+      "cost_usd": 0.102951,
+      "error": null
+    },
+    {
+      "file": "exodo-es-electricity-es.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "quote_unverified_usage"
+      ],
+      "cost_usd": 0.046491,
+      "error": null
+    },
+    {
+      "file": "midamerican-us-electric-en.pdf",
+      "mode": "text",
+      "rows": 2,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "quote_unverified_invoice_date",
+        "quote_unverified_service_address"
+      ],
+      "cost_usd": 0.049725,
+      "error": null
+    },
+    {
+      "file": "sfpuc-us-water-en.pdf",
+      "mode": "text",
+      "rows": 2,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "ambiguous_unit"
+      ],
+      "cost_usd": 0.062424,
+      "error": null
+    },
+    {
+      "file": "swm-de-electricity-de.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [],
+      "cost_usd": 0.032457,
+      "error": null
+    },
+    {
+      "file": "vialis-fr-electricity-fr.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "quote_unverified_service_address"
+      ],
+      "cost_usd": 0.035844,
+      "error": null
+    },
+    {
+      "file": "weenergies-us-electric-gas-en.pdf",
+      "mode": "text",
+      "rows": 2,
+      "statuses": [
+        "ok"
+      ],
+      "flags": [],
+      "cost_usd": 0.027276,
+      "error": null
+    }
+  ]
+}

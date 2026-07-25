@@ -90,6 +90,15 @@ def test_verify_quote_tolerates_whitespace_and_case():
     assert verify_quote("total ELECTRICITY you used", doc)
 
 
+def test_verify_quote_is_space_insensitive_both_directions():
+    # model stripped spaces while quoting
+    doc = fold_text("284 SOUTH AVENUE\nPOUGHKEEPSIE NY 12601-4839")
+    assert verify_quote("284SOUTHAVENUE POUGHKEEPSIENY12601-4839", doc)
+    # extractor merged words the model quoted faithfully
+    doc = fold_text("CurrentBillingPeriod May25,2021-Jun22,2021")
+    assert verify_quote("Current Billing Period May 25, 2021 - Jun 22, 2021", doc)
+
+
 def test_verify_quote_rejects_absent_text():
     doc = fold_text("Some completely different document")
     assert not verify_quote("Total electricity you used: 458 kWh", doc)

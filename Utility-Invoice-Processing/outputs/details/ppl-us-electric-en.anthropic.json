@@ -1,0 +1,53 @@
+{
+  "source_file": "ppl-us-electric-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 7451,
+  "output_tokens": 781,
+  "latency_s": 8.28,
+  "cost_usd": 0.034068,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "Year for billing period (2024) inferred from due date 6/19/24; no explicit invoice date printed on document. Demand (1,095 kW) and meter reading difference (00499) are not usage and were excluded in favor of the stated 'Total Delivered' figure.",
+  "fields": {
+    "vendor_name": {
+      "value": "PPL Electric Utilities",
+      "status": "confident",
+      "source_quote": "PPL Electric Utilities",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "service_address": {
+      "value": "123 SERVICE RD, ALLENTOWN PA 18100",
+      "status": "confident",
+      "source_quote": "123 SERVICE RD\n  ALLENTOWN PA 18100",
+      "quote_verified": true
+    },
+    "total_amount": {
+      "value": "3133.19",
+      "status": "confident",
+      "source_quote": "Amount Due By 6 /19/24       $3,133.19",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "598800",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "Total Delivered: 598800",
+      "period_quote": "Usage from May 2 - Jun 3",
+      "usage_status": "confident",
+      "period_status": "inferred",
+      "flags": []
+    }
+  ],
+  "n_pages": 3,
+  "n_text_chars": 13889
+}

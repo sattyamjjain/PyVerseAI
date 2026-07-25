@@ -138,20 +138,12 @@ files:
         billing_period_start: "2023-01-12"
         billing_period_end: "2023-02-11"
 
-  # --- deliberate edge cases (scored only in --edge-cases runs) ---
-
-  - file: cub-comed-us-electric-es.pdf
-    language: es
-    rows:
-      - utility_type: electricity
-        vendor_name: ["Ameren", "Ameren Illinois", "Citizens Utility Board", "CUB"]
-        invoice_date: null            # every date is a 00/00/0000 placeholder
-        service_address: null
-        usage_amount: null            # usage fields are 000.0000 placeholders; the
-                                      # "800 kWh" in the rate table is a tier boundary trap
-        usage_unit: null
-        billing_period_start: null
-        billing_period_end: null
+  # --- deliberate edge cases (scored only in edge-case runs) ---
+  # cub-comed-us-electric-es.pdf is intentionally NOT numerically scored: it is a
+  # rate explainer with an all-placeholder template bill, so "one electricity row
+  # of nulls" and "no rows at all" are equally correct shapes. Its real test —
+  # does the model hallucinate the 800 kWh tier boundary or the 00/00/0000
+  # dates? — is verified behaviorally in TESTING.md.
 
   - file: ppl-us-electric-en.pdf
     language: en

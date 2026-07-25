@@ -1,0 +1,5 @@
+# CSV outputs are byte-exact artifacts (utf-8-sig BOM + CRLF per RFC 4180);
+# git must never normalize their line endings or the mock-replay
+# byte-equality test breaks on fresh clones.
+*.csv -text
+*.pdf binary

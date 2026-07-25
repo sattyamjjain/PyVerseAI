@@ -9,6 +9,16 @@ PyVerseAI is a hub of diverse projects, each with its unique purpose and tech st
 
 ## Projects
 
+### Utility-Invoice-Processing
+
+LLM-powered multilingual utility invoice extraction: real electricity/gas/water bills in 4 languages (en/es/fr/de) -> schema-enforced structured outputs (Claude + OpenAI behind one interface) -> validated CSV. Key features include:
+- Verbatim evidence quotes per field with a deterministic hallucination filter (space-insensitive quote verification).
+- Locale-aware normalization (comma decimals, space thousands, lakh grouping), ISO date cross-checking, unit-label canonicalization.
+- Measured accuracy: 98.7% field accuracy against hand-labeled golden data, with a per-language breakdown and provider comparison.
+- Vision fallback for image-only PDFs, offline fixture-replay mode (no API key needed), Streamlit review console, 113 tests.
+
+[Detailed setup and usage for Utility-Invoice-Processing](./Utility-Invoice-Processing/README.md)
+
 ### EC2-Crawler
 
 The EC2-Crawler project is designed to scrape news from various sources and manage AWS EC2 instances. Key features include:

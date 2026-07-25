@@ -41,6 +41,12 @@ EVAL_FIELDS = [
 
 ACCURATE = {"correct_exact", "correct_normalized", "missing_correct"}
 
+_PUNCT = str.maketrans("", "", ".,;:'’")
+
+
+def _loose(value: str) -> str:
+    return " ".join(fold_text(value).translate(_PUNCT).split())
+
 
 def _as_decimal(value: str) -> Decimal | None:
     try:
@@ -75,8 +81,9 @@ def classify(field: str, golden, predicted: str) -> str:
         return "wrong_value"
 
     if field == "service_address":
-        # golden holds a distinctive substring of the true address
-        if fold_text(str(golden)) in fold_text(pred):
+        # golden holds a distinctive substring of the true address; punctuation
+        # is stripped on both sides so "St." vs "St" or comma placement can't fail it
+        if _loose(str(golden)) in _loose(pred):
             return "correct_normalized"
         return "wrong_value"
 
@@ -109,8 +116,12 @@ def score(golden: dict[tuple[str, str], dict], predictions: dict[tuple[str, str]
     per_language: dict[str, Counter] = defaultdict(Counter)
     row_issues: list[str] = []
     judged_files = {file for file, _ in golden}
+    predicted_files = {file for file, _ in predictions}
+    skipped_files = sorted({f for f in judged_files if f not in predicted_files})
 
     for key, gold in golden.items():
+        if key[0] not in predicted_files:
+            continue  # file wasn't part of this run (e.g. edge cases) — not a miss
         pred = predictions.get(key)
         if pred is None:
             row_issues.append(f"missing predicted row for {key[0]} [{key[1]}]")
@@ -130,7 +141,12 @@ def score(golden: dict[tuple[str, str], dict], predictions: dict[tuple[str, str]
         if key[0] in judged_files and key not in golden:
             row_issues.append(f"spurious predicted row {key[0]} [{key[1]}]")
 
-    return {"per_field": per_field, "per_language": per_language, "row_issues": row_issues}
+    return {
+        "per_field": per_field,
+        "per_language": per_language,
+        "row_issues": row_issues,
+        "skipped_files": skipped_files,
+    }
 
 
 def _accuracy(counter: Counter) -> float:
@@ -182,6 +198,10 @@ def render_report(results: dict, pred_path: Path, compare: tuple[Path, dict] | N
     if results["row_issues"]:
         lines += ["", "## Row-level issues", ""]
         lines += [f"- {issue}" for issue in results["row_issues"]]
+
+    if results.get("skipped_files"):
+        lines += ["", "_Labeled but not part of this run: "]
+        lines[-1] += ", ".join(f"`{f}`" for f in results["skipped_files"]) + "_"
 
     if compare:
         cmp_path, cmp_results = compare

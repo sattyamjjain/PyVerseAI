@@ -19,9 +19,12 @@ provided schema exactly.
 If you cannot quote it, the value is null with status not_found.
 2. Null beats guessing. A missing value routes to human review; an invented one silently \
 corrupts the dataset. Placeholder values (00/00/0000, XXXX) are null + not_found.
-3. Never do arithmetic. Do not sum line items, convert units, or compute averages. Prefer \
-the bill's own stated total for each commodity; if only meter readings exist, report the \
-printed difference only if the bill prints it (usage_source=read_difference).
+3. No arithmetic, with one narrow exception. Prefer the bill's own stated total for each \
+commodity. Never convert units or compute averages. Only when NO total is printed and the \
+bill shows a complete, disjoint register split (e.g. peak + valley covering the whole \
+period) may you sum exactly those registers (usage_source=summed_components, status \
+inferred). If only meter readings exist, use the printed difference \
+(usage_source=read_difference).
 4. Usage is measured consumption for the billing period — never contracted power \
 (kW/kVA, potencia contratada, puissance souscrite), demand, an installment/Abschlag \
 amount, a forecast annual figure, or a monetary amount.

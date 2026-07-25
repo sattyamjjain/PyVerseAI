@@ -47,6 +47,7 @@ class ReadType(StrEnum):
 
 class UsageSource(StrEnum):
     STATED_TOTAL = "stated_total"  # the bill prints a total for this commodity
+    SUMMED_COMPONENTS = "summed_components"  # no printed total; complete disjoint register split
     READ_DIFFERENCE = "read_difference"  # only current - previous meter reads
     NOT_FOUND = "not_found"
 
@@ -89,9 +90,13 @@ class CommodityReading(BaseModel):
         description=(
             "The consumption NUMBER exactly as printed — keep commas, periods, spaces and "
             "apostrophes ('48 469', '2.157,5', '222,45'); strip the unit. Prefer the "
-            "bill's own stated total. NEVER add up line items yourself, NEVER convert "
-            "units, NEVER use monetary amounts, contracted power (kW/kVA), demand, or "
-            "installment/Abschlag amounts."
+            "bill's own stated total. NEVER convert units, NEVER use monetary amounts, "
+            "contracted power (kW/kVA), demand, or installment/Abschlag amounts. Do not "
+            "sum line items — with ONE exception: if no total is printed anywhere and the "
+            "bill shows a complete disjoint register split (e.g. peak + off-peak covering "
+            "the whole period), you may report their sum with usage_source="
+            "summed_components and status inferred. Never include tariff-component or "
+            "capacity lines that restate the same energy."
         )
     )
     usage_unit_raw: str | None = Field(

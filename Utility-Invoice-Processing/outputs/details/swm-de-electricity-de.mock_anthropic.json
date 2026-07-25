@@ -1,0 +1,53 @@
+{
+  "source_file": "swm-de-electricity-de.pdf",
+  "provider": "mock:anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 6974,
+  "output_tokens": 769,
+  "latency_s": 0.0,
+  "cost_usd": 0.032457,
+  "language": "de",
+  "document_type": "consumption_invoice",
+  "notes": "Vendor is identified only via Messstellenbetreiber/Netzbetreiber (SWM Infrastruktur GmbH & Co. KG); the actual billing entity name is not explicitly labeled elsewhere. No explicit invoice issue date found on the document, only the billing period.",
+  "fields": {
+    "vendor_name": {
+      "value": "SWM Infrastruktur GmbH & Co. KG",
+      "status": "ambiguous",
+      "source_quote": "Messstellenbetreiber: SWM Infrastruktur GmbH & Co. KG / Emmy-Noether-Straße 2 / 80992 München",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "service_address": {
+      "value": "Mustermannstraße 1, 80992 München",
+      "status": "confident",
+      "source_quote": "Verbrauchsstelle: Mustermannstraße 1, 80992 München",
+      "quote_verified": true
+    },
+    "total_amount": {
+      "value": "460.03",
+      "status": "confident",
+      "source_quote": "Bruttobetrag 460,03 Euro",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "859",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "Gesamt 859 kWh",
+      "period_quote": "Vom 01.06.2022 – 31.05.2023: 859 kWh (365 Tage)",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": []
+    }
+  ],
+  "n_pages": 2,
+  "n_text_chars": 10055
+}

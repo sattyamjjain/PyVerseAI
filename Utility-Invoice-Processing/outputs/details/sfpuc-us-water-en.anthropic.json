@@ -1,0 +1,67 @@
+{
+  "source_file": "sfpuc-us-water-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 15263,
+  "output_tokens": 1109,
+  "latency_s": 10.57,
+  "cost_usd": 0.062424,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "This is a labeled 'SAMPLE BILL' from SFPUC covering both water and sewer charges; sewer usage (5.76 units) is a computed 90% wastewater flow factor applied to the metered water consumption (6.40 units), not a separate meter reading.",
+  "fields": {
+    "vendor_name": {
+      "value": "San Francisco Water, Power and Sewer (SFPUC)",
+      "status": "confident",
+      "source_quote": "SAN FRANCISCO WATER, POWER AND SEWER Services of the San Francisco Public Utilities Commission",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2017-01-02",
+      "status": "confident",
+      "source_quote": "Bill Date: 01/02/2017",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": "525 Golden Gate Ave",
+      "status": "confident",
+      "source_quote": "Service Address: 525 Golden Gate Ave",
+      "quote_verified": true
+    },
+    "total_amount": {
+      "value": "247.25",
+      "status": "confident",
+      "source_quote": "Total Amount Due $247.25",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "water",
+      "usage_amount_raw": "6.40",
+      "usage_unit_raw": "units",
+      "usage_quote": "Total consumption in units of water 6.40",
+      "period_quote": "Meter Reading 12/02/2016 - 01/02/2017",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "ambiguous_unit"
+      ]
+    },
+    {
+      "utility_type": "sewer",
+      "usage_amount_raw": "5.76",
+      "usage_unit_raw": "units",
+      "usage_quote": "Total Discharge units 5.76 (6.40 units x 90%)",
+      "period_quote": "Service from 12/02/2016 to 01/02/2017",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "ambiguous_unit"
+      ]
+    }
+  ],
+  "n_pages": 4,
+  "n_text_chars": 35144
+}

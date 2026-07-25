@@ -1,0 +1,55 @@
+{
+  "source_file": "exodo-es-electricity-es.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 10527,
+  "output_tokens": 994,
+  "latency_s": 10.28,
+  "cost_usd": 0.046491,
+  "language": "es",
+  "document_type": "consumption_invoice",
+  "notes": "No single stated total for the whole billing period; the bill splits energy into two sub-periods due to a mid-period price change (222,45 kWh + 127,55 kWh = 350 kWh), which matches the PUNTA+VALLE register split (163+187=350 kWh), so the sum was used as usage_amount_raw.",
+  "fields": {
+    "vendor_name": {
+      "value": "IBERDROLA CLIENTES, S.A.U.",
+      "status": "confident",
+      "source_quote": "IBERDROLA CLIENTES, S.A.U.",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2018-06-13",
+      "status": "confident",
+      "source_quote": "Fecha de emisión de factura 13 de junio de 2018",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": "Trav SAN MATEO, 8 esc. EXT, 2º Dch, 28004 MADRID",
+      "status": "confident",
+      "source_quote": "Dirección de suministro: Trav SAN MATEO, 8 esc. EXT, 2º Dch 28004 MADRID",
+      "quote_verified": true
+    },
+    "total_amount": {
+      "value": "80.95",
+      "status": "confident",
+      "source_quote": "TOTAL IMPORTE FACTURA:  80,95 €",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "350",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "Total 222,45 kWh hasta 31/05/2018 ... Total 127,55 kWh hasta 10/06/2018",
+      "period_quote": "Periodo de facturación 08/05/2018 - 10/06/2018",
+      "usage_status": "inferred",
+      "period_status": "confident",
+      "flags": [
+        "quote_unverified_usage"
+      ]
+    }
+  ],
+  "n_pages": 4,
+  "n_text_chars": 33000
+}

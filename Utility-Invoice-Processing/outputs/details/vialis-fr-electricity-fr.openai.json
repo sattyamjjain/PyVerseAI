@@ -1,0 +1,55 @@
+{
+  "source_file": "vialis-fr-electricity-fr.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 5730,
+  "output_tokens": 403,
+  "latency_s": 3.69,
+  "cost_usd": 0.02037,
+  "language": "fr",
+  "document_type": "consumption_invoice",
+  "notes": "Document identifié comme un exemple de facture (« Cette facture est un exemple qui ne concerne pas spécifiquement votre situation. »).",
+  "fields": {
+    "vendor_name": {
+      "value": "Vialis S.A.E.M.",
+      "status": "confident",
+      "source_quote": "Vialis S.A.E.M.",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2019-01-08",
+      "status": "confident",
+      "source_quote": "facture n° 1234V du 08/01/2019",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": "SA ENTREPRISE, 10 RUE DES BONNES GENS, COLMAR",
+      "status": "confident",
+      "source_quote": "SA ENTREPRISE\n10 RUE DES BONNES GENS\nCOLMAR",
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": "7 015,13",
+      "status": "confident",
+      "source_quote": "total TTC           7 015,13",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "48 469",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh",
+      "period_quote": "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "quote_unverified_service_address"
+      ]
+    }
+  ],
+  "n_pages": 2,
+  "n_text_chars": 32518
+}

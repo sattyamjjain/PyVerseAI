@@ -1,0 +1,63 @@
+{
+  "source_file": "midamerican-us-electric-en.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 7538,
+  "output_tokens": 858,
+  "latency_s": 8.74,
+  "cost_usd": 0.031715,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "Gas detail states both 59 ccf and 61 Therms; the explicitly labelled billed usage total in Therms was selected.",
+  "fields": {
+    "vendor_name": {
+      "value": "MidAmerican Energy Company",
+      "status": "confident",
+      "source_quote": "MidAmerican EnergyCompany",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2025-04-04",
+      "status": "confident",
+      "source_quote": "Date(cid:1)Billed:(cid:1)04/04/25",
+      "quote_verified": true
+    },
+    "service_address": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": "106.82",
+      "status": "confident",
+      "source_quote": "Total Amount Due by04/28/25  $106.82",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "389",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "TotalkWh       389",
+      "period_quote": "CompanyReading 04/04/25 55129\nCompanyReading 03/06/25 54740",
+      "usage_status": "confident",
+      "period_status": "inferred",
+      "flags": []
+    },
+    {
+      "utility_type": "gas",
+      "usage_amount_raw": "61",
+      "usage_unit_raw": "Therms",
+      "usage_quote": "TotalTherms     61",
+      "period_quote": "CompanyReading 04/04/25 423\nCompanyReading 03/06/25 364",
+      "usage_status": "confident",
+      "period_status": "inferred",
+      "flags": []
+    }
+  ],
+  "n_pages": 3,
+  "n_text_chars": 22036
+}

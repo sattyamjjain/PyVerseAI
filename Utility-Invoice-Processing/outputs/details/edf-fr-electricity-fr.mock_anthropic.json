@@ -1,0 +1,55 @@
+{
+  "source_file": "edf-fr-electricity-fr.pdf",
+  "provider": "mock:anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "vision",
+  "input_tokens": 18172,
+  "output_tokens": 3229,
+  "latency_s": 0.0,
+  "cost_usd": 0.102951,
+  "language": "fr",
+  "document_type": "other",
+  "notes": "This document is a template/explanatory guide ('Comprendre votre nouvelle facture') from EDF illustrating how to read an invoice, using placeholder/example data (e.g. 'NOM ENTREPRISE', 'CP VILLE', account numbers of all zeros). The invoice date is inconsistent across pages (14/02/2023 vs 02/02/2023), and the address fields are clearly placeholders rather than real data, so they are marked not_found. Electricity consumption figures (Heures Pleines/Creuses Hiver) sum to the stated total of 11 897 kWh.",
+  "fields": {
+    "vendor_name": {
+      "value": "EDF",
+      "status": "confident",
+      "source_quote": "EDF",
+      "quote_verified": null
+    },
+    "invoice_date": {
+      "value": "2023-02-14",
+      "status": "ambiguous",
+      "source_quote": "Facture du 14/02/2023",
+      "quote_verified": null
+    },
+    "service_address": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": "NOM ENTREPRISE\nADRESSE\nCP VILLE",
+      "quote_verified": null
+    },
+    "total_amount": {
+      "value": "2282.62",
+      "status": "confident",
+      "source_quote": "Montant total à payer (TTC)  2 282,62 €",
+      "quote_verified": null
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "11 897",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "Consommation (Conso) 11 897 kWh",
+      "period_quote": "du 12/01/2023 au 11/02/2023",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "vision_mode_quotes_unverifiable"
+      ]
+    }
+  ],
+  "n_pages": 3,
+  "n_text_chars": 18583
+}

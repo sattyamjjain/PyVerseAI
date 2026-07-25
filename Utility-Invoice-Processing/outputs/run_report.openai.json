@@ -1,0 +1,128 @@
+{
+  "generated_at": "2026-07-25T13:56:32+00:00",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mock": false,
+  "csv": "outputs/invoices.openai.csv",
+  "files": 8,
+  "rows": 11,
+  "row_status_counts": {
+    "ok": 2,
+    "review": 9,
+    "failed": 0
+  },
+  "languages": [
+    "de",
+    "en",
+    "es",
+    "fr"
+  ],
+  "utility_types": [
+    "electricity",
+    "gas",
+    "sewer",
+    "water"
+  ],
+  "input_tokens": 48779,
+  "output_tokens": 5012,
+  "cost_usd": 0.1971,
+  "cost_per_invoice_usd": 0.0246,
+  "wall_s": 54.4,
+  "per_file": [
+    {
+      "file": "centralhudson-us-electric-en.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "ok"
+      ],
+      "flags": [],
+      "cost_usd": 0.02418,
+      "error": null
+    },
+    {
+      "file": "edf-fr-electricity-fr.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "no_readings"
+      ],
+      "cost_usd": 0.01476,
+      "error": null
+    },
+    {
+      "file": "exodo-es-electricity-es.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [],
+      "cost_usd": 0.024765,
+      "error": null
+    },
+    {
+      "file": "midamerican-us-electric-en.pdf",
+      "mode": "text",
+      "rows": 2,
+      "statuses": [
+        "review"
+      ],
+      "flags": [],
+      "cost_usd": 0.031715,
+      "error": null
+    },
+    {
+      "file": "sfpuc-us-water-en.pdf",
+      "mode": "text",
+      "rows": 2,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "ambiguous_unit"
+      ],
+      "cost_usd": 0.03607,
+      "error": null
+    },
+    {
+      "file": "swm-de-electricity-de.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [],
+      "cost_usd": 0.01869,
+      "error": null
+    },
+    {
+      "file": "vialis-fr-electricity-fr.pdf",
+      "mode": "text",
+      "rows": 1,
+      "statuses": [
+        "review"
+      ],
+      "flags": [
+        "quote_unverified_service_address"
+      ],
+      "cost_usd": 0.02037,
+      "error": null
+    },
+    {
+      "file": "weenergies-us-electric-gas-en.pdf",
+      "mode": "text",
+      "rows": 2,
+      "statuses": [
+        "ok",
+        "review"
+      ],
+      "flags": [],
+      "cost_usd": 0.026578,
+      "error": null
+    }
+  ]
+}

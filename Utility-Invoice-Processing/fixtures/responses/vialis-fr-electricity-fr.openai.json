@@ -1,0 +1,51 @@
+{
+  "source_file": "vialis-fr-electricity-fr.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 5730,
+  "output_tokens": 403,
+  "latency_s": 3.69,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "fr",
+    "currency": "EUR",
+    "vendor_name": {
+      "source_quote": "Vialis S.A.E.M.",
+      "value": "Vialis S.A.E.M.",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": "facture n° 1234V du 08/01/2019",
+      "value": "2019-01-08",
+      "status": "confident"
+    },
+    "service_address": {
+      "source_quote": "SA ENTREPRISE\n10 RUE DES BONNES GENS\nCOLMAR",
+      "value": "SA ENTREPRISE, 10 RUE DES BONNES GENS, COLMAR",
+      "status": "confident"
+    },
+    "total_amount": {
+      "source_quote": "total TTC           7 015,13",
+      "value": "7 015,13",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh",
+        "usage_amount_raw": "48 469",
+        "usage_unit_raw": "kWh",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": "123456789",
+        "period_quote": "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh",
+        "billing_period_start": "2018-12-01",
+        "billing_period_end": "2019-01-01",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "Document identifié comme un exemple de facture (« Cette facture est un exemple qui ne concerne pas spécifiquement votre situation. »)."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "source_file": "centralhudson-us-electric-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 9549,
+  "output_tokens": 481,
+  "latency_s": 6.9,
+  "cost_usd": 0.035862,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "Present reading marked as estimated; previous reading actual. Bill combines Central Hudson delivery charges and ESCO electric supply charges as one consolidated bill.",
+  "fields": {
+    "vendor_name": {
+      "value": "Central Hudson Gas & Electric Corporation",
+      "status": "confident",
+      "source_quote": "CentralHudsonGas&ElectricCorporation",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": null,
+      "status": "not_found",
+      "source_quote": null,
+      "quote_verified": false
+    },
+    "service_address": {
+      "value": "284 South Avenue, Poughkeepsie, NY 12601-4839",
+      "status": "ambiguous",
+      "source_quote": "284SOUTHAVENUE POUGHKEEPSIENY12601-4839",
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": "218.10",
+      "status": "confident",
+      "source_quote": "TotalAmount Due Now                          $218.10",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "458",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "Electricity Used (kWh)                458",
+      "period_quote": "CurrentBillingPeriod                May25,2021-Jun22,2021",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "quote_unverified_service_address"
+      ]
+    }
+  ],
+  "n_pages": 3,
+  "n_text_chars": 20684
+}

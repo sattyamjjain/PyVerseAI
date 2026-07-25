@@ -1,0 +1,65 @@
+{
+  "source_file": "weenergies-us-electric-gas-en.pdf",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "mode": "text",
+  "input_tokens": 4001,
+  "output_tokens": 1105,
+  "latency_s": 10.71,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "en",
+    "currency": "USD",
+    "vendor_name": {
+      "source_quote": "We Energies",
+      "value": "We Energies",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": "Bill Date  Account Number Next Meter Read Date Amount Due  Payment Transfer Date\n      02/03/2026                  03/03/2026        $246.40          02/25/2026",
+      "value": "2026-02-03",
+      "status": "confident"
+    },
+    "service_address": {
+      "source_quote": null,
+      "value": null,
+      "status": "not_found"
+    },
+    "total_amount": {
+      "source_quote": "Amount Due  Payment Transfer Date\n      02/03/2026                  03/03/2026        $246.40          02/25/2026",
+      "value": "246.40",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "Total Electric Use 669 KWH",
+        "usage_amount_raw": "669",
+        "usage_unit_raw": "KWH",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": "NZT0123456",
+        "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+        "billing_period_start": "2026-01-05",
+        "billing_period_end": "2026-02-02",
+        "period_status": "confident"
+      },
+      {
+        "utility_type": "gas",
+        "usage_quote": "Therms Used 83.9 83.1 92.1",
+        "usage_amount_raw": "83.9",
+        "usage_unit_raw": "Therms",
+        "usage_source": "stated_total",
+        "usage_status": "ambiguous",
+        "read_type": "actual",
+        "meter_id": "0WG0123456",
+        "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+        "billing_period_start": "2026-01-05",
+        "billing_period_end": "2026-02-02",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "Gas usage is stated both as metered volume (79 CCF) and billing energy (83.9 Therms); the Therms total is reported because it is the account-summary usage and billing unit."
+  }
+}

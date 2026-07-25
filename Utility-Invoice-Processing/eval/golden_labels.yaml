@@ -1,0 +1,158 @@
+# Hand-labeled ground truth, established by visually reading every bill
+# (not from any model output). One entry per (file x commodity row).
+#
+# Matching semantics (see evaluate.py):
+#   vendor_name       list of accepted aliases; folded substring match
+#   service_address   distinctive substring of the true address (punctuation-insensitive);
+#                     null when the bill genuinely lacks a labeled service address
+#   dates             exact ISO string match
+#   usage_amount      Decimal-equality match
+#   usage_unit        canonical label, case-insensitive match
+#   null              the field is genuinely absent from the document; a predicted
+#                     value there counts as a hallucination
+#
+# Judgment calls are documented in TESTING.md ("Golden-label judgment calls").
+
+files:
+  - file: centralhudson-us-electric-en.pdf
+    language: en
+    rows:
+      - utility_type: electricity
+        vendor_name: ["Central Hudson", "Central Hudson Gas & Electric"]
+        invoice_date: null            # no bill/statement date is printed anywhere
+        service_address: null         # "Service For:" block is a redacted placeholder
+        usage_amount: "458"
+        usage_unit: kWh
+        billing_period_start: "2021-05-25"
+        billing_period_end: "2021-06-22"
+
+  - file: weenergies-us-electric-gas-en.pdf
+    language: en
+    rows:
+      - utility_type: electricity
+        vendor_name: ["We Energies"]
+        invoice_date: "2026-02-03"
+        service_address: "123 Main St"
+        usage_amount: "669"
+        usage_unit: kWh
+        billing_period_start: "2026-01-05"
+        billing_period_end: "2026-02-02"
+      - utility_type: gas
+        vendor_name: ["We Energies"]
+        invoice_date: "2026-02-03"
+        service_address: "123 Main St"
+        usage_amount: "83.9"          # billing headline; 79 CCF is the metered alternate
+        usage_unit: therms
+        billing_period_start: "2026-01-05"
+        billing_period_end: "2026-02-02"
+
+  - file: midamerican-us-electric-en.pdf
+    language: en
+    rows:
+      - utility_type: electricity
+        vendor_name: ["MidAmerican Energy", "MidAmerican Energy Company"]
+        invoice_date: "2025-04-04"    # "Date Billed: 04/04/25" (2-digit year)
+        service_address: "Sioux City" # street line is font-garbled in the text layer
+        usage_amount: "389"
+        usage_unit: kWh
+        billing_period_start: "2025-03-06"   # derived from the two meter-read dates
+        billing_period_end: "2025-04-04"
+      - utility_type: gas
+        vendor_name: ["MidAmerican Energy", "MidAmerican Energy Company"]
+        invoice_date: "2025-04-04"
+        service_address: "Sioux City"
+        usage_amount: "61"            # Total Therms; 59 ccf is the metered alternate
+        usage_unit: therms
+        billing_period_start: "2025-03-06"
+        billing_period_end: "2025-04-04"
+
+  - file: sfpuc-us-water-en.pdf
+    language: en
+    rows:
+      - utility_type: water
+        vendor_name:
+          ["San Francisco Public Utilities Commission", "SFPUC",
+           "San Francisco Water Power and Sewer", "San Francisco Water, Power and Sewer"]
+        invoice_date: "2017-01-02"    # "Bill Date: 01/02/2017", US MDY
+        service_address: "525 Golden Gate Ave"
+        usage_amount: "6.40"          # "Total consumption in units of water 6.40"
+        usage_unit: units             # SFPUC's fractional-billing unit (1 unit = 1 CCF)
+        billing_period_start: "2016-12-02"
+        billing_period_end: "2017-01-02"
+      - utility_type: sewer
+        vendor_name:
+          ["San Francisco Public Utilities Commission", "SFPUC",
+           "San Francisco Water Power and Sewer", "San Francisco Water, Power and Sewer"]
+        invoice_date: "2017-01-02"
+        service_address: "525 Golden Gate Ave"
+        usage_amount: "5.76"          # "Total Discharge units 5.76 (6.40 units x 90%)"
+        usage_unit: units
+        billing_period_start: "2016-12-02"
+        billing_period_end: "2017-01-02"
+
+  - file: exodo-es-electricity-es.pdf
+    language: es
+    rows:
+      - utility_type: electricity
+        vendor_name: ["Iberdrola", "Iberdrola Clientes S.A.U."]
+        invoice_date: "2018-06-13"    # "13 de junio de 2018" (Spanish month name)
+        service_address: "Trav San Mateo 8"
+        usage_amount: "350"           # no printed total; PUNTA 163 + VALLE 187 disjoint registers
+        usage_unit: kWh
+        billing_period_start: "2018-05-08"
+        billing_period_end: "2018-06-10"
+
+  - file: vialis-fr-electricity-fr.pdf
+    language: fr
+    rows:
+      - utility_type: electricity
+        vendor_name: ["Vialis", "Vialis S.A.E.M."]
+        invoice_date: "2019-01-08"    # "facture n° 1234V du 08/01/2019", French DMY
+        service_address: "Bonnes Gens"  # espace de livraison; same street as vendor HQ
+        usage_amount: "48469"         # "électricité du 01/12/2018 au 01/01/2019 : 48 469 kWh"
+        usage_unit: kWh
+        billing_period_start: "2018-12-01"
+        billing_period_end: "2019-01-01"
+
+  - file: swm-de-electricity-de.pdf
+    language: de
+    rows:
+      - utility_type: electricity
+        vendor_name: ["SWM", "Stadtwerke München"]
+        invoice_date: null            # the Jahresrechnung annex prints no issue date
+        service_address: "Mustermannstraße 1"
+        usage_amount: "859"           # "Gesamt 859 kWh" (four sub-periods restate it)
+        usage_unit: kWh
+        billing_period_start: "2022-06-01"   # "Vom 01.06.2022 – 31.05.2023"
+        billing_period_end: "2023-05-31"
+
+  - file: edf-fr-electricity-fr.pdf
+    language: fr
+    rows:
+      - utility_type: electricity
+        vendor_name: ["EDF"]
+        invoice_date: "2023-02-14"    # "Facture du 14/02/2023" (image layer; vision path)
+        service_address: null         # specimen placeholder ("1 RUE ... CP VILLE")
+        usage_amount: "11897"         # "Conso 11 897 kWh" stated total (HPH 9 711 + HCH 2 186)
+        usage_unit: kWh
+        billing_period_start: "2023-01-12"
+        billing_period_end: "2023-02-11"
+
+  # --- deliberate edge cases (scored only in edge-case runs) ---
+  # cub-comed-us-electric-es.pdf is intentionally NOT numerically scored: it is a
+  # rate explainer with an all-placeholder template bill, so "one electricity row
+  # of nulls" and "no rows at all" are equally correct shapes. Its real test —
+  # does the model hallucinate the 800 kWh tier boundary or the 00/00/0000
+  # dates? — is verified behaviorally in TESTING.md.
+
+  - file: ppl-us-electric-en.pdf
+    language: en
+    rows:
+      - utility_type: electricity
+        vendor_name: ["PPL", "PPL Electric Utilities"]
+        invoice_date: null            # no statement date printed
+        service_address: "123 Service Rd"
+        usage_amount: "598800"        # "Total Delivered: 598800" (multiplier x1200 applied)
+        usage_unit: kWh
+        billing_period_start: "2024-05-02"   # "Usage from May 2 - Jun 3"; year inferred
+        billing_period_end: "2024-06-03"     # from "Balance as of Jun 3, 2024"

@@ -1,0 +1,69 @@
+{
+  "source_file": "midamerican-us-electric-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 11720,
+  "output_tokens": 971,
+  "latency_s": 10.06,
+  "cost_usd": 0.049725,
+  "language": "en",
+  "document_type": "consumption_invoice",
+  "notes": "Gas bill shows both 'Totalccf 59' and 'TotalTherms 61'; therms was used as the primary usage unit since it matches the billed DeliveryCharge and GasSupplyCharge calculation basis (61 therms).",
+  "fields": {
+    "vendor_name": {
+      "value": "MidAmerican Energy Company",
+      "status": "confident",
+      "source_quote": "MidAmerican Energy Company",
+      "quote_verified": true
+    },
+    "invoice_date": {
+      "value": "2025-04-04",
+      "status": "confident",
+      "source_quote": "Date Billed: 04/04/25",
+      "quote_verified": false
+    },
+    "service_address": {
+      "value": "Sioux City, IA 51106",
+      "status": "ambiguous",
+      "source_quote": "SIOUX CITY IA 51106",
+      "quote_verified": false
+    },
+    "total_amount": {
+      "value": "106.82",
+      "status": "confident",
+      "source_quote": "Total Amount Due by04/28/25  $106.82",
+      "quote_verified": true
+    }
+  },
+  "readings": [
+    {
+      "utility_type": "electricity",
+      "usage_amount_raw": "389",
+      "usage_unit_raw": "kWh",
+      "usage_quote": "TotalkWh       389",
+      "period_quote": "CompanyReading 04/04/25 55129 CompanyReading 03/06/25 54740",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "quote_unverified_invoice_date",
+        "quote_unverified_service_address"
+      ]
+    },
+    {
+      "utility_type": "gas",
+      "usage_amount_raw": "61",
+      "usage_unit_raw": "Therms",
+      "usage_quote": "TotalTherms     61",
+      "period_quote": "CompanyReading 04/04/25 423 CompanyReading 03/06/25 364",
+      "usage_status": "confident",
+      "period_status": "confident",
+      "flags": [
+        "quote_unverified_invoice_date",
+        "quote_unverified_service_address"
+      ]
+    }
+  ],
+  "n_pages": 3,
+  "n_text_chars": 22036
+}

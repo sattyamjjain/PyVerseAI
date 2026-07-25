@@ -1,0 +1,65 @@
+{
+  "source_file": "weenergies-us-electric-gas-en.pdf",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "mode": "text",
+  "input_tokens": 5912,
+  "output_tokens": 636,
+  "latency_s": 6.93,
+  "extraction": {
+    "document_type": "consumption_invoice",
+    "language": "en",
+    "currency": "USD",
+    "vendor_name": {
+      "source_quote": "We Energies",
+      "value": "We Energies",
+      "status": "confident"
+    },
+    "invoice_date": {
+      "source_quote": "02/03/2026",
+      "value": "2026-02-03",
+      "status": "confident"
+    },
+    "service_address": {
+      "source_quote": "123 MAIN ST NEENAH WI 54956-1802",
+      "value": "123 MAIN ST, NEENAH WI 54956-1802",
+      "status": "confident"
+    },
+    "total_amount": {
+      "source_quote": "Total Current Charges                      $246.40",
+      "value": "246.40",
+      "status": "confident"
+    },
+    "readings": [
+      {
+        "utility_type": "electricity",
+        "usage_quote": "Total Electric Use 669 KWH",
+        "usage_amount_raw": "669",
+        "usage_unit_raw": "KWH",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": "NZT0123456",
+        "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+        "billing_period_start": "2026-01-05",
+        "billing_period_end": "2026-02-02",
+        "period_status": "confident"
+      },
+      {
+        "utility_type": "gas",
+        "usage_quote": "79 CCF x 1.062 BTU = 83.9 Therms",
+        "usage_amount_raw": "83.9",
+        "usage_unit_raw": "Therms",
+        "usage_source": "stated_total",
+        "usage_status": "confident",
+        "read_type": "actual",
+        "meter_id": "0WG0123456",
+        "period_quote": "Bill Period: 01/05/2026 to 02/02/2026",
+        "billing_period_start": "2026-01-05",
+        "billing_period_end": "2026-02-02",
+        "period_status": "confident"
+      }
+    ],
+    "notes": "Gas usage is reported both as 79 CCF (raw meter volume) and 83.9 Therms (converted, billed unit); Therms was chosen as it matches the billed energy amount used for charges."
+  }
+}

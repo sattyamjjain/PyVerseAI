@@ -1,9 +1,9 @@
 {
   "sample": 200,
   "accuracy": {
-    "k20_precedents": 0.625,
-    "k20_no_precedents": 0.52,
-    "k10_precedents": 0.58,
-    "k40_precedents": 0.685
+    "k20_precedents": 0.54,
+    "k20_no_precedents": 0.525,
+    "k10_precedents": 0.535,
+    "k40_precedents": 0.535
   }
 }

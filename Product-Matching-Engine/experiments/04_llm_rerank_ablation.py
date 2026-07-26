@@ -1,9 +1,12 @@
 """Experiment 04 — LLM rerank ablations (needs OPENAI_API_KEY).
 
-Questions answered on a fixed sample:
-1. Does the extraction short-circuit help, or should the LLM see those rows too?
-2. Do historical precedents in the prompt help?
-3. How much does candidate-list size (k) matter?
+Questions answered on a fixed sample (precedents are leave-one-out — identical
+texts are excluded from the prompt, so these numbers measure generalization,
+not memorization):
+1. Do historical precedents in the prompt help?
+2. How much does candidate-list size (k) matter?
+(The extraction short-circuit is characterized separately:
+ extraction_stage_stats reports its coverage and precision.)
 
 Run: .venv/bin/python experiments/04_llm_rerank_ablation.py [--sample 200]
 """

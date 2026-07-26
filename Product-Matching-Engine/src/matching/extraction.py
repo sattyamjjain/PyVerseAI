@@ -8,7 +8,10 @@ This is the highest-precision signal in the dataset (~26% coverage).
 import re
 from typing import Iterable
 
-_ID_PATTERN = re.compile(r"\d{7,}")
+# Alphanumeric, not digits-only: 119 catalog ids look like "41840900A1" or
+# "C11020001010" and do appear verbatim in tender texts. Membership in the
+# catalog is what makes the signal safe, so the token pattern can be loose.
+_ID_PATTERN = re.compile(r"[A-Za-z0-9]{7,}")
 
 
 def extract_catalog_ids(text: str, catalog_ids: frozenset[str]) -> list[str]:
@@ -16,9 +19,10 @@ def extract_catalog_ids(text: str, catalog_ids: frozenset[str]) -> list[str]:
     seen: set[str] = set()
     out: list[str] = []
     for token in _ID_PATTERN.findall(str(text)):
-        if token in catalog_ids and token not in seen:
-            seen.add(token)
-            out.append(token)
+        candidate = token if token in catalog_ids else token.upper()
+        if candidate in catalog_ids and candidate not in seen:
+            seen.add(candidate)
+            out.append(candidate)
     return out
 
 

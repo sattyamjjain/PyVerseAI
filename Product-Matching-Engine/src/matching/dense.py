@@ -60,9 +60,12 @@ class Embedder:
 
     def embed(self, texts: Sequence[str]) -> np.ndarray:
         """Embed texts (cached), returning an L2-normalized (n, dims) matrix."""
+        if not texts:
+            return np.zeros((0, EMBED_DIMS), dtype=np.float32)
         texts = [t if t.strip() else "leer" for t in texts]
         keys = [self._cache.key(EMBED_MODEL, str(EMBED_DIMS), t) for t in texts]
-        vectors: list[Optional[list[float]]] = [self._cache.get(k) for k in keys]
+        cached = self._cache.get_many(keys)
+        vectors: list[Optional[list[float]]] = [cached.get(k) for k in keys]
         missing = [i for i, v in enumerate(vectors) if v is None]
         for start in range(0, len(missing), _BATCH):
             idx = missing[start : start + _BATCH]

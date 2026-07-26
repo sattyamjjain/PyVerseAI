@@ -13,7 +13,7 @@ import pandas as pd
 
 from .dense import Embedder, has_openai_key
 from .sparse import SparseIndex
-from .text_utils import product_doc, requirement_text
+from .text_utils import normalize, product_doc, requirement_text
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +22,7 @@ RRF_K = 60
 
 def _rrf_from_rankings(rankings: Sequence[np.ndarray], n_docs: int, depth: int = 100) -> np.ndarray:
     """Fuse per-ranker score matrices into RRF scores, shape (n_queries, n_docs)."""
+    depth = min(depth, n_docs)
     n_queries = rankings[0].shape[0]
     fused = np.zeros((n_queries, n_docs), dtype=np.float32)
     for scores in rankings:
@@ -46,6 +47,10 @@ class HybridRetriever:
             self._doc_vecs = self._embedder.embed(docs)
         elif use_dense:
             logger.warning("OPENAI_API_KEY not set — dense retrieval disabled, using sparse only.")
+
+    def sparse_scores(self, queries: Sequence[str]) -> np.ndarray:
+        """TF-IDF-only relevance (no API) — used by the deterministic fallback."""
+        return self._sparse.tfidf_scores(queries)
 
     def score_matrix(self, queries: Sequence[str]) -> np.ndarray:
         """RRF-fused relevance of every product for every query."""
@@ -79,14 +84,32 @@ class PrecedentIndex:
             self._embedder = Embedder()
             self._vecs = self._embedder.embed(self._texts)
 
-    def top_k(self, queries: Sequence[str], k: int = 3) -> list[list[tuple[str, str, float]]]:
-        """Top-k (historical_text, chosen_product_id, score) per query."""
+    def top_k(
+        self, queries: Sequence[str], k: int = 3, exclude_identical: bool = False
+    ) -> list[list[tuple[str, str, float]]]:
+        """Top-k (historical_text, chosen_product_id, score) per query.
+
+        exclude_identical drops precedents whose normalized text equals the
+        query's — leave-one-out discipline so that evaluating on labeled data
+        never hands the model its own row as "evidence".
+        """
+        if not queries:
+            return []
         rankers = [self._sparse.tfidf_scores(queries)]
         if self._embedder is not None and self._vecs is not None:
             rankers.append((self._embedder.embed(list(queries)) @ self._vecs.T + 1.0) / 2.0)
         blended = np.mean(rankers, axis=0)
-        order = np.argsort(-blended, axis=1)[:, :k]
-        return [
-            [(self._texts[j], self._labels[j], float(blended[qi, j])) for j in order[qi]]
-            for qi in range(len(queries))
-        ]
+        depth = min(k + 20 if exclude_identical else k, blended.shape[1])
+        order = np.argsort(-blended, axis=1)[:, :depth]
+        results: list[list[tuple[str, str, float]]] = []
+        for qi, query in enumerate(queries):
+            query_norm = normalize(query)
+            per_query: list[tuple[str, str, float]] = []
+            for j in order[qi]:
+                if exclude_identical and normalize(self._texts[j]) == query_norm:
+                    continue
+                per_query.append((self._texts[j], self._labels[j], float(blended[qi, j])))
+                if len(per_query) == k:
+                    break
+            results.append(per_query)
+        return results

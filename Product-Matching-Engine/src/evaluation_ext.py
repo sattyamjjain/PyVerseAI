@@ -7,7 +7,7 @@ Adds what the plain full-dataset accuracy hides:
 - per-category and per-stage breakdowns
 """
 import hashlib
-from typing import Callable, Iterable, Optional
+from typing import Iterable, Optional
 
 import numpy as np
 import pandas as pd
@@ -33,19 +33,12 @@ def unseen_split(requirements: pd.DataFrame, test_frac: float = 0.2, seed: int =
     return requirements[~mask].reset_index(drop=True), requirements[mask].reset_index(drop=True)
 
 
-def eval_full_dataset(
-    requirements: pd.DataFrame, methods: dict[str, Callable[[pd.DataFrame], Iterable[str]]]
-) -> dict[str, float]:
-    """The challenge's own metric: accuracy over the full labeled set."""
-    inputs = requirements[["requirement", "requirement_detail"]]
-    return {name: accuracy(fn(inputs), requirements["product_id"]) for name, fn in methods.items()}
-
-
 def eval_unseen(
     products: pd.DataFrame,
     requirements: pd.DataFrame,
     config: Optional[MatcherConfig] = None,
     seed: int = 42,
+    use_llm: bool = True,
 ) -> dict[str, float]:
     """Honest generalization: precedent index sees only train rows, eval on held-out."""
     train, test = unseen_split(requirements, seed=seed)
@@ -58,12 +51,36 @@ def eval_unseen(
     }
     from src.matching.dense import has_openai_key
 
-    if has_openai_key():
+    if use_llm and has_openai_key():
         results["llm"] = accuracy(matcher.predict_llm(inputs), targets)
     return results
 
 
-def topk_recall(matcher: Matcher, requirements: pd.DataFrame, ks: tuple[int, ...] = (1, 5, 10, 20, 50)) -> dict[int, float]:
+def precedent_copy_baseline(matcher: Matcher, requirements: pd.DataFrame) -> dict[str, float]:
+    """How much of the full-set metric is reachable by pure memorization?
+
+    Copying the nearest precedent's label scores 0.894 when the precedent index
+    contains the evaluated rows themselves — far above any real method. This
+    baseline is printed next to the full-set accuracy so that number can never
+    be read as generalization.
+    """
+    if matcher.precedent_index is None:
+        return {}
+    texts = requirement_text(requirements).tolist()
+    gold = requirements["product_id"].tolist()
+    top = matcher.precedent_index.top_k(texts, k=3, exclude_identical=False)
+    top_loo = matcher.precedent_index.top_k(texts, k=3, exclude_identical=True)
+    return {
+        "copy_top1_precedent": float(np.mean([p[0][1] == g for p, g in zip(top, gold) if p])),
+        "gold_in_top3_precedents": float(np.mean([g in [x[1] for x in p] for p, g in zip(top, gold)])),
+        "self_precedent_rate": float(
+            np.mean([bool(p) and normalize(p[0][0]) == normalize(t) for p, t in zip(top, texts)])
+        ),
+        "copy_top1_leave_one_out": float(np.mean([bool(p) and p[0][1] == g for p, g in zip(top_loo, gold)])),
+    }
+
+
+def topk_recall(matcher: Matcher, requirements: pd.DataFrame, ks: tuple[int, ...] = (1, 5, 10, 20, 40, 50)) -> dict[int, float]:
     """Is the target anywhere in the retriever's top-k? Upper bound for reranking."""
     queries = requirement_text(requirements).tolist()
     targets = requirements["product_id"].tolist()

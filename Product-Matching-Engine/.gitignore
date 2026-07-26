@@ -42,7 +42,10 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
-.cache
+# cache dir: embeddings stay local (64 MB), but the LLM answer cache ships so
+# reviewers can replay Method 3 without a funded API key
+.cache/*
+!.cache/rerank.sqlite
 nosetests.xml
 coverage.xml
 *.cover

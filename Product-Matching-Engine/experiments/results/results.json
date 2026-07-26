@@ -1,31 +1,101 @@
 {
+  "config": {
+    "candidates_k": 40,
+    "precedents_k": 3,
+    "exclude_identical_precedents": true,
+    "embed_model": "text-embedding-3-large",
+    "rerank_model": "gpt-5.4-mini"
+  },
   "stages": {
     "extraction": {
-      "coverage": 0.264,
-      "precision_first": 0.8257575757575758,
-      "target_in_extracted": 0.8522727272727273
+      "coverage": 0.272,
+      "precision_first": 0.8272058823529411,
+      "target_in_extracted": 0.8602941176470589
     },
     "retrieval_topk_recall": {
       "1": 0.295,
       "5": 0.511,
       "10": 0.604,
       "20": 0.684,
+      "40": 0.769,
       "50": 0.804
+    },
+    "precedent_memorization_baseline": {
+      "copy_top1_precedent": 0.894,
+      "gold_in_top3_precedents": 0.995,
+      "self_precedent_rate": 1.0,
+      "copy_top1_leave_one_out": 0.226
+    },
+    "llm_pipeline": {
+      "n_rows": 1000,
+      "n_short_circuit": 255,
+      "n_llm": 745,
+      "n_llm_fallback": 27
     }
   },
-  "full_dataset": {
-    "method1_deterministic": 0.397,
+  "full_dataset_loo": {
+    "method1_deterministic": 0.409,
     "method2_hybrid": 0.295,
-    "method3_llm": 0.678
+    "method3_llm": 0.524
   },
   "unseen_split": {
-    "deterministic": 0.35858585858585856,
+    "deterministic": 0.37373737373737376,
     "hybrid": 0.2727272727272727,
-    "llm": 0.48484848484848486
+    "llm": 0.4898989898989899
   },
   "timing_s": {
-    "method1_deterministic": 1.4,
-    "method2_hybrid": 19.1,
-    "method3_llm": 107.8
+    "method1_deterministic": 0.4,
+    "method2_hybrid": 5.3,
+    "method3_llm": 4.9
+  },
+  "per_category": {
+    "method": "method3_llm",
+    "table": [
+      {
+        "category": "Keramik",
+        "mean": 0.5789473684210527,
+        "count": 646
+      },
+      {
+        "category": "WC-Sitze",
+        "mean": 0.4090909090909091,
+        "count": 198
+      },
+      {
+        "category": "Badzubeh\u00f6r & Accessoires",
+        "mean": 0.4,
+        "count": 70
+      },
+      {
+        "category": "W&W Zubeh\u00f6r",
+        "mean": 0.15555555555555556,
+        "count": 45
+      },
+      {
+        "category": "Wannen und Zubeh\u00f6r",
+        "mean": 0.8260869565217391,
+        "count": 23
+      },
+      {
+        "category": "Armaturen",
+        "mean": 0.7857142857142857,
+        "count": 14
+      },
+      {
+        "category": "Duschabtrennungen",
+        "mean": 1.0,
+        "count": 2
+      },
+      {
+        "category": "Sensowash",
+        "mean": 1.0,
+        "count": 1
+      },
+      {
+        "category": "Sensowash Zubeh\u00f6r",
+        "mean": 1.0,
+        "count": 1
+      }
+    ]
   }
 }

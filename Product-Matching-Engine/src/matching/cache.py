@@ -29,12 +29,38 @@ class DiskCache:
         return hashlib.sha256("||".join(parts).encode()).hexdigest()
 
     def get(self, key: str) -> Optional[Any]:
-        with self._lock, self._conn() as conn:
-            row = conn.execute("SELECT v FROM kv WHERE k = ?", (key,)).fetchone()
+        with self._lock:
+            conn = self._conn()
+            try:
+                row = conn.execute("SELECT v FROM kv WHERE k = ?", (key,)).fetchone()
+            finally:
+                conn.close()
         return json.loads(row[0]) if row else None
 
+    def get_many(self, keys: list[str]) -> dict[str, Any]:
+        """Batch lookup — one query instead of one connection per key."""
+        found: dict[str, Any] = {}
+        with self._lock:
+            conn = self._conn()
+            try:
+                for start in range(0, len(keys), 500):
+                    chunk = keys[start : start + 500]
+                    placeholders = ",".join("?" * len(chunk))
+                    rows = conn.execute(
+                        f"SELECT k, v FROM kv WHERE k IN ({placeholders})", chunk
+                    ).fetchall()
+                    found.update({k: json.loads(v) for k, v in rows})
+            finally:
+                conn.close()
+        return found
+
     def set(self, key: str, value: Any) -> None:
-        with self._lock, self._conn() as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO kv (k, v) VALUES (?, ?)", (key, json.dumps(value))
-            )
+        with self._lock:
+            conn = self._conn()
+            try:
+                with conn:
+                    conn.execute(
+                        "INSERT OR REPLACE INTO kv (k, v) VALUES (?, ?)", (key, json.dumps(value))
+                    )
+            finally:
+                conn.close()

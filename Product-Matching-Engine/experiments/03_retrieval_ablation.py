@@ -62,7 +62,8 @@ def main() -> None:
         for k, v in metrics.items():
             print(f"  {k:10s} {v:.3f}")
 
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results", "retrieval_ablation.json")
+    suffix = "_partial" if args.no_dense else ""
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results", f"retrieval_ablation{suffix}.json")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as fh:
         json.dump(results, fh, indent=2)

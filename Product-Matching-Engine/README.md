@@ -2,7 +2,8 @@
 
 > **Solution:** see [SOLUTION.md](SOLUTION.md) for the implemented approaches, evaluation
 > methodology and results. Experiments live in `experiments/`, the deliverable functions in
-> `src/tasks.py`, and `scripts/run_eval.py` reproduces every number.
+> `src/tasks.py`. `scripts/run_eval.py` reproduces the headline table; `experiments/01`–`04`
+> reproduce the EDA, baseline and ablation numbers. `scripts/demo.py` is a 10-second smoke test.
 
 ## Problem Description
 

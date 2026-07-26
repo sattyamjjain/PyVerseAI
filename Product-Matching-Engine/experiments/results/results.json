@@ -1,0 +1,28 @@
+{
+  "stages": {
+    "extraction": {
+      "coverage": 0.264,
+      "precision_first": 0.8257575757575758,
+      "target_in_extracted": 0.8522727272727273
+    },
+    "retrieval_topk_recall": {
+      "1": 0.251,
+      "5": 0.437,
+      "10": 0.528,
+      "20": 0.626,
+      "50": 0.752
+    }
+  },
+  "full_dataset": {
+    "method1_deterministic": 0.397,
+    "method2_hybrid": 0.251
+  },
+  "unseen_split": {
+    "deterministic": 0.35858585858585856,
+    "hybrid": 0.24242424242424243
+  },
+  "timing_s": {
+    "method1_deterministic": 0.4,
+    "method2_hybrid": 5.1
+  }
+}

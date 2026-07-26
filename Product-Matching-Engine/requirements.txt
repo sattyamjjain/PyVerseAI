@@ -1,0 +1,8 @@
+pandas>=2.0
+numpy>=1.26
+matplotlib
+ipython
+scikit-learn>=1.4
+rank-bm25>=0.2
+openai>=1.40
+python-dotenv>=1.0

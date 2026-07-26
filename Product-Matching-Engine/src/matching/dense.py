@@ -15,6 +15,10 @@ from .cache import DiskCache
 
 logger = logging.getLogger(__name__)
 
+_ENV_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env"
+)
+
 EMBED_MODEL = os.environ.get("EMBED_MODEL", "text-embedding-3-large")
 EMBED_DIMS = int(os.environ.get("EMBED_DIMS", "1024"))
 _BATCH = 256
@@ -24,7 +28,7 @@ def has_openai_key() -> bool:
     try:
         from dotenv import load_dotenv
 
-        load_dotenv()
+        load_dotenv(_ENV_PATH)
     except ImportError:
         pass
     return bool(os.environ.get("OPENAI_API_KEY"))
@@ -35,7 +39,7 @@ class Embedder:
         from dotenv import load_dotenv
         from openai import OpenAI
 
-        load_dotenv()
+        load_dotenv(_ENV_PATH)
         self._client = OpenAI()
         self._cache = DiskCache("embeddings")
 

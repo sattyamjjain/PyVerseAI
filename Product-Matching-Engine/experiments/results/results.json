@@ -6,23 +6,26 @@
       "target_in_extracted": 0.8522727272727273
     },
     "retrieval_topk_recall": {
-      "1": 0.251,
-      "5": 0.437,
-      "10": 0.528,
-      "20": 0.626,
-      "50": 0.752
+      "1": 0.295,
+      "5": 0.511,
+      "10": 0.604,
+      "20": 0.684,
+      "50": 0.804
     }
   },
   "full_dataset": {
     "method1_deterministic": 0.397,
-    "method2_hybrid": 0.251
+    "method2_hybrid": 0.295,
+    "method3_llm": 0.678
   },
   "unseen_split": {
     "deterministic": 0.35858585858585856,
-    "hybrid": 0.24242424242424243
+    "hybrid": 0.2727272727272727,
+    "llm": 0.48484848484848486
   },
   "timing_s": {
-    "method1_deterministic": 0.4,
-    "method2_hybrid": 5.1
+    "method1_deterministic": 1.4,
+    "method2_hybrid": 19.1,
+    "method3_llm": 107.8
   }
 }

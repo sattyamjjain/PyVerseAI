@@ -20,7 +20,9 @@ logger = logging.getLogger(__name__)
 
 
 class MatcherConfig(BaseModel):
-    candidates_k: int = 20
+    # k=40 chosen via experiments/04_llm_rerank_ablation.py (0.685 vs 0.625 at k=20):
+    # retrieval recall keeps climbing past top-20 and the LLM handles the longer list well
+    candidates_k: int = 40
     precedents_k: int = 3
     use_dense: bool = True
     use_precedents: bool = True

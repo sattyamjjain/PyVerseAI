@@ -1,0 +1,30 @@
+{
+  "tfidf_word_char": {
+    "recall@1": 0.282,
+    "recall@5": 0.497,
+    "recall@10": 0.593,
+    "recall@20": 0.678,
+    "recall@50": 0.784
+  },
+  "bm25": {
+    "recall@1": 0.136,
+    "recall@5": 0.283,
+    "recall@10": 0.361,
+    "recall@20": 0.453,
+    "recall@50": 0.605
+  },
+  "dense_openai": {
+    "recall@1": 0.252,
+    "recall@5": 0.501,
+    "recall@10": 0.588,
+    "recall@20": 0.657,
+    "recall@50": 0.736
+  },
+  "hybrid_rrf": {
+    "recall@1": 0.295,
+    "recall@5": 0.511,
+    "recall@10": 0.604,
+    "recall@20": 0.684,
+    "recall@50": 0.804
+  }
+}

@@ -72,7 +72,9 @@ class LLMReranker:
         from dotenv import load_dotenv
         from openai import OpenAI
 
-        load_dotenv()
+        from .dense import _ENV_PATH
+
+        load_dotenv(_ENV_PATH)
         self._client = OpenAI()
         self._cache = DiskCache("rerank")
         self.model = model or os.environ.get("RERANK_MODEL") or self._resolve_model()

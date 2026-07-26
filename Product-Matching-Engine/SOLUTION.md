@@ -8,17 +8,21 @@ evaluation framework, every experiment kept per the challenge rules.
 
 | Method | Full labeled set | Unseen split* | API cost | Latency (1k rows) |
 |---|---|---|---|---|
-| 1 — Deterministic cascade (extraction → TF-IDF) | **0.397** | 0.359 | $0 | ~0.4 s |
-| 2 — Hybrid retrieval, sparse-only (TF-IDF + BM25, RRF) | 0.251 | 0.242 | $0 | ~5 s |
-| 2 — Hybrid retrieval incl. OpenAI embeddings | _pending key_ | _pending_ | <$0.10 (cached) | seconds |
-| 3 — Full pipeline (extraction → retrieval → LLM selection) | _pending key_ | _pending_ | ~$1–3 (cached) | minutes |
+| 1 — Deterministic cascade (extraction → TF-IDF) | 0.397 | 0.359 | $0 | ~0.3 s |
+| 2 — Hybrid retrieval (TF-IDF + BM25 + embeddings, RRF) | 0.295 | 0.273 | <$0.10 (cached) | ~7 s |
+| 3 — Full pipeline (extraction → retrieval → LLM selection) | **0.678** | **0.485** | ~$1–2 (cached) | ~2 min |
 
 *Unseen split = duplicate-aware 80/20 group split; precedent index sees only train rows.
-Numbers regenerate into `experiments/results/results.json` via `scripts/run_eval.py`.
+Numbers regenerate into `experiments/results/results.json` via `scripts/run_eval.py`
+(models: `text-embedding-3-large` @1024 dims, `gpt-5.4-mini`).
 
-Useful context for reading the table: the extraction stage alone covers 26.4% of rows at
-82.6% precision, and sparse-only retrieval already puts the target in its top-50 for 75.2%
-of rows (top-20: 62.6%) — that recall, not top-1 ranking, is what the LLM stage converts.
+How to read this: the extraction stage covers 26.4% of rows at 82.6% precision; hybrid
+retrieval puts the target in its top-20 for 68.4% of rows (top-50: 80.4%). Method 3
+converts that recall into top-1 accuracy — 0.678 approaches the practical ceiling once
+you account for extraction misses and label noise between near-identical variants.
+Per-ranker ablation (`experiments/results/retrieval_ablation.json`): char/word TF-IDF
+recall@50 0.784, dense embeddings 0.736, BM25 0.605 — RRF fusion beats every single
+ranker at 0.804, confirming sparse and dense fail on different rows.
 
 ## What the data says (see `experiments/01_eda.py`)
 
@@ -69,7 +73,18 @@ Ablation per ranker: `experiments/03_retrieval_ablation.py`.
    dimensions, Rimless, mounting, color/finish). The model cannot hallucinate an id:
    any out-of-candidate answer falls back to retrieval top-1. All calls disk-cached.
 
-Ablations (candidate count, precedents on/off): `experiments/04_llm_rerank_ablation.py`.
+Ablations (`experiments/04_llm_rerank_ablation.py`, 200-row sample, results in
+`experiments/results/llm_ablation.json`):
+
+| Variant | Accuracy | Takeaway |
+|---|---|---|
+| k=20, with precedents | 0.625 | baseline config |
+| k=20, **no** precedents | 0.520 | historical precedents are worth **+10.5 pts** |
+| k=10, with precedents | 0.580 | too-small candidate lists cap recall |
+| k=40, with precedents | **0.685** | recall keeps climbing past top-20 → adopted as default |
+
+The k=40 finding was fed back into `MatcherConfig` — an example of the
+measure → change → re-measure loop the whole repo is built around.
 
 ## Evaluation methodology (`src/evaluation_ext.py`, `scripts/run_eval.py`)
 
@@ -94,6 +109,15 @@ Ablations (candidate count, precedents on/off): `experiments/04_llm_rerank_ablat
 - **Classification head over 318 seen products:** cheap and decent on frequent classes, but
   cannot generalize to the 1,862 catalog products never chosen historically — rejected
   because the brief demands the function work on *any* requirement data.
+
+## Where the remaining errors live (Method 3)
+
+Per-category accuracy on the full set (k=40 config): Wannen 0.91, Armaturen 0.79,
+Keramik 0.73, WC-Sitze 0.65, Badzubehör 0.41, W&W Zubehör 0.27. The weak spots are
+exactly the variant-dense segments: accessories and fittings where dozens of articles
+differ only in finish/hinge/soft-close — often under-specified in the tender text, so
+even a human picker would need a follow-up question. The LLM chose an out-of-candidate
+id in only ~1% of rows, all safely caught by the fallback guard.
 
 ## Extending to full coverage & production notes
 

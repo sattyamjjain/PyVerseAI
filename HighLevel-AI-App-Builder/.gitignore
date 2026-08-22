@@ -30,3 +30,6 @@ emulator-data/
 .DS_Store
 *.log
 .playwright-mcp/
+
+# Session screenshots at sub-project root
+/*.png

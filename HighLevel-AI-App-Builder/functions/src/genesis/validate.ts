@@ -13,7 +13,12 @@ export interface ValidationWarning {
 }
 
 /** External URLs permitted inside generated code (pinned CDN only). */
-const URL_ALLOWLIST = [/^https:\/\/cdn\.jsdelivr\.net\/npm\/vue@3(\.\d+){0,2}\/dist\/vue\.global\.prod\.js$/]
+const URL_ALLOWLIST = [
+  /^https:\/\/cdn\.jsdelivr\.net\/npm\/vue@3(\.\d+){0,2}\/dist\/vue\.global\.prod\.js$/,
+  // XML namespace identifiers (inline SVG xmlns attrs / data-URI icons) —
+  // string identifiers, never fetched.
+  /^https?:\/\/www\.w3\.org\//,
+]
 
 const URL_RE = /https?:\/\/[^\s"'<>)]+/g
 

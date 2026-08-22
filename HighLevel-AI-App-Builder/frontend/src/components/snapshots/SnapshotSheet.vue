@@ -37,6 +37,21 @@ const workspace = useWorkspaceStore()
 const ui = useUiStore()
 
 const restoreTarget = ref<SnapshotRow | null>(null)
+/** Survives the dialog's own close handler: reka closes (and we null
+ *  restoreTarget) BEFORE our Action @click runs, so the click consumes this. */
+let pendingRestoreId: string | null = null
+
+function beginRestore(snapshot: SnapshotRow) {
+  pendingRestoreId = snapshot.id
+  restoreTarget.value = snapshot
+}
+
+function confirmRestore() {
+  if (restoring.value || !pendingRestoreId) return
+  const id = pendingRestoreId
+  pendingRestoreId = null
+  void restore(id)
+}
 const restoring = ref(false)
 
 const kindLabel: Record<string, string> = {
@@ -150,7 +165,7 @@ defineExpose({ restoring })
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem :disabled="index === 0" @select="restoreTarget = snapshot">
+                <DropdownMenuItem :disabled="index === 0" @select="beginRestore(snapshot)">
                   <RotateCcw class="size-4" aria-hidden="true" /> Restore
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -184,7 +199,7 @@ defineExpose({ restoring })
         <AlertDialogAction
           :aria-disabled="restoring || undefined"
           :class="restoring ? 'opacity-40' : ''"
-          @click="!restoring && restoreTarget && restore(restoreTarget.id)"
+          @click="confirmRestore()"
         >
           Restore
         </AlertDialogAction>

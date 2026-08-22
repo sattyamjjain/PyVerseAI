@@ -11,6 +11,14 @@ import type { MessageRow } from '@/stores/workspace'
 const props = defineProps<{ message: MessageRow }>()
 
 const isAssistant = computed(() => props.message.role === 'assistant')
+
+/** Persisted assistant turns end with LLM-history stubs like
+ *  "[wrote app.js (4.4 KB)]" — context for the model, noise for humans. */
+const displayContent = computed(() =>
+  isAssistant.value
+    ? props.message.content.replace(/(\s*\[(?:wrote|deleted) [^\]]*\])+\s*$/, '').trimEnd()
+    : props.message.content,
+)
 const hovering = ref(false)
 
 async function copyContent() {
@@ -54,7 +62,7 @@ async function copyContent() {
     </header>
 
     <div v-if="isAssistant" class="space-y-3">
-      <ChatMarkdown v-if="message.content" :source="message.content" />
+      <ChatMarkdown v-if="displayContent" :source="displayContent" />
       <GenerationActivityCard v-if="message.meta" mode="persisted" :meta="message.meta" />
       <p v-if="message.meta?.error" class="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-[13px] text-destructive-soft">
         {{ message.meta.error }}

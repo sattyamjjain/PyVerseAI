@@ -12,6 +12,19 @@
   var PARENT_ORIGIN = '__GENESIS_PARENT_ORIGIN__'
   var V = 1
 
+  // Neutralize NATIVE form submissions for every generated app (capture
+  // phase, before any app handler). The sandbox blocks them anyway (no
+  // allow-forms), but the block logs a scary console error and skips the
+  // app's own submit listeners' default-path expectations. preventDefault
+  // cancels only the navigation — app submit handlers still run.
+  document.addEventListener(
+    'submit',
+    function (e) {
+      e.preventDefault()
+    },
+    true,
+  )
+
   // ── storage shims (opaque origins throw on localStorage access) ───────────
   function memoryStorage() {
     var m = new Map()

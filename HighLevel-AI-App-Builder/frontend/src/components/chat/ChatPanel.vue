@@ -54,6 +54,26 @@ async function scrollToBottom(force = false) {
     el.scrollTop = el.scrollHeight
     pinned.value = true
   }
+  if (force) {
+    // The jump-to-latest pill unmounts once pinned — don't drop focus to body.
+    await nextTick()
+    if (document.activeElement === document.body) el.focus()
+  }
+}
+
+/** Focus-eviction target when transient chat cards unmount. */
+function focusComposer() {
+  composerRef.value?.focusInput()
+}
+
+function dismissLive() {
+  generation.reset()
+  void nextTick(() => focusComposer())
+}
+
+function dismissInterrupted() {
+  interruptedDismissed.value = true
+  void nextTick(() => focusComposer())
 }
 
 watch(
@@ -90,7 +110,8 @@ defineExpose({
 </script>
 
 <template>
-  <section class="flex h-full min-h-0 flex-col" aria-label="Chat">
+  <!-- The labeled landmark is the region wrapper in WorkspaceView. -->
+  <div class="flex h-full min-h-0 flex-col">
     <h2 class="sr-only">Chat</h2>
 
     <div
@@ -127,7 +148,7 @@ defineExpose({
               {{ interruptedGeneration.filesWritten.length === 1 ? 'file' : 'files' }} landed safely.
             </p>
           </div>
-          <Button size="sm" variant="ghost" @click="interruptedDismissed = true">Dismiss</Button>
+          <Button size="sm" variant="ghost" @click="dismissInterrupted">Dismiss</Button>
         </div>
 
         <ChatMessage v-for="message in visibleMessages" :key="message.id" :message="message" />
@@ -157,7 +178,7 @@ defineExpose({
               v-if="generation.liveFiles.length || ['failed', 'stopped'].includes(generation.phase)"
               mode="live"
               @continue-gen="continueGeneration"
-              @dismiss="generation.reset()"
+              @dismiss="dismissLive"
             />
           </div>
         </article>
@@ -178,5 +199,5 @@ defineExpose({
     </div>
 
     <PromptComposer ref="composerRef" />
-  </section>
+  </div>
 </template>

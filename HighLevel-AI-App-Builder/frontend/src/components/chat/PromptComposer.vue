@@ -12,6 +12,8 @@ import {
 import { useAuthStore } from '@/stores/auth'
 import { useGenerationStore } from '@/stores/generation'
 import { useUiStore } from '@/stores/ui'
+import { announce } from '@/composables/useAnnouncer'
+import { ariaMod } from '@/composables/useShortcuts'
 
 const MAX_CHARS = 4000
 const WARN_AT = 3500
@@ -22,13 +24,34 @@ const ui = useUiStore()
 
 const draft = ref('')
 const textareaEl = ref<HTMLTextAreaElement | null>(null)
-const sendButtonEl = ref<HTMLElement | null>(null)
+const stopButton = ref<InstanceType<typeof Button> | null>(null)
 
 const streaming = computed(() => generation.isActive)
 const blocked = computed(() => !auth.hlConnected)
 const overLimit = computed(() => draft.value.length > MAX_CHARS)
 const canSend = computed(
   () => !blocked.value && !streaming.value && draft.value.trim().length > 0 && !overLimit.value,
+)
+
+const describedBy = computed(() => {
+  const ids = ['composer-hint']
+  if (blocked.value) ids.push('composer-blocked-reason')
+  if (draft.value.length >= WARN_AT) ids.push('composer-counter')
+  return ids.join(' ')
+})
+
+// Character-limit announcements happen on threshold CROSSINGS only.
+let limitState: 'ok' | 'warn' | 'over' = 'ok'
+watch(
+  () => draft.value.length,
+  (len) => {
+    const next = len > MAX_CHARS ? 'over' : len >= WARN_AT ? 'warn' : 'ok'
+    if (next === limitState) return
+    if (next === 'over') announce('Character limit reached — shorten your prompt to send')
+    else if (next === 'warn' && limitState === 'ok')
+      announce(`Approaching the character limit: ${len} of ${MAX_CHARS}`)
+    limitState = next
+  },
 )
 
 // External prefill ("Fix with Genesis", suggestion chips).
@@ -44,10 +67,13 @@ watch(
   },
 )
 
-// Focus-eviction rule: when Stop morphs back to Send, keep focus in the composer.
+// Focus-eviction rule for the Send⇄Stop morph, both directions.
 watch(streaming, async (now, was) => {
-  if (was && !now) {
-    await nextTick()
+  await nextTick()
+  if (!was && now) {
+    // Send vanished; if focus fell to body, land on Stop.
+    if (document.activeElement === document.body) stopButton.value?.$el?.focus()
+  } else if (was && !now) {
     if (document.activeElement === document.body) textareaEl.value?.focus()
   }
 })
@@ -100,18 +126,20 @@ defineExpose({
     <div
       class="rounded-lg border border-border bg-card transition-colors focus-within:border-primary/60"
     >
+      <!-- readonly (not disabled) while streaming: stays focusable/readable
+           and the draft is preserved. -->
       <textarea
         id="prompt-input"
         ref="textareaEl"
         v-model="draft"
-        class="block max-h-40 min-h-11 w-full resize-none bg-transparent px-3 pt-2.5 text-[13px] leading-relaxed outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
+        class="block max-h-40 min-h-11 w-full resize-none bg-transparent px-3 pt-2.5 text-[13px] leading-relaxed outline-none read-only:text-muted-foreground placeholder:text-muted-foreground"
         :placeholder="
           streaming ? 'Waiting for generation to finish…' : 'Describe the app you want to build…'
         "
         aria-label="Message Genesis"
-        aria-describedby="composer-hint"
+        :aria-describedby="describedBy"
         :aria-disabled="blocked || undefined"
-        :disabled="streaming"
+        :readonly="streaming"
         :maxlength="MAX_CHARS + 100"
         rows="1"
         @input="autogrow"
@@ -137,39 +165,39 @@ defineExpose({
           </Select>
           <span
             v-if="draft.length >= WARN_AT"
+            id="composer-counter"
             class="font-mono text-[11px]"
             :class="overLimit ? 'text-destructive-soft' : 'text-warning'"
-            role="status"
           >
             {{ draft.length.toLocaleString() }} / {{ MAX_CHARS.toLocaleString() }}
           </span>
         </div>
         <div class="flex items-center gap-2">
           <span id="composer-hint" class="hidden text-[11px] text-muted-foreground xl:block">
-            ⏎ Send · ⇧⏎ New line
+            <span aria-hidden="true">⏎ Send · ⇧⏎ New line</span>
+            <span class="sr-only">Press Enter to send. Press Shift plus Enter for a new line.</span>
           </span>
           <Button
             v-if="streaming"
-            ref="sendButtonEl"
+            ref="stopButton"
             size="icon"
             variant="outline"
             class="size-8 border-destructive/50 text-destructive-soft hover:bg-destructive/10"
             aria-label="Stop generation"
-            aria-keyshortcuts="Meta+Period"
+            :aria-keyshortcuts="`${ariaMod}+Period`"
             @click="generation.cancel()"
           >
             <Square class="size-3.5" aria-hidden="true" />
           </Button>
           <Button
             v-else
-            ref="sendButtonEl"
             size="icon"
             class="size-8"
             :disabled="!canSend"
             :aria-disabled="!canSend || undefined"
             :aria-describedby="blocked ? 'composer-blocked-reason' : undefined"
             aria-label="Send message"
-            aria-keyshortcuts="Enter Meta+Enter"
+            :aria-keyshortcuts="`Enter ${ariaMod}+Enter`"
             @click="submit"
           >
             <ArrowUp class="size-4" aria-hidden="true" />

@@ -8,6 +8,9 @@ export const isMac = /mac/i.test(
 /** Display label for the platform modifier. */
 export const modKeyLabel = isMac ? '⌘' : 'Ctrl'
 
+/** aria-keyshortcuts token for the platform modifier (spec wants key names, not glyphs). */
+export const ariaMod = isMac ? 'Meta' : 'Control'
+
 export interface ShortcutDef {
   /** KeyboardEvent.key value ('k', 's', '.', 'Enter', 'F6'…). */
   key: string

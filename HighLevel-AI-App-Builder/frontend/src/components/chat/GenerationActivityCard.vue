@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import {
   Check,
   ChevronDown,
@@ -67,6 +67,12 @@ const headerText = computed(() => {
   }
   return `Generated ${totals.value.files} ${totals.value.files === 1 ? 'file' : 'files'} in ${formatDuration(totals.value.duration)}`
 })
+
+function onRetry() {
+  generation.retry()
+  // The error footer (and this Retry button) unmounts — keep focus in chat.
+  void nextTick(() => document.querySelector<HTMLElement>('#prompt-input')?.focus())
+}
 
 function openDiffForThis() {
   const snapshotId = live.value ? generation.lastSnapshotId : props.meta?.snapshotId
@@ -179,7 +185,7 @@ const showSummaryFooter = computed(() =>
           v-if="generation.error.recoverable"
           size="sm"
           variant="secondary"
-          @click="generation.retry()"
+          @click="onRetry"
         >
           <RotateCcw class="size-3.5" aria-hidden="true" /> Retry
         </Button>

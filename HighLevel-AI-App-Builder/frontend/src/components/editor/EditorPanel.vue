@@ -32,7 +32,8 @@ defineExpose({
 </script>
 
 <template>
-  <section class="flex h-full min-h-0 flex-col" aria-label="Code editor">
+  <!-- The labeled landmark is the region wrapper in WorkspaceView. -->
+  <div class="flex h-full min-h-0 flex-col">
     <h2 class="sr-only">Code editor</h2>
     <EditorTabs :tree-visible="treeVisible" @toggle-tree="treeVisible = !treeVisible" />
     <div class="min-h-0 flex-1">
@@ -62,5 +63,5 @@ defineExpose({
       </ResizablePanelGroup>
     </div>
     <EditorStatusStrip :line="cursorLine" :col="cursorCol" />
-  </section>
+  </div>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { nextTick } from 'vue'
 import { Crosshair, PanelLeft, X } from 'lucide-vue-next'
 import { Toggle } from '@/components/ui/toggle'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -18,14 +19,14 @@ function activate(path: string) {
   if (generation.isActive) ui.followMode = false // manual navigation disarms follow
 }
 
-function close(path: string, e: Event) {
-  e.stopPropagation()
-  const wasActive = workspace.activePath === path
+async function close(path: string) {
   workspace.closeTab(path)
-  if (wasActive && workspace.activePath === null) {
-    // Focus-eviction: land on the tab bar container, not body.
-    ;(document.querySelector('[data-editor-tabbar]') as HTMLElement | null)?.focus()
-  }
+  await nextTick()
+  // Focus-eviction: land on the now-active tab, else the tab bar container.
+  const nextTab = workspace.activePath
+    ? document.querySelector<HTMLElement>(`[data-tab-path="${CSS.escape(workspace.activePath)}"]`)
+    : null
+  ;(nextTab ?? document.querySelector<HTMLElement>('[data-editor-tabbar]'))?.focus()
 }
 
 function rearmFollow() {
@@ -58,37 +59,43 @@ function rearmFollow() {
     </Tooltip>
 
     <div role="tablist" aria-label="Open files" class="flex min-w-0 flex-1 items-center overflow-x-auto">
-      <button
+      <!-- Tab select and close are SIBLING buttons (no nested interactives). -->
+      <div
         v-for="path in workspace.openTabs"
         :key="path"
-        role="tab"
-        type="button"
-        :aria-selected="workspace.activePath === path"
-        class="group flex h-9 shrink-0 items-center gap-1.5 border-r border-border px-3 font-mono text-xs transition-colors"
+        class="group flex h-9 shrink-0 items-stretch border-r border-border transition-colors"
         :class="
           workspace.activePath === path
             ? 'bg-editor text-foreground'
             : 'text-muted-foreground hover:bg-accent hover:text-foreground'
         "
-        @click="activate(path)"
       >
-        <span
-          v-if="workspace.dirtyPaths.has(path)"
-          class="size-1.5 rounded-full bg-primary"
-          aria-hidden="true"
-        />
-        {{ path.split('/').pop() }}
-        <span
-          class="flex size-4 items-center justify-center rounded opacity-0 hover:bg-secondary focus-visible:opacity-100 group-hover:opacity-100"
-          role="button"
-          tabindex="0"
-          :aria-label="`Close ${path}`"
-          @click="close(path, $event)"
-          @keydown.enter.stop.prevent="close(path, $event)"
+        <button
+          role="tab"
+          type="button"
+          :data-tab-path="path"
+          :aria-selected="workspace.activePath === path"
+          class="flex items-center gap-1.5 pr-1 pl-3 font-mono text-xs"
+          @click="activate(path)"
         >
-          <X class="size-3" aria-hidden="true" />
-        </span>
-      </button>
+          <span
+            v-if="workspace.dirtyPaths.has(path)"
+            class="size-1.5 rounded-full bg-primary"
+            aria-hidden="true"
+          />
+          {{ path.split('/').pop() }}
+        </button>
+        <button
+          type="button"
+          class="flex w-6 items-center justify-center opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
+          :aria-label="`Close ${path}`"
+          @click="close(path)"
+        >
+          <span class="flex size-4 items-center justify-center rounded hover:bg-secondary">
+            <X class="size-3" aria-hidden="true" />
+          </span>
+        </button>
+      </div>
     </div>
 
     <Tooltip>

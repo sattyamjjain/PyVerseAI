@@ -2,7 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PreviewMessage } from '@shared/protocol'
 import { assembleSrcdoc } from '@/lib/srcdoc'
-import { announce } from '@/composables/useAnnouncer'
+import { announce, announceAlert } from '@/composables/useAnnouncer'
 
 export interface ConsoleEntry {
   level: 'log' | 'info' | 'warn' | 'error'
@@ -27,6 +27,8 @@ export const usePreviewStore = defineStore('preview', () => {
   const runtimeError = ref<{ message: string; source?: string; line?: number } | null>(null)
   const errorDismissed = ref(false)
   const deviceMode = ref<'desktop' | 'mobile'>('desktop')
+  /** One assertive announcement per build for runtime errors. */
+  let errorAnnounced = false
 
   const errorCount = computed(
     () => consoleEntries.value.filter((e) => e.level === 'error').length,
@@ -41,6 +43,7 @@ export const usePreviewStore = defineStore('preview', () => {
     consoleEntries.value = []
     runtimeError.value = null
     errorDismissed.value = false
+    errorAnnounced = false
     ready.value = false
     hasBuilt.value = files.has('index.html')
     srcdoc.value = result.srcdoc
@@ -79,6 +82,10 @@ export const usePreviewStore = defineStore('preview', () => {
             source: msg.source ? shortSource(msg.source) : undefined,
             line: msg.line,
           }
+        }
+        if (!errorAnnounced) {
+          errorAnnounced = true
+          announceAlert(`Preview runtime error: ${msg.message}`)
         }
         break
       }

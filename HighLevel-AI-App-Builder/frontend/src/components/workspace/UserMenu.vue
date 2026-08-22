@@ -42,7 +42,7 @@ async function signOut() {
     <DropdownMenuTrigger as-child>
       <button
         type="button"
-        class="rounded-full outline-none transition-opacity hover:opacity-90"
+        class="rounded-full outline-none transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         aria-label="Account menu"
       >
         <Avatar class="size-7 text-[11px]">

@@ -53,6 +53,22 @@ const tree = computed<TreeNode[]>(() => {
   return root
 })
 
+/** Bind reka's selection to the active file so aria-selected is exposed. */
+const selectedNode = computed<TreeNode | undefined>(() => {
+  if (!workspace.activePath) return undefined
+  const find = (nodes: TreeNode[]): TreeNode | undefined => {
+    for (const n of nodes) {
+      if (n.isFile && n.path === workspace.activePath) return n
+      if (n.children) {
+        const hit = find(n.children)
+        if (hit) return hit
+      }
+    }
+    return undefined
+  }
+  return find(tree.value)
+})
+
 function iconFor(node: TreeNode) {
   if (!node.isFile) return Folder
   if (node.name.endsWith('.json')) return FileJson
@@ -88,6 +104,7 @@ function onSelect(node: TreeNode) {
       :get-key="(item: TreeNode) => item.path + (item.isFile ? '' : '/')"
       :get-children="(item: TreeNode) => item.children"
       :default-expanded="tree.filter((n) => !n.isFile).map((n) => n.path + '/')"
+      :model-value="selectedNode"
       class="select-none"
       aria-label="Project files"
     >
@@ -96,7 +113,7 @@ function onSelect(node: TreeNode) {
         v-slot="{ isExpanded }"
         :key="item._id"
         v-bind="item.bind"
-        class="group flex h-7 w-full cursor-pointer items-center gap-1.5 px-2 font-mono text-xs outline-none hover:bg-accent data-[selected]:bg-secondary"
+        class="group flex h-7 w-full cursor-pointer items-center gap-1.5 px-2 font-mono text-xs outline-none hover:bg-accent focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring data-[selected]:bg-secondary"
         :class="{
           'border-l-2 border-primary pl-[6px]':
             item.value.isFile && workspace.activePath === item.value.path,

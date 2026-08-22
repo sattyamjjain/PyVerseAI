@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import { Camera, GitCompare, MoreHorizontal, RotateCcw } from 'lucide-vue-next'
 import {
@@ -30,7 +30,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { absoluteTime, relativeTime } from '@/lib/time'
 import { callFn } from '@/lib/api'
-import { announce } from '@/composables/useAnnouncer'
 import { useWorkspaceStore, type SnapshotRow } from '@/stores/workspace'
 import { useUiStore } from '@/stores/ui'
 
@@ -57,7 +56,7 @@ async function restore(snapshotId: string, isUndo = false) {
       projectId,
       snapshotId,
     })
-    announce('Snapshot restored')
+    // Toast is the visual channel; sonner's own live region covers SR users.
     if (!isUndo) {
       toast.success('Snapshot restored', {
         duration: 8000,
@@ -75,6 +74,9 @@ async function restore(snapshotId: string, isUndo = false) {
     restoring.value = false
     ui.restoring = false
     restoreTarget.value = null
+    // Focus-eviction: the sheet closed programmatically — land on its trigger.
+    await nextTick()
+    document.querySelector<HTMLElement>('#snapshot-history-btn')?.focus()
   }
 }
 
@@ -173,8 +175,14 @@ defineExpose({ restoring })
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel :disabled="restoring">Cancel</AlertDialogCancel>
-        <AlertDialogAction :disabled="restoring" @click="restoreTarget && restore(restoreTarget.id)">
+        <AlertDialogCancel :aria-disabled="restoring || undefined" :class="restoring ? 'opacity-40' : ''">
+          Cancel
+        </AlertDialogCancel>
+        <AlertDialogAction
+          :aria-disabled="restoring || undefined"
+          :class="restoring ? 'opacity-40' : ''"
+          @click="!restoring && restoreTarget && restore(restoreTarget.id)"
+        >
           Restore
         </AlertDialogAction>
       </AlertDialogFooter>

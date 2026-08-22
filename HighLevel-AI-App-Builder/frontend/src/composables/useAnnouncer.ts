@@ -1,13 +1,17 @@
 import { readonly, ref } from 'vue'
 
 /**
- * The app's ONLY live-region channel (accessibility review item A5).
- * `announce` → role="status" (polite): generation state transitions, restores.
- * `alert`    → role="alert" (assertive): failures, connection loss.
+ * The app's live-region channels (accessibility review item A5).
+ * `announce`      → role="status" (polite): generation state transitions.
+ * `announceAlert` → role="alert" (assertive): failures, connection loss.
  * Polite announcements are coalesced to at most one per 1.5s (latest wins) so
  * fast multi-file generations don't flood the screen-reader queue.
- * CI-grep rule: aria-live/role="status"/role="alert" appear only in
- * AppAnnouncer.vue (plus vendored sonner internals, which are suppressed).
+ *
+ * Toasts (vue-sonner) maintain their OWN internal live region — a toast is
+ * both the visual and SR channel for toast-worthy events, so never pair a
+ * toast with announce() for the same event (double announcement). Grep rule:
+ * aria-live/role="status"/role="alert" appear only in AppAnnouncer.vue and
+ * vendored components (components/ui/**).
  */
 const politeText = ref('')
 const alertText = ref('')

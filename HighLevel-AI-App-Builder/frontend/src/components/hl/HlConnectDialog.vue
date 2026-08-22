@@ -26,7 +26,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useUiStore } from '@/stores/ui'
 import { connectHighLevel } from '@/lib/oauth'
 import { callFn } from '@/lib/api'
-import { announce } from '@/composables/useAnnouncer'
 
 const auth = useAuthStore()
 const ui = useUiStore()
@@ -40,13 +39,14 @@ const errorText = ref('')
 const connected = computed(() => auth.hlConnected)
 
 async function connect() {
+  if (connecting.value) return
   errorText.value = ''
   connecting.value = true
   try {
     const result = await connectHighLevel()
     if (result.ok) {
+      // Toast is the visual channel; sonner's live region covers SR users.
       toast.success('HighLevel connected')
-      announce('HighLevel connected')
     } else if (result.reason) {
       errorText.value = result.reason
     }
@@ -58,6 +58,7 @@ async function connect() {
 }
 
 async function disconnect() {
+  if (disconnecting.value) return
   disconnecting.value = true
   try {
     await callFn('hlDisconnect', {})
@@ -71,6 +72,7 @@ async function disconnect() {
 }
 
 async function seed() {
+  if (seeding.value) return
   seeding.value = true
   try {
     const res = await callFn<{
@@ -142,7 +144,13 @@ async function seed() {
           <p class="mb-2 text-xs text-muted-foreground">
             Fill the sandbox with sample contacts, conversations, and appointments (takes ~20s).
           </p>
-          <Button size="sm" variant="secondary" :disabled="seeding" @click="seed">
+          <Button
+            size="sm"
+            variant="secondary"
+            :aria-disabled="seeding || undefined"
+            :class="seeding ? 'opacity-60' : ''"
+            @click="seed"
+          >
             <Loader2 v-if="seeding" class="size-4 animate-spin" aria-hidden="true" />
             <Database v-else class="size-4" aria-hidden="true" />
             {{ seeding ? 'Seeding…' : 'Seed demo data' }}
@@ -155,13 +163,18 @@ async function seed() {
           v-if="connected"
           variant="ghost"
           class="text-destructive-soft hover:text-destructive-soft"
-          :disabled="disconnecting"
-          @click="confirmDisconnect = true"
+          :aria-disabled="disconnecting || undefined"
+          :class="disconnecting ? 'opacity-60' : ''"
+          @click="!disconnecting && (confirmDisconnect = true)"
         >
           <Unplug class="size-4" aria-hidden="true" />
           Disconnect
         </Button>
-        <Button :disabled="connecting" @click="connect">
+        <Button
+          :aria-disabled="connecting || undefined"
+          :class="connecting ? 'opacity-60' : ''"
+          @click="connect"
+        >
           <Loader2 v-if="connecting" class="size-4 animate-spin" aria-hidden="true" />
           <Plug v-else class="size-4" aria-hidden="true" />
           {{ connected ? 'Reconnect' : connecting ? 'Waiting for HighLevel…' : 'Connect HighLevel' }}

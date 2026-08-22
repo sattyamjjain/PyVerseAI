@@ -159,9 +159,7 @@ const mobileDot = computed(() => generation.isActive)
 
     <!-- Workspace -->
     <template v-else>
-      <div data-panel-cycle="topbar" tabindex="-1" class="outline-none">
-        <WorkspaceTopBar />
-      </div>
+      <WorkspaceTopBar />
 
       <h1 tabindex="-1" class="sr-only outline-none">{{ workspace.project?.name }} workspace</h1>
 
@@ -201,7 +199,13 @@ const mobileDot = computed(() => generation.isActive)
               :max-size="45"
               :order="1"
             >
-              <div data-panel-cycle="chat" tabindex="-1" class="h-full outline-none" aria-label="Chat panel">
+              <div
+                data-panel-cycle="chat"
+                role="region"
+                tabindex="-1"
+                class="h-full outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                aria-label="Chat panel"
+              >
                 <ChatPanel ref="chatRef" />
               </div>
             </ResizablePanel>
@@ -209,8 +213,9 @@ const mobileDot = computed(() => generation.isActive)
             <ResizablePanel :default-size="40" :min-size="30" :order="2">
               <div
                 data-panel-cycle="editor"
+                role="region"
                 tabindex="-1"
-                class="h-full outline-none"
+                class="h-full outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                 aria-label="Editor panel"
               >
                 <EditorPanel @cycle="cyclePanels" />
@@ -226,8 +231,9 @@ const mobileDot = computed(() => generation.isActive)
             >
               <div
                 data-panel-cycle="preview"
+                role="region"
                 tabindex="-1"
-                class="h-full outline-none"
+                class="h-full outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                 aria-label="Preview panel"
               >
                 <PreviewPanel @focus-chat="chatRef?.focusInput()" />
@@ -238,13 +244,31 @@ const mobileDot = computed(() => generation.isActive)
 
         <!-- Mobile: one panel at a time -->
         <div class="h-full lg:hidden">
-          <div v-show="ui.mobileTab === 'chat'" class="h-full">
+          <div
+            v-show="ui.mobileTab === 'chat'"
+            role="region"
+            aria-label="Chat panel"
+            tabindex="-1"
+            class="h-full outline-none"
+          >
             <ChatPanel v-if="ui.mobileTab === 'chat'" />
           </div>
-          <div v-show="ui.mobileTab === 'code'" class="h-full">
+          <div
+            v-show="ui.mobileTab === 'code'"
+            role="region"
+            aria-label="Editor panel"
+            tabindex="-1"
+            class="h-full outline-none"
+          >
             <EditorPanel @cycle="cyclePanels" />
           </div>
-          <div v-show="ui.mobileTab === 'preview'" class="h-full">
+          <div
+            v-show="ui.mobileTab === 'preview'"
+            role="region"
+            aria-label="Preview panel"
+            tabindex="-1"
+            class="h-full outline-none"
+          >
             <PreviewPanel @focus-chat="ui.mobileTab = 'chat'" />
           </div>
         </div>

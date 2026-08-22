@@ -10,7 +10,7 @@ import UserMenu from '@/components/workspace/UserMenu.vue'
 import HlBadge from '@/components/hl/HlBadge.vue'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { useUiStore } from '@/stores/ui'
-import { modKeyLabel } from '@/composables/useShortcuts'
+import { ariaMod, modKeyLabel } from '@/composables/useShortcuts'
 
 const workspace = useWorkspaceStore()
 const ui = useUiStore()
@@ -19,6 +19,7 @@ const { isOnline } = useNetwork()
 const renaming = ref(false)
 const renameDraft = ref('')
 const renameInput = ref<HTMLInputElement | null>(null)
+const renameButton = ref<HTMLButtonElement | null>(null)
 
 async function startRename() {
   renameDraft.value = workspace.project?.name ?? ''
@@ -28,9 +29,17 @@ async function startRename() {
   renameInput.value?.select()
 }
 
-async function commitRename() {
+/** Focus-eviction: the input unmounts on commit/cancel — return to the button. */
+async function endRename() {
   renaming.value = false
+  await nextTick()
+  renameButton.value?.focus()
+}
+
+async function commitRename() {
+  if (!renaming.value) return // blur after Enter already committed
   const name = renameDraft.value.trim()
+  await endRename()
   if (name && name !== workspace.project?.name) {
     await workspace.renameProject(name)
   }
@@ -39,6 +48,7 @@ async function commitRename() {
 
 <template>
   <header
+    data-panel-cycle="topbar"
     class="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-2"
     tabindex="-1"
     aria-label="Workspace toolbar"
@@ -65,11 +75,12 @@ async function commitRename() {
         class="h-7 w-48 rounded-md border border-border bg-card px-2 text-[13px] outline-none focus-visible:border-primary"
         aria-label="Project name"
         @keydown.enter.prevent="commitRename"
-        @keydown.esc="renaming = false"
+        @keydown.esc="endRename"
         @blur="commitRename"
       />
       <button
         v-else
+        ref="renameButton"
         type="button"
         class="group flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium hover:bg-accent"
         aria-label="Rename project"
@@ -99,6 +110,7 @@ async function commitRename() {
     <Tooltip>
       <TooltipTrigger as-child>
         <button
+          id="snapshot-history-btn"
           type="button"
           class="relative flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
           :aria-label="`Snapshot history, ${workspace.snapshots.length} snapshots`"
@@ -125,7 +137,7 @@ async function commitRename() {
           :class="{ 'bg-secondary text-foreground': ui.chatCollapsed }"
           :aria-label="ui.chatCollapsed ? 'Show chat panel' : 'Hide chat panel'"
           :aria-expanded="!ui.chatCollapsed"
-          :aria-keyshortcuts="`${modKeyLabel}+B`"
+          :aria-keyshortcuts="`${ariaMod}+B`"
           @click="ui.chatCollapsed = !ui.chatCollapsed"
         >
           <PanelLeftClose class="size-4" aria-hidden="true" />

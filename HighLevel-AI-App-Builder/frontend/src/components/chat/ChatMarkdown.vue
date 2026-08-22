@@ -156,7 +156,7 @@ async function onClick(e: MouseEvent) {
   color: #fbbf24;
 }
 .chat-prose .hljs-comment {
-  color: #5f6b7d;
+  color: #7d8798; /* ≥4.5:1 on the #14171d code surface */
   font-style: italic;
 }
 .chat-prose .hljs-title,

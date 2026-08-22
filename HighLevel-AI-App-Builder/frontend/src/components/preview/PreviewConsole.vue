@@ -26,32 +26,32 @@ function prefixFor(level: string) {
 
 <template>
   <div class="border-t border-border bg-background" role="region" aria-label="Preview console">
-    <button
-      type="button"
-      class="flex h-7 w-full items-center gap-2 px-3 text-[11px] text-muted-foreground hover:bg-accent"
-      :aria-expanded="preview.consoleOpen"
-      aria-controls="preview-console-list"
-      @click="preview.consoleOpen = !preview.consoleOpen"
-    >
-      <component
-        :is="preview.consoleOpen ? ChevronDown : ChevronUp"
-        class="size-3.5"
-        aria-hidden="true"
-      />
-      <span :class="{ 'text-destructive-soft': preview.errorCount > 0 }">{{ summary }}</span>
-      <span class="flex-1" />
-      <span
+    <!-- Toggle and Clear are SIBLING buttons (no nested interactives). -->
+    <div class="flex h-7 items-stretch text-[11px] text-muted-foreground">
+      <button
+        type="button"
+        class="flex min-w-0 flex-1 items-center gap-2 px-3 hover:bg-accent"
+        :aria-expanded="preview.consoleOpen"
+        aria-controls="preview-console-list"
+        @click="preview.consoleOpen = !preview.consoleOpen"
+      >
+        <component
+          :is="preview.consoleOpen ? ChevronDown : ChevronUp"
+          class="size-3.5"
+          aria-hidden="true"
+        />
+        <span :class="{ 'text-destructive-soft': preview.errorCount > 0 }">{{ summary }}</span>
+      </button>
+      <button
         v-if="preview.consoleOpen && preview.consoleEntries.length"
-        role="button"
-        tabindex="0"
-        class="flex items-center gap-1 rounded px-1.5 py-0.5 hover:bg-secondary hover:text-foreground"
+        type="button"
+        class="flex items-center gap-1 px-2.5 hover:bg-secondary hover:text-foreground"
         aria-label="Clear console"
-        @click.stop="preview.clearConsole()"
-        @keydown.enter.stop.prevent="preview.clearConsole()"
+        @click="preview.clearConsole()"
       >
         <Ban class="size-3" aria-hidden="true" /> Clear
-      </span>
-    </button>
+      </button>
+    </div>
     <div
       v-if="preview.consoleOpen"
       id="preview-console-list"

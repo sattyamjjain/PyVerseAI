@@ -23,6 +23,7 @@ import { useWorkspaceStore } from '@/stores/workspace'
 import { useGenerationStore } from '@/stores/generation'
 import { usePreviewStore } from '@/stores/preview'
 import { useUiStore } from '@/stores/ui'
+import { ariaMod } from '@/composables/useShortcuts'
 import type { BridgeHlEventMessage } from '@shared/protocol'
 
 const emit = defineEmits<{ focusChat: [] }>()
@@ -117,10 +118,17 @@ function fixWithGenesis() {
   preview.dismissError()
   emit('focusChat')
 }
+
+function dismissErrorOverlay() {
+  preview.dismissError()
+  // Focus-eviction: the overlay (and its buttons) unmount — land on the toolbar.
+  void nextTick(() => toolbarRefreshEl.value?.focus())
+}
 </script>
 
 <template>
-  <section class="flex h-full min-h-0 flex-col bg-background" aria-label="Preview">
+  <!-- The labeled landmark is the region wrapper in WorkspaceView. -->
+  <div class="flex h-full min-h-0 flex-col bg-background">
     <h2 class="sr-only">Preview</h2>
 
     <!-- Toolbar sits BEFORE the iframe in DOM: the keyboard escape point. -->
@@ -165,7 +173,7 @@ function fixWithGenesis() {
             type="button"
             class="relative flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
             :aria-label="`Toggle console${preview.errorCount ? `, ${preview.errorCount} errors` : ''}`"
-            aria-keyshortcuts="Meta+J"
+            :aria-keyshortcuts="`${ariaMod}+J`"
             @click="preview.consoleOpen = !preview.consoleOpen"
           >
             <SquareTerminal class="size-4" aria-hidden="true" />
@@ -245,12 +253,12 @@ function fixWithGenesis() {
             <Button size="sm" variant="ghost" @click="preview.consoleOpen = true">
               <Terminal class="size-3.5" aria-hidden="true" /> Open console
             </Button>
-            <Button size="sm" variant="ghost" @click="preview.dismissError()">Dismiss</Button>
+            <Button size="sm" variant="ghost" @click="dismissErrorOverlay">Dismiss</Button>
           </div>
         </div>
       </template>
     </div>
 
     <PreviewConsole />
-  </section>
+  </div>
 </template>

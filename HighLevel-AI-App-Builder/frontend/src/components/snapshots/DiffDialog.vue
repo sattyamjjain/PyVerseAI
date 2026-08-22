@@ -102,12 +102,11 @@ const diffOptions = computed(() => ({
       </div>
       <div v-else class="flex min-h-0 flex-1">
         <ScrollArea class="w-60 shrink-0 border-r border-border">
-          <ul class="py-1" role="listbox" aria-label="Changed files">
+          <ul class="py-1" aria-label="Changed files">
             <li v-for="change in changes" :key="change.path">
               <button
                 type="button"
-                role="option"
-                :aria-selected="selected?.path === change.path"
+                :aria-current="selected?.path === change.path || undefined"
                 class="flex h-8 w-full items-center gap-2 px-3 text-left hover:bg-accent"
                 :class="{ 'bg-secondary': selected?.path === change.path }"
                 @click="selected = change"

@@ -50,6 +50,7 @@ async function restore(snapshotId: string, isUndo = false) {
   const projectId = workspace.projectId
   if (!projectId) return
   restoring.value = true
+  ui.restoring = true
   ui.snapshotSheetOpen = false
   try {
     const res = await callFn<{ backupSnapshotId: string }>('restoreSnapshot', {
@@ -72,6 +73,7 @@ async function restore(snapshotId: string, isUndo = false) {
     toast.error(err instanceof Error ? err.message : 'Restore failed')
   } finally {
     restoring.value = false
+    ui.restoring = false
     restoreTarget.value = null
   }
 }

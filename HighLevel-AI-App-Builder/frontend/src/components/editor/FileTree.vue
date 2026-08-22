@@ -12,6 +12,7 @@ import {
 } from 'lucide-vue-next'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { useGenerationStore } from '@/stores/generation'
+import { useUiStore } from '@/stores/ui'
 
 interface TreeNode {
   name: string
@@ -22,6 +23,7 @@ interface TreeNode {
 
 const workspace = useWorkspaceStore()
 const generation = useGenerationStore()
+const ui = useUiStore()
 
 const tree = computed<TreeNode[]>(() => {
   const root: TreeNode[] = []
@@ -69,14 +71,10 @@ const fileState = computed(() => {
 })
 
 function onSelect(node: TreeNode) {
-  if (node.isFile) {
-    workspace.openFile(node.path)
-    if (generation.isActive) {
-      // User navigated manually mid-stream — follow mode disarms elsewhere via
-      // the tabs; mirror here for tree navigation.
-      generation.followTick // noop read; ui handles follow disarm in EditorPanel
-    }
-  }
+  if (!node.isFile) return
+  workspace.openFile(node.path)
+  // Manual navigation mid-stream disarms follow mode.
+  if (generation.isActive) ui.followMode = false
 }
 </script>
 

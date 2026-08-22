@@ -122,7 +122,8 @@ export const hlWebhook = onRequest(
           await db.collection('hl_events').add({
             ownerUid: doc.id,
             locationId,
-            type: mapping.sdkEvent,
+            // Raw HL event name — the SPA maps it to SDK event names itself.
+            type,
             summary: mapping.summarize(payload),
             payload: JSON.parse(truncate(JSON.stringify(payload), 10_000).replace(/…$/, '') || '{}'),
             createdAt: FieldValue.serverTimestamp(),

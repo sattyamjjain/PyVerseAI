@@ -31,6 +31,9 @@ export const useUiStore = defineStore('ui', () => {
   // Composer
   const composerPrefill = ref<string | null>(null)
 
+  // Blocking overlay while a snapshot restore is applying.
+  const restoring = ref(false)
+
   // Accessibility: screen-reader optimized Monaco (persisted).
   const srOptimized = ref(localStorage.getItem('genesis:sr-optimized') === 'true')
   function setSrOptimized(v: boolean) {
@@ -69,6 +72,7 @@ export const useUiStore = defineStore('ui', () => {
     mobileTab,
     followMode,
     composerPrefill,
+    restoring,
     srOptimized,
     setSrOptimized,
     confirmQueue,

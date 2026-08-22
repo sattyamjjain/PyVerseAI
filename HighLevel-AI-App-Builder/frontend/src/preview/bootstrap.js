@@ -39,7 +39,7 @@
   try {
     Object.defineProperty(window, 'localStorage', { value: memoryStorage(), configurable: true })
     Object.defineProperty(window, 'sessionStorage', { value: memoryStorage(), configurable: true })
-  } catch (e) {
+  } catch {
     /* best effort */
   }
 
@@ -62,10 +62,10 @@
         1,
       )
       return String(s).slice(0, 2048)
-    } catch (e) {
+    } catch {
       try {
         return String(arg).slice(0, 2048)
-      } catch (e2) {
+      } catch {
         return '[unserializable]'
       }
     }
@@ -73,7 +73,7 @@
   function post(msg) {
     try {
       window.parent.postMessage(msg, PARENT_ORIGIN)
-    } catch (e) {
+    } catch {
       /* parent gone */
     }
   }
@@ -117,7 +117,7 @@
   function makeId() {
     try {
       return crypto.randomUUID()
-    } catch (e) {
+    } catch {
       return 'req-' + Date.now() + '-' + seq++
     }
   }
@@ -143,8 +143,8 @@
         cbs.forEach(function (cb) {
           try {
             cb(msg.payload || {})
-          } catch (e) {
-            console.error(e)
+          } catch (err) {
+            console.error(err)
           }
         })
     }

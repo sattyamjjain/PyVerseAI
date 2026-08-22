@@ -85,6 +85,7 @@ function continueGeneration() {
 
 defineExpose({
   focusInput: () => composerRef.value?.focusInput(),
+  submit: () => composerRef.value?.submit(),
 })
 </script>
 

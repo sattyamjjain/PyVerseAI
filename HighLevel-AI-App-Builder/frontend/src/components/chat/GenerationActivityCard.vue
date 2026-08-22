@@ -120,7 +120,7 @@ const showSummaryFooter = computed(() =>
         <button
           type="button"
           class="flex h-8 w-full items-center gap-2 px-3 text-left hover:bg-accent"
-          :aria-label="`Open ${file.path} — ${file.status === 'done' ? 'completed' : 'writing'}`"
+          :aria-label="`Open ${file.path} — ${file.status === 'done' ? 'completed' : 'writing'}${file.truncated ? ', truncated' : ''}`"
           @click="workspace.openFile(file.path)"
         >
           <FilePlus2

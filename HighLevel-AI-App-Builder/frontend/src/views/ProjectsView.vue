@@ -47,6 +47,7 @@ import HlBanner from '@/components/hl/HlBanner.vue'
 import HlConnectDialog from '@/components/hl/HlConnectDialog.vue'
 import UserMenu from '@/components/workspace/UserMenu.vue'
 import { relativeTime } from '@/lib/time'
+import { announce } from '@/composables/useAnnouncer'
 import { useProjectsStore, type ProjectRow } from '@/stores/projects'
 
 const router = useRouter()
@@ -66,7 +67,13 @@ const newProjectBtn = ref<InstanceType<typeof Button> | null>(null)
 
 const list = computed(() => (tab.value === 'all' ? projects.active : projects.trashed))
 
-onMounted(() => projects.subscribe())
+onMounted(() => {
+  projects.subscribe()
+  // Announce loading only when it's actually slow (mn5).
+  setTimeout(() => {
+    if (projects.loading) announce('Loading projects')
+  }, 600)
+})
 onBeforeUnmount(() => projects.unsubscribe())
 
 async function openCreate() {
@@ -277,6 +284,7 @@ async function restore(project: ProjectRow) {
       <DialogContent class="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Rename project</DialogTitle>
+          <DialogDescription class="sr-only">Enter a new name for the project.</DialogDescription>
         </DialogHeader>
         <form class="space-y-4" @submit.prevent="commitRename">
           <div class="space-y-1.5">

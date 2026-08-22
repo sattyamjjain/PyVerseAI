@@ -56,7 +56,9 @@ onMounted(() => {
 
   // A11y item 16: Cmd/Ctrl+S and F6/Shift+F6 must work INSIDE Monaco.
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-    if (workspace.activePath) void workspace.saveFile(workspace.activePath)
+    if (workspace.activePath) {
+      void workspace.saveFile(workspace.activePath, { announceResult: true })
+    }
   })
   editor.addCommand(monaco.KeyCode.F6, () => emit('cycle', 1))
   editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.F6, () => emit('cycle', -1))

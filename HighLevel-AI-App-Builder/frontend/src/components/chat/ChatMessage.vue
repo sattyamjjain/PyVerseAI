@@ -34,9 +34,10 @@ async function copyContent() {
       <User v-else class="size-4 text-muted-foreground" aria-hidden="true" />
       <Tooltip>
         <TooltipTrigger as-child>
-          <span class="text-xs font-medium text-muted-foreground">
+          <span tabindex="0" class="rounded-sm text-xs font-medium text-muted-foreground">
             <span class="sr-only">{{ isAssistant ? 'Genesis:' : 'You:' }}</span>
             <span aria-hidden="true">{{ isAssistant ? 'Genesis' : 'You' }}</span>
+            <span class="sr-only">, {{ absoluteTime(message.createdAt) }}</span>
           </span>
         </TooltipTrigger>
         <TooltipContent>{{ absoluteTime(message.createdAt) }}</TooltipContent>

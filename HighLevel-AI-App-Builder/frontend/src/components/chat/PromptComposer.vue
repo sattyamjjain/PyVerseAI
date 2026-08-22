@@ -138,7 +138,6 @@ defineExpose({
         "
         aria-label="Message Genesis"
         :aria-describedby="describedBy"
-        :aria-disabled="blocked || undefined"
         :readonly="streaming"
         :maxlength="MAX_CHARS + 100"
         rows="1"

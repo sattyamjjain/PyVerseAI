@@ -117,7 +117,8 @@ defineExpose({
     <div
       ref="scrollEl"
       class="relative min-h-0 flex-1 overflow-y-auto px-4 py-4"
-      tabindex="-1"
+      tabindex="0"
+      aria-label="Conversation transcript"
       @scroll.passive="onScroll"
     >
       <!-- Empty state -->

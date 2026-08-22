@@ -37,6 +37,8 @@ const open = computed(() => current.value !== null)
         </AlertDialogDescription>
       </AlertDialogHeader>
       <pre
+        tabindex="0"
+        aria-label="Request details"
         class="max-h-40 overflow-auto rounded-md border border-border bg-editor px-3 py-2 font-mono text-xs text-muted-foreground"
         >{{ current.info.detail }}</pre
       >

@@ -42,6 +42,7 @@ function insert(prompt: string) {
       class="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground transition-colors hover:border-primary/40 hover:bg-accent"
       :class="{ 'pointer-events-none opacity-50': !auth.hlConnected }"
       :aria-disabled="!auth.hlConnected || undefined"
+      :aria-describedby="!auth.hlConnected ? 'composer-blocked-reason' : undefined"
       @click="insert(chip.prompt)"
     >
       <component :is="chip.icon" class="size-3.5 text-primary" aria-hidden="true" />

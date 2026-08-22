@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { ArrowLeft, History, PanelLeftClose, PanelRightClose, Pencil, WifiOff } from 'lucide-vue-next'
 import { useNetwork } from '@vueuse/core'
 import { Badge } from '@/components/ui/badge'
@@ -11,10 +11,17 @@ import HlBadge from '@/components/hl/HlBadge.vue'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { useUiStore } from '@/stores/ui'
 import { ariaMod, modKeyLabel } from '@/composables/useShortcuts'
+import { announce, announceAlert } from '@/composables/useAnnouncer'
 
 const workspace = useWorkspaceStore()
 const ui = useUiStore()
 const { isOnline } = useNetwork()
+
+// Offline is announced, not just shown (WCAG 4.1.3).
+watch(isOnline, (online) => {
+  if (online) announce('Back online')
+  else announceAlert('Connection lost — working offline')
+})
 
 const renaming = ref(false)
 const renameDraft = ref('')
@@ -83,7 +90,7 @@ async function commitRename() {
         ref="renameButton"
         type="button"
         class="group flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 text-[13px] font-medium hover:bg-accent"
-        aria-label="Rename project"
+        :aria-label="`Rename project ${workspace.project?.name ?? ''}`"
         @click="startRename"
       >
         <span class="truncate">{{ workspace.project?.name ?? '…' }}</span>

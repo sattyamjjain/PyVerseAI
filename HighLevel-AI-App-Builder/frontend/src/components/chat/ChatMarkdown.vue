@@ -7,25 +7,41 @@ import { renderMarkdown } from '@/lib/markdown'
 const props = defineProps<{ source: string; streaming?: boolean }>()
 
 // While streaming, re-render at most every ~80ms; when static, render eagerly.
+// A re-render replaces the v-html subtree — if focus is inside (a code-copy
+// button), defer until focus leaves so we never destroy the focused element.
 const html = ref(renderMarkdown(props.source))
-const applyRender = useThrottleFn(
-  () => {
-    html.value = renderMarkdown(props.source)
-  },
-  80,
-  true,
-)
+const containerEl = ref<HTMLElement | null>(null)
+let deferredWhileFocused = false
+
+function renderNow() {
+  if (containerEl.value?.contains(document.activeElement)) {
+    deferredWhileFocused = true
+    return
+  }
+  deferredWhileFocused = false
+  html.value = renderMarkdown(props.source)
+}
+
+const applyRender = useThrottleFn(renderNow, 80, true)
+
+function onFocusOut() {
+  // Wait a tick so activeElement reflects the new focus target.
+  setTimeout(() => {
+    if (deferredWhileFocused) renderNow()
+  }, 0)
+}
+
 watch(
   () => props.source,
   () => {
     if (props.streaming) void applyRender()
-    else html.value = renderMarkdown(props.source)
+    else renderNow()
   },
 )
 watch(
   () => props.streaming,
   (s) => {
-    if (!s) html.value = renderMarkdown(props.source)
+    if (!s) renderNow()
   },
 )
 
@@ -47,7 +63,14 @@ async function onClick(e: MouseEvent) {
 <template>
   <!-- The app's single v-html sink: markdown-it html:false + DOMPurify. -->
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div class="chat-prose" :aria-busy="busy" @click="onClick" v-html="html" />
+  <div
+    ref="containerEl"
+    class="chat-prose"
+    :aria-busy="busy"
+    @click="onClick"
+    @focusout="onFocusOut"
+    v-html="html"
+  />
 </template>
 
 <style>
@@ -91,9 +114,11 @@ async function onClick(e: MouseEvent) {
 }
 .chat-prose a {
   color: var(--info);
+  text-decoration: underline; /* WCAG 1.4.1 — never color alone */
+  text-underline-offset: 2px;
 }
 .chat-prose a:hover {
-  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 .chat-prose code:not(pre code) {
   font-family: var(--font-mono);

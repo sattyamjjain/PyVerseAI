@@ -10,7 +10,7 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import WorkspaceTopBar from '@/components/workspace/WorkspaceTopBar.vue'
 import CommandPalette from '@/components/workspace/CommandPalette.vue'
 import ShortcutsDialog from '@/components/workspace/ShortcutsDialog.vue'
@@ -77,7 +77,9 @@ useShortcuts([
     mod: true,
     allowInInput: true,
     handler: () => {
-      if (workspace.activePath) void workspace.saveFile(workspace.activePath)
+      if (workspace.activePath) {
+        void workspace.saveFile(workspace.activePath, { announceResult: true })
+      }
     },
   },
   {
@@ -163,29 +165,43 @@ const mobileDot = computed(() => generation.isActive)
 
       <h1 tabindex="-1" class="sr-only outline-none">{{ workspace.project?.name }} workspace</h1>
 
-      <!-- Mobile tab switcher -->
+      <!-- Mobile panel switcher. ToggleGroup (not Tabs): the panels are
+           region wrappers, not TabsContent, so tab/tabpanel wiring would
+           reference nonexistent ids. -->
       <div class="border-b border-border px-2 py-1.5 lg:hidden">
-        <Tabs v-model="ui.mobileTab">
-          <TabsList class="w-full">
-            <TabsTrigger value="chat" class="relative flex-1">
-              Chat
-              <span
-                v-if="mobileDot && ui.mobileTab !== 'chat'"
-                class="genesis-activity-dot absolute top-1 right-2 size-1.5 rounded-full bg-primary"
-                aria-hidden="true"
-              />
-            </TabsTrigger>
-            <TabsTrigger value="code" class="relative flex-1">
-              Code
-              <span
-                v-if="mobileDot && ui.mobileTab !== 'code'"
-                class="genesis-activity-dot absolute top-1 right-2 size-1.5 rounded-full bg-primary"
-                aria-hidden="true"
-              />
-            </TabsTrigger>
-            <TabsTrigger value="preview" class="relative flex-1">Preview</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <ToggleGroup
+          :model-value="ui.mobileTab"
+          type="single"
+          aria-label="Workspace panel"
+          class="w-full gap-1 rounded-lg bg-muted p-1"
+          @update:model-value="
+            (v) => {
+              if (v) ui.mobileTab = v as 'chat' | 'code' | 'preview'
+            }
+          "
+        >
+          <ToggleGroupItem value="chat" class="relative h-8 flex-1 rounded-md text-[13px] data-[state=on]:bg-secondary">
+            Chat
+            <span
+              v-if="mobileDot && ui.mobileTab !== 'chat'"
+              class="genesis-activity-dot absolute top-1 right-2 size-1.5 rounded-full bg-primary"
+              aria-hidden="true"
+            />
+            <span v-if="mobileDot && ui.mobileTab !== 'chat'" class="sr-only">(activity)</span>
+          </ToggleGroupItem>
+          <ToggleGroupItem value="code" class="relative h-8 flex-1 rounded-md text-[13px] data-[state=on]:bg-secondary">
+            Code
+            <span
+              v-if="mobileDot && ui.mobileTab !== 'code'"
+              class="genesis-activity-dot absolute top-1 right-2 size-1.5 rounded-full bg-primary"
+              aria-hidden="true"
+            />
+            <span v-if="mobileDot && ui.mobileTab !== 'code'" class="sr-only">(activity)</span>
+          </ToggleGroupItem>
+          <ToggleGroupItem value="preview" class="h-8 flex-1 rounded-md text-[13px] data-[state=on]:bg-secondary">
+            Preview
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       <!-- Desktop: three resizable panels -->

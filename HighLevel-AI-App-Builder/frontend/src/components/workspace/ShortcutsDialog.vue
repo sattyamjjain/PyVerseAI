@@ -6,6 +6,21 @@ import { isMac, modKeyLabel } from '@/composables/useShortcuts'
 
 const ui = useUiStore()
 
+/** Spoken names for shortcut glyphs (mn3). */
+const GLYPH_LABELS: Record<string, string> = {
+  '⏎': 'Enter',
+  '⇧': 'Shift',
+  '⌘': 'Command',
+  '⌥': 'Option',
+  '⌃⇧M': 'Control Shift M',
+  'Ctrl+M': 'Control M',
+  Esc: 'Escape',
+  '.': 'Period',
+}
+function glyphLabel(key: string): string | undefined {
+  return GLYPH_LABELS[key]
+}
+
 const groups = [
   {
     title: 'General',
@@ -65,6 +80,7 @@ const groups = [
                   <kbd
                     v-for="key in item.keys"
                     :key="key"
+                    :aria-label="glyphLabel(key)"
                     class="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground"
                     >{{ key }}</kbd
                   >

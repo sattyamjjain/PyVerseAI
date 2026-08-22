@@ -58,7 +58,9 @@ function rearmFollow() {
       <TooltipContent>{{ treeVisible ? 'Hide' : 'Show' }} file tree</TooltipContent>
     </Tooltip>
 
-    <div role="tablist" aria-label="Open files" class="flex min-w-0 flex-1 items-center overflow-x-auto">
+    <!-- Plain buttons with aria-current (full tabs/tabpanel semantics would
+         need roving tabindex + a labeled panel; buttons are honest here). -->
+    <div role="group" aria-label="Open files" class="flex min-w-0 flex-1 items-center overflow-x-auto">
       <!-- Tab select and close are SIBLING buttons (no nested interactives). -->
       <div
         v-for="path in workspace.openTabs"
@@ -71,10 +73,9 @@ function rearmFollow() {
         "
       >
         <button
-          role="tab"
           type="button"
           :data-tab-path="path"
-          :aria-selected="workspace.activePath === path"
+          :aria-current="workspace.activePath === path || undefined"
           class="flex items-center gap-1.5 pr-1 pl-3 font-mono text-xs"
           @click="activate(path)"
         >
@@ -84,6 +85,7 @@ function rearmFollow() {
             aria-hidden="true"
           />
           {{ path.split('/').pop() }}
+          <span v-if="workspace.dirtyPaths.has(path)" class="sr-only">(unsaved)</span>
         </button>
         <button
           type="button"

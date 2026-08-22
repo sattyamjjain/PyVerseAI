@@ -110,7 +110,10 @@ defineExpose({ restoring })
               <div class="flex items-center gap-2">
                 <Tooltip>
                   <TooltipTrigger as-child>
-                    <span class="text-[13px] font-medium">{{ relativeTime(snapshot.createdAt) }}</span>
+                    <span tabindex="0" class="rounded-sm text-[13px] font-medium">
+                      {{ relativeTime(snapshot.createdAt) }}
+                      <span class="sr-only">, {{ absoluteTime(snapshot.createdAt) }}</span>
+                    </span>
                   </TooltipTrigger>
                   <TooltipContent>{{ absoluteTime(snapshot.createdAt) }}</TooltipContent>
                 </Tooltip>

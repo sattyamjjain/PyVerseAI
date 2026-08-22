@@ -17,6 +17,8 @@ export interface ShortcutDef {
   /** Requires the platform modifier (⌘ on mac, Ctrl elsewhere). */
   mod?: boolean
   shift?: boolean
+  /** Requires Alt/Option (bindings without it reject Alt-modified presses). */
+  alt?: boolean
   /** Fire even when focus is inside an input/textarea/contenteditable. */
   allowInInput?: boolean
   handler: (e: KeyboardEvent) => void
@@ -41,6 +43,7 @@ export function useShortcuts(defs: ShortcutDef[]) {
       if (def.mod && !mod) continue
       if (!def.mod && mod) continue
       if (Boolean(def.shift) !== e.shiftKey) continue
+      if (Boolean(def.alt) !== e.altKey) continue
       if (e.key.toLowerCase() !== def.key.toLowerCase()) continue
       if (!def.allowInInput && !def.mod && isEditableTarget(e)) continue
       e.preventDefault()

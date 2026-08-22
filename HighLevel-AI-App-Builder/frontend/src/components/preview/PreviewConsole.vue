@@ -55,6 +55,8 @@ function prefixFor(level: string) {
     <div
       v-if="preview.consoleOpen"
       id="preview-console-list"
+      tabindex="0"
+      aria-label="Console output"
       class="h-44 overflow-y-auto border-t border-border font-mono text-xs"
     >
       <p v-if="preview.consoleEntries.length === 0" class="px-3 py-2 text-muted-foreground">

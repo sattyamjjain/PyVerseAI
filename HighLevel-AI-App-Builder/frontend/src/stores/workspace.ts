@@ -11,7 +11,9 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { toast } from 'vue-sonner'
 import { auth, db } from '@/lib/firebase'
+import { announce, announceAlert } from '@/composables/useAnnouncer'
 import type {
   FileDoc,
   GenerationDoc,
@@ -216,7 +218,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     }
   }
 
-  async function saveFile(path: string): Promise<void> {
+  async function saveFile(path: string, opts?: { announceResult?: boolean }): Promise<void> {
     const pid = projectId.value
     const row = files.value.get(path)
     const model = getModel(path)
@@ -225,6 +227,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     if (content === row.content) {
       dirtyPaths.value.delete(path)
       dirtyPaths.value = new Set(dirtyPaths.value)
+      if (opts?.announceResult) announce('Saved')
       return
     }
     savingPaths.value = new Set(savingPaths.value).add(path)
@@ -236,6 +239,13 @@ export const useWorkspaceStore = defineStore('workspace', () => {
       dirtyPaths.value.delete(path)
       dirtyPaths.value = new Set(dirtyPaths.value)
       lastSavedAt.value = Date.now()
+      if (opts?.announceResult) announce('Saved')
+    } catch (err) {
+      // A silent failed save loses work invisibly (WCAG 4.1.3).
+      toast.error(`Could not save ${path}`, {
+        description: err instanceof Error ? err.message : undefined,
+      })
+      announceAlert(`Could not save ${path}`)
     } finally {
       savingPaths.value.delete(path)
       savingPaths.value = new Set(savingPaths.value)

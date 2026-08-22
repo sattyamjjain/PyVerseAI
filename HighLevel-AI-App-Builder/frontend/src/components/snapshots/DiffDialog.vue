@@ -4,7 +4,13 @@ import { collection, getDocs } from 'firebase/firestore'
 import { VueMonacoDiffEditor } from '@guolao/vue-monaco-editor'
 import { useMediaQuery } from '@vueuse/core'
 import { FileDiff, FilePlus2, FileX2, GitCompare, Loader2 } from 'lucide-vue-next'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { db } from '@/lib/firebase'
@@ -92,10 +98,14 @@ const diffOptions = computed(() => ({
             <span class="text-destructive-soft"> −{{ totals.removed }}</span>
           </span>
         </DialogTitle>
+        <DialogDescription class="sr-only">
+          Side-by-side comparison of the files that changed between the two versions.
+        </DialogDescription>
       </DialogHeader>
 
       <div v-if="loading" class="flex flex-1 items-center justify-center">
         <Loader2 class="size-5 animate-spin text-muted-foreground" aria-hidden="true" />
+        <span class="sr-only">Loading diff</span>
       </div>
       <div v-else-if="changes.length === 0" class="flex flex-1 items-center justify-center">
         <p class="text-[13px] text-muted-foreground">No differences.</p>

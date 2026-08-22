@@ -11,6 +11,9 @@ coverage/
 !.env.example
 # functions/.env holds only non-secret emulator defaults — committed on purpose
 !functions/.env
+# Per-project function config + frontend web config are non-secret by design
+!functions/.env.genesis-hl-builder-sj
+!frontend/.env.production
 *.local
 *serviceAccount*.json
 *.pem

@@ -1,0 +1,28 @@
+# Dependencies & build output
+node_modules/
+dist/
+lib/
+coverage/
+
+# Environment & secrets — never commit
+.env
+.env.*
+!.env.example
+*.local
+*serviceAccount*.json
+*.pem
+*.key
+credentials.*
+.runtimeconfig.json
+
+# Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+pglite-debug.log*
+emulator-data/
+
+# Editor/OS
+.DS_Store
+*.log

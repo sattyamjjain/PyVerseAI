@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function owner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    // One parent get() per request — well under the 10-call rules limit, and
+    // it prevents the denormalized-ownerUid trap (creating docs under someone
+    // else's project with your own uid stamped on them).
+    function projectOwner(projectId) {
+      return signedIn() &&
+        get(/databases/$(db)/documents/projects/$(projectId)).data.ownerUid
+          == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read: if owner(uid);
+      // Client creates its own profile on first sign-in; the `hl` connection
+      // mirror is written exclusively by the Admin SDK (which bypasses rules).
+      allow create: if owner(uid)
+        && request.resource.data.keys().hasOnly(['displayName', 'email', 'createdAt']);
+      allow update: if owner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['displayName']);
+      allow delete: if false;
+    }
+
+    match /projects/{projectId} {
+      allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 2000
+        && request.resource.data.softDeleted == false;
+      allow update: if signedIn() && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['name', 'description', 'softDeleted', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.description.size() <= 2000;
+      allow delete: if false; // soft-delete via update; hard delete never
+
+      match /files/{fileId} {
+        allow read: if projectOwner(projectId);
+        // Manual editor saves may change file CONTENT only; files are created
+        // and deleted server-side during generation (path stays immutable).
+        allow update: if projectOwner(projectId)
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['content', 'updatedAt'])
+          && request.resource.data.content is string
+          && request.resource.data.content.size() <= 200000;
+        allow create, delete: if false;
+      }
+
+      match /messages/{messageId} {
+        allow read: if projectOwner(projectId);
+        // Chat log is append-only. Clients may append their own user turns;
+        // assistant turns are written by the generation function.
+        allow create: if projectOwner(projectId)
+          && request.resource.data.keys().hasOnly(['role', 'content', 'createdAt', 'generationId'])
+          && request.resource.data.role == 'user'
+          && request.resource.data.content is string
+          && request.resource.data.content.size() > 0
+          && request.resource.data.content.size() <= 20000;
+        allow update, delete: if false;
+      }
+
+      match /generations/{generationId} {
+        allow read: if projectOwner(projectId);
+        allow write: if false; // server-only
+      }
+
+      match /snapshots/{snapshotId} {
+        allow read: if projectOwner(projectId);
+        allow write: if false; // created by generation + restore functions only
+
+        match /files/{fileId} {
+          allow read: if projectOwner(projectId);
+          allow write: if false;
+        }
+      }
+    }
+
+    match /hl_events/{eventId} {
+      allow read: if signedIn() && resource.data.ownerUid == request.auth.uid;
+      allow write: if false; // webhook function writes these
+    }
+
+    // Server-only collections: HighLevel OAuth tokens, rate-limit counters,
+    // OAuth state nonces. The Admin SDK bypasses rules; clients get nothing.
+    match /hl_connections/{uid} { allow read, write: if false; }
+    match /rate_limits/{docId}  { allow read, write: if false; }
+    match /oauth_states/{nonce} { allow read, write: if false; }
+  }
+}

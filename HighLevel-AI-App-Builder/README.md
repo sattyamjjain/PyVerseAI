@@ -6,9 +6,8 @@ Describe an app in plain English → Claude generates it live, streamed token-by
 
 ## Live URLs
 
-<!-- TODO(deploy): fill after Firebase project creation -->
-- **App (Firebase Hosting):** `https://<project-id>.web.app`
-- **Cloud Functions base:** `https://us-central1-<project-id>.cloudfunctions.net`
+- **App (Firebase Hosting):** https://genesis-hl-builder-sj.web.app
+- **Cloud Functions base:** https://us-central1-genesis-hl-builder-sj.cloudfunctions.net
 - **Loom walkthrough:** _link goes here_
 
 ## What it does

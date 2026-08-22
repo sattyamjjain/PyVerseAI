@@ -8,6 +8,8 @@ coverage/
 .env
 .env.*
 !.env.example
+# functions/.env holds only non-secret emulator defaults — committed on purpose
+!functions/.env
 *.local
 *serviceAccount*.json
 *.pem

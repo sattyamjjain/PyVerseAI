@@ -30,7 +30,7 @@ export function lineDiffCounts(before: string, after: string): DiffCounts {
   }
 
   // LCS length via single-array DP.
-  const prev = new Array<number>(b.length + 1).fill(0)
+  const prev = Array.from({ length: b.length + 1 }, () => 0)
   for (let i = 1; i <= a.length; i++) {
     let diag = 0
     for (let j = 1; j <= b.length; j++) {

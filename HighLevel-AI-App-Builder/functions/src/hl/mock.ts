@@ -201,15 +201,27 @@ export function mockHlFetch(method: string, url: URL, body?: unknown): Promise<H
   if (method === 'POST' && p === '/contacts/') {
     createdCounter++
     const b = (body ?? {}) as Record<string, unknown>
-    return ok({
-      contact: {
-        id: `mockCreated${String(createdCounter).padStart(6, '0')}`,
-        locationId: MOCK_LOCATION_ID,
-        dateAdded: new Date().toISOString(),
-        tags: [],
-        ...b,
-      },
-    })
+    const contact = {
+      id: `mockCreated${String(createdCounter).padStart(6, '0')}`,
+      locationId: MOCK_LOCATION_ID,
+      firstName: '',
+      lastName: '',
+      contactName: [b.firstName, b.lastName].filter(Boolean).join(' ') || 'New contact',
+      email: '',
+      phone: '',
+      tags: [] as string[],
+      type: 'lead',
+      source: 'genesis app',
+      dateAdded: new Date().toISOString(),
+      dateUpdated: new Date().toISOString(),
+      country: 'US',
+      customFields: [],
+      ...b,
+    }
+    // Created contacts show up in subsequent list calls (newest first),
+    // matching real HighLevel behavior for demo fidelity.
+    MOCK_CONTACTS.unshift(contact as (typeof MOCK_CONTACTS)[number])
+    return ok({ contact })
   }
   if (method === 'PUT' && /^\/contacts\/[^/]+$/.test(p)) {
     const id = p.split('/')[2]

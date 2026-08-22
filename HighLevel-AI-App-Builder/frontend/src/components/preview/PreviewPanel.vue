@@ -212,7 +212,7 @@ function dismissErrorOverlay() {
           :key="preview.srcdocKey"
           ref="iframeEl"
           :srcdoc="preview.srcdoc"
-          sandbox="allow-scripts"
+          sandbox="allow-scripts allow-forms"
           title="App preview"
           referrerpolicy="no-referrer"
           allow=""

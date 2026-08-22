@@ -163,13 +163,17 @@
     }
   })
 
-  function request(method, path, params, body) {
+  // Write methods pop a confirmation dialog in the parent app — the human
+  // decision time must not count against the RPC timeout.
+  var CONFIRM_TIMEOUT_MS = 120000
+  var READ_TIMEOUT_MS = 15000
+  function request(method, path, params, body, timeoutMs) {
     return new Promise(function (resolve, reject) {
       var id = makeId()
       var timer = setTimeout(function () {
         pending.delete(id)
         reject(new Error('Request timed out'))
-      }, 15000)
+      }, timeoutMs || READ_TIMEOUT_MS)
       pending.set(id, { resolve: resolve, reject: reject, timer: timer })
       post({
         v: V,
@@ -199,10 +203,10 @@
         return request('GET', '/contacts/' + enc(contactId))
       },
       create: function (data) {
-        return request('POST', '/contacts/', undefined, data || {})
+        return request('POST', '/contacts/', undefined, data || {}, CONFIRM_TIMEOUT_MS)
       },
       update: function (contactId, data) {
-        return request('PUT', '/contacts/' + enc(contactId), undefined, data || {})
+        return request('PUT', '/contacts/' + enc(contactId), undefined, data || {}, CONFIRM_TIMEOUT_MS)
       },
     },
     conversations: {
@@ -216,7 +220,7 @@
         return request('GET', '/conversations/' + enc(conversationId) + '/messages', opts)
       },
       send: function (data) {
-        return request('POST', '/conversations/messages', undefined, data || {})
+        return request('POST', '/conversations/messages', undefined, data || {}, CONFIRM_TIMEOUT_MS)
       },
     },
     calendars: {
@@ -233,7 +237,7 @@
         return request('GET', '/calendars/' + enc(calendarId) + '/free-slots', opts)
       },
       book: function (data) {
-        return request('POST', '/calendars/events/appointments', undefined, data || {})
+        return request('POST', '/calendars/events/appointments', undefined, data || {}, CONFIRM_TIMEOUT_MS)
       },
     },
     location: {

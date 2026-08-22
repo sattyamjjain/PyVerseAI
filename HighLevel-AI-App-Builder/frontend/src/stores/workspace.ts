@@ -187,10 +187,23 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     }
   }
 
+  /**
+   * Paths currently being streamed by a generation. They exist as Monaco
+   * models and open tabs BEFORE their Firestore write lands at file_complete,
+   * so tab pruning must not evict them mid-stream.
+   */
+  const streamingPaths = ref<ReadonlySet<string>>(new Set())
+  function markStreaming(path: string) {
+    streamingPaths.value = new Set(streamingPaths.value).add(path)
+  }
+  function clearStreaming() {
+    if (streamingPaths.value.size > 0) streamingPaths.value = new Set()
+  }
+
   function pruneTabs() {
-    const existing = new Set(files.value.keys())
-    openTabs.value = openTabs.value.filter((p) => existing.has(p))
-    if (activePath.value && !existing.has(activePath.value)) {
+    const keep = (p: string) => files.value.has(p) || streamingPaths.value.has(p)
+    openTabs.value = openTabs.value.filter(keep)
+    if (activePath.value && !keep(activePath.value)) {
       activePath.value = openTabs.value[0] ?? null
     }
   }
@@ -291,6 +304,8 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     close,
     openFile,
     closeTab,
+    markStreaming,
+    clearStreaming,
     markDirty,
     saveFile,
     renameProject,

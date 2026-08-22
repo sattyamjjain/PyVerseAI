@@ -146,6 +146,7 @@ export const useGenerationStore = defineStore('generation', () => {
               beforeContents.set(event.path, before)
               getOrCreateModel(event.path, '')
               setModelValue(event.path, '')
+              workspace.markStreaming(event.path)
               liveFiles.value = [
                 ...liveFiles.value,
                 { path: event.path, status: 'writing', action: event.action, added: 0, removed: 0, truncated: false },
@@ -250,6 +251,8 @@ export const useGenerationStore = defineStore('generation', () => {
   /** One undo stop per generation for every touched file. */
   function finishTouchedFiles() {
     for (const f of liveFiles.value) pushUndoStop(f.path)
+    // Streamed files are durable in Firestore by now — normal pruning resumes.
+    workspace.clearStreaming()
   }
 
   function cancel() {

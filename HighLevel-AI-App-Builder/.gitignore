@@ -1,7 +1,8 @@
 # Dependencies & build output
 node_modules/
 dist/
-lib/
+# Compiled functions output ONLY — a bare lib/ would swallow frontend/src/lib
+functions/lib/
 coverage/
 
 # Environment & secrets — never commit

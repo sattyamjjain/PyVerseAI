@@ -28,3 +28,4 @@ emulator-data/
 # Editor/OS
 .DS_Store
 *.log
+.playwright-mcp/

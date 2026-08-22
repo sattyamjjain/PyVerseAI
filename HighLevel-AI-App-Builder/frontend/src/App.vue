@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { RouterView } from 'vue-router'
 import AppAnnouncer from '@/components/AppAnnouncer.vue'
 import { Toaster } from '@/components/ui/sonner'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 const route = useRoute()
 
@@ -22,6 +23,8 @@ watch(
 <template>
   <a href="#main" class="skip-link">Skip to main content</a>
   <AppAnnouncer />
-  <RouterView />
+  <TooltipProvider :delay-duration="300">
+    <RouterView />
+  </TooltipProvider>
   <Toaster theme="dark" position="bottom-right" :duration="5000" close-button />
 </template>

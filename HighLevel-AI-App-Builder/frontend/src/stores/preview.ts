@@ -36,8 +36,10 @@ export const usePreviewStore = defineStore('preview', () => {
   const warnCount = computed(() => consoleEntries.value.filter((e) => e.level === 'warn').length)
 
   let overlayTimer: ReturnType<typeof setTimeout> | null = null
+  let loadGraceTimer: ReturnType<typeof setTimeout> | null = null
 
   function rebuild(files: ReadonlyMap<string, string>, parentOrigin: string) {
+    if (loadGraceTimer) clearTimeout(loadGraceTimer)
     const result = assembleSrcdoc(files, parentOrigin)
     warnings.value = result.warnings
     consoleEntries.value = []
@@ -109,7 +111,10 @@ export const usePreviewStore = defineStore('preview', () => {
   function markLoaded() {
     // iframe load fired; if the bootstrap never signals ready, drop the
     // overlay after a grace period so a broken app doesn't spin forever.
-    setTimeout(() => {
+    // Tracked so reset()/rebuild() cancel it — a stale timer from a previous
+    // build must not hide the next build's overlay early.
+    if (loadGraceTimer) clearTimeout(loadGraceTimer)
+    loadGraceTimer = setTimeout(() => {
       if (!ready.value) updating.value = false
     }, 1500)
   }
@@ -122,6 +127,7 @@ export const usePreviewStore = defineStore('preview', () => {
    */
   function reset() {
     if (overlayTimer) clearTimeout(overlayTimer)
+    if (loadGraceTimer) clearTimeout(loadGraceTimer)
     srcdoc.value = ''
     srcdocKey.value++
     updating.value = false

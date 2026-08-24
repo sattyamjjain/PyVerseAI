@@ -70,7 +70,7 @@ Live: https://genesis-hl-builder-sj.web.app · Health: [`GET healthz`](https://h
 | Firestore rules | Emulator-backed | `@firebase/rules-unit-testing` against the real rules engine |
 | Frontend unit | 40 tests | SSE event decoding, srcdoc assembly (including the PARENT_ORIGIN `replaceAll` regression that once shipped as a real bug), auth error mapping, time formatting, generation store state machine (`frontend/src/**/__tests__/`) |
 | Integration | 17-step emulator smoke | Scripted: auth → mock OAuth → generate SSE event-sequence assertions → Firestore end-state → proxy → seed (`scratchpad/smoke.sh` pattern) |
-| End-to-end (real model) | Golden battery | Real-Claude runs: first generation, refinement (changed-files-only verified), cache-hit verification, cancel mid-stream, snapshot restore + undo, write-confirm round trip, rate-limit 429s observed live |
+| End-to-end (real model) | Golden battery | Real-Claude runs: first generation, refinement (changed-files-only verified), cache-hit verification, cancel mid-stream, snapshot restore + undo, write-confirm round trip, rate-limit 429s observed live — dated transcripts in [docs/e2e-evidence.md](./docs/e2e-evidence.md) |
 | CI | Every push/PR | GitHub Actions, path-filtered to this sub-project: functions typecheck + full test suite against the Firestore emulator; frontend typecheck + tests + production build (`.github/workflows/highlevel-ai-app-builder-ci.yml`) |
 
 ## 6. Observability and operations

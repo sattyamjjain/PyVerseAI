@@ -128,6 +128,10 @@ export const generate = onRequest(
           activeGenerationId: generationRef.id,
           generatingSince: FieldValue.serverTimestamp(),
           updatedAt: FieldValue.serverTimestamp(),
+          // Stamp the connected HL location onto the project (spec: each
+          // project has a connected HighLevel location ID). Server-written:
+          // the client's rules whitelist doesn't include this key.
+          ...(conn?.locationId ? { locationId: conn.locationId } : {}),
         })
       })
 

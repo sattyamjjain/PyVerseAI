@@ -1,6 +1,10 @@
 # Genesis — AI-Powered HighLevel App Builder
 
+[![CI](https://github.com/sattyamjjain/PyVerseAI/actions/workflows/highlevel-ai-app-builder-ci.yml/badge.svg)](https://github.com/sattyamjjain/PyVerseAI/actions/workflows/highlevel-ai-app-builder-ci.yml)
+
 Describe an app in plain English → Claude generates it live, streamed token-by-token into a Monaco editor → the preview runs it against **real HighLevel CRM data** (Contacts, Conversations, Calendars) through a secured proxy. Built for the HighLevel Senior Engineer take-home.
+
+![The Genesis workspace: chat, code editor, and live preview running a generated contact dashboard](frontend/public/screenshots/workspace.png)
 
 **Stack:** Vue 3 + TypeScript + shadcn-vue · Firebase (Auth, Firestore, Cloud Functions v2) · Claude (`@anthropic-ai/sdk`, streaming) · Monaco · HighLevel API 2.0 (OAuth)
 
@@ -11,7 +15,25 @@ Describe an app in plain English → Claude generates it live, streamed token-by
 - **Health probe:** [`GET healthz`](https://healthz-rttqk4rz4q-uc.a.run.app) (liveness + Firestore readiness)
 - **Loom walkthrough:** _link goes here_
 
-> The full senior-engineer checklist — reliability, scalability, security, testing, observability, performance, accessibility — with per-item evidence lives in [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md).
+> The full senior-engineer checklist — reliability, scalability, security, testing, observability, performance, accessibility — with per-item evidence lives in [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md). The threat model lives in [SECURITY.md](./SECURITY.md).
+
+## Reviewing this submission? Start here
+
+**60-second live tour** (needs a HighLevel account): sign up at the [live app](https://genesis-hl-builder-sj.web.app) → Connect HighLevel → pick a sandbox location → Seed demo data → click the "Contact dashboard with search" suggestion chip → watch the stream, then use the app it built on your real CRM data.
+
+**5-minute local tour** (no HighLevel account needed): follow [Local setup](#local-setup-firebase-emulators) — `HL_MOCK_MODE` ships a faithful HighLevel simulator, so everything incl. OAuth runs offline.
+
+| Requirement | Where | Proof in 30 seconds |
+|---|---|---|
+| Email/password auth + session persistence | `frontend/src/views/Sign{In,Up}View.vue`, `stores/auth.ts` | Sign in, refresh the page |
+| HighLevel OAuth + token refresh (rotating) | `functions/src/oauth.ts`, `functions/src/hl/client.ts` | Connect flow live; lease-refresh logic at `hl/client.ts` |
+| Project CRUD, owner-scoped rules | `frontend/src/stores/projects.ts`, `firestore.rules` | Rules test suite in `functions/test/rules.test.ts` |
+| SSE streaming + event protocol | `functions/src/generate.ts`, `functions/src/shared/protocol.ts` | `node scripts/gen-test.mjs gen "..."` asserts the event sequence |
+| Server-side stream parsing | `functions/src/genesis/parser.ts` | 16 parser edge-case tests in `functions/test/` |
+| Monaco editor, live typing, read-only while streaming | `frontend/src/components/editor/` | Send any prompt, watch the editor |
+| Live preview on real CRM data | `frontend/src/lib/srcdoc.ts`, `frontend/src/preview/bootstrap.js`, `functions/src/proxy.ts` | Generated dashboard lists your sandbox contacts |
+| Snapshots + restore | `functions/src/snapshots.ts`, `SnapshotSheet.vue` | History icon → Restore → Undo |
+| All 6 bonuses | see [Bonus features](#bonus-features-implemented) | Stop button, refinement prompt, View changes, 429 after 5 gen/min, Load-more in generated apps, webhook toast |
 
 ## What it does
 
@@ -42,7 +64,7 @@ Describe an app in plain English → Claude generates it live, streamed token-by
 5. **Redirect URL** — add the deployed callback verbatim:
    `https://us-central1-<project-id>.cloudfunctions.net/hlAuthCallback`
 6. **Webhooks (optional bonus)** — in the app's Advanced Settings → Webhooks, set the webhook URL to
-   `https://us-central1-<project-id>.cloudfunctions.net/hlWebhook` and toggle on: ContactCreate, ContactUpdate, ContactDelete, InboundMessage, AppointmentCreate, AppointmentUpdate. Signature verification (current Ed25519 `x-ghl-signature` + legacy RSA `x-wh-signature`) ships enabled — both HighLevel public keys are baked into the per-project env file.
+   `https://us-central1-<project-id>.cloudfunctions.net/hlWebhook` and toggle on: ContactCreate, ContactUpdate, ContactDelete, InboundMessage, AppointmentCreate, AppointmentUpdate. Signature verification (current Ed25519 `x-ghl-signature` + legacy RSA `x-wh-signature`) ships enabled — both HighLevel public keys are baked into the per-project env file. An **UNINSTALL** event purges the user's stored tokens and flips their connection status — uninstalling from HighLevel cleanly disconnects Genesis. The requested scope list above is deliberately minimal: exactly what the three CRM areas need, nothing more.
 7. **Sandbox** — developer portal → **Testing → Create App Test Account** (free, no trial needed). Create **one calendar** in it (Settings → Calendars) so appointment features have somewhere to book. In-app: **Connect HighLevel → Seed demo data** fills the sandbox with contacts, inbound SMS threads, and appointments.
 
 ## Local setup (Firebase emulators)
@@ -66,7 +88,7 @@ npm --prefix frontend run dev          # → http://localhost:5173
 
 # 5. Tests
 npm --prefix functions test            # parser / allowlist / paths / Firestore rules (39 tests)
-npm --prefix frontend run test:unit    # SSE client / srcdoc assembler / stores (40 tests)
+npm --prefix frontend run test:unit    # SSE client / srcdoc assembler / stores (44 tests)
 npm --prefix frontend run build        # vue-tsc type-check + production build
 # CI runs all of the above (rules against a real Firestore emulator) on every
 # push/PR: .github/workflows/highlevel-ai-app-builder-ci.yml
@@ -76,6 +98,46 @@ node scripts/gen-test.mjs gen "build a contact dashboard with search"
 ```
 
 To develop against **real** HighLevel locally: set `HL_MOCK_MODE=false` and real `HL_CLIENT_ID`/`HL_CLIENT_SECRET`, and register the deployed `hlAuthCallback` as the redirect URL — the callback returns the browser to whatever origin started the flow (localhost included), so no tunnel is needed.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    U([User]) --> SPA[Vue 3 SPA<br/>Firebase Hosting]
+    SPA -- "SSE at the function's direct URL<br/>(Hosting rewrites buffer + cap at 60s)" --> GEN[generate<br/>Cloud Function]
+    GEN --> CLAUDE[Claude API<br/>streaming]
+    GEN -- "writes at file_complete<br/>boundaries only" --> FS[(Firestore)]
+    SPA <-- onSnapshot --> FS
+    subgraph Browser sandbox
+        IFR[Generated app<br/>srcdoc iframe<br/>CSP connect-src 'none']
+    end
+    SPA -- "postMessage bridge<br/>(write actions need human confirm)" --- IFR
+    SPA --> PROXY[hlProxy<br/>Cloud Function]
+    PROXY -- "shared allowlist +<br/>locationId forced server-side" --> HL[HighLevel API]
+    HL -- "signed webhooks<br/>(Ed25519 / RSA)" --> WH[hlWebhook] --> FS
+    TOK[(hl_connections<br/>deny-all, Admin SDK only)] -.-> PROXY
+```
+
+One generation, end to end:
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant G as generate (Cloud Function)
+    participant C as Claude
+    participant F as Firestore
+    B->>G: POST prompt (SSE)
+    G->>C: messages.stream (cached frozen system prompt)
+    loop token stream
+        C-->>G: text deltas
+        G-->>B: narration_delta / file_start / file_delta<br/>(holdback parser - close tags never leak)
+    end
+    G->>F: file content at each file_complete
+    G-->>B: file_complete (authoritative content)
+    G->>F: append snapshot
+    G-->>B: snapshot_created, done
+    Note over B,F: A dropped connection loses nothing - Firestore is the source of truth
+```
 
 ## Architecture decisions
 
@@ -120,7 +182,7 @@ firebase deploy --only hosting                 # builds frontend via predeploy
 # Then register the OAuth Redirect URL + webhook URL in the HighLevel app.
 ```
 
-No CI/CD (out of scope for the take-home); deploys are the three commands above. `maxInstances` caps every function (cost ceiling); Firestore TTL policies clean `rate_limits`, `webhook_dedupe`, and `hl_events`:
+CI runs on every push/PR (typecheck + full test suites, rules against a live Firestore emulator: `.github/workflows/highlevel-ai-app-builder-ci.yml`); there is deliberately no CD — deploys are the three commands above. `maxInstances` caps every function (cost ceiling); Firestore TTL policies clean `rate_limits`, `webhook_dedupe`, and `hl_events`:
 
 ```bash
 gcloud firestore fields ttls update expireAt --collection-group=rate_limits --enable-ttl

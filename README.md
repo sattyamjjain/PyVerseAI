@@ -9,6 +9,18 @@ PyVerseAI is a hub of diverse projects, each with its unique purpose and tech st
 
 ## Projects
 
+### Genesis — AI-Powered HighLevel App Builder
+
+> **Live app:** https://genesis-hl-builder-sj.web.app
+
+Describe an app in plain English and Claude generates a working HighLevel marketplace app, streamed token-by-token into a Monaco editor, with a sandboxed live preview running on real CRM data (Contacts, Conversations, Calendars via OAuth 2.0). Vue 3 + shadcn-vue + Firebase (Auth, Firestore, Cloud Functions v2) + Claude streaming over SSE. Key features include:
+- Server-side stream parsing with a holdback-buffer state machine; per-file Firestore persistence at completion boundaries; restorable append-only snapshots with undo.
+- Zero-network sandboxed preview: generated code reaches HighLevel only through a postMessage bridge and a server-enforced endpoint allowlist; write actions require human confirmation.
+- Iterative refinement with diff view, generation cancellation, rate limiting, HighLevel webhook fanout with dual-scheme signature verification.
+- 83 tests (functions + frontend + Firestore rules) with CI on every push; production readiness review with per-item evidence; Lighthouse 90/100/100/100.
+
+[Detailed setup, architecture, and production-readiness review for Genesis](./HighLevel-AI-App-Builder/README.md)
+
 ### Utility-Invoice-Processing
 
 LLM-powered multilingual utility invoice extraction: real electricity/gas/water bills in 4 languages (en/es/fr/de) -> schema-enforced structured outputs (Claude + OpenAI behind one interface) -> validated CSV. Key features include:

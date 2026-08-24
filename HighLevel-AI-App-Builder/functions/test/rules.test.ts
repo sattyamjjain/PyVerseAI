@@ -17,8 +17,10 @@ const rulesPath = fileURLToPath(new URL('../../firestore.rules', import.meta.url
 
 async function emulatorUp(): Promise<boolean> {
   try {
-    await fetch('http://127.0.0.1:8080/')
-    return true
+    // The Firestore emulator answers "Ok" at its root; checking the body
+    // avoids running the suite against some unrelated service on :8080.
+    const res = await fetch('http://127.0.0.1:8080/')
+    return (await res.text()).trim() === 'Ok'
   } catch {
     return false
   }

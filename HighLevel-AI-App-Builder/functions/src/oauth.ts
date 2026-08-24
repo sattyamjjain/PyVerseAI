@@ -163,15 +163,13 @@ export const hlAuthCallback = onRequest(
       res.send(callbackPage(true, `Linked to ${locationName}.`, returnOrigin))
     } catch (err) {
       log.warn('oauth callback failed', sanitizeUpstreamError(err, '/oauth/token'))
-      res
-        .status(400)
-        .send(
-          callbackPage(
-            false,
-            'HighLevel did not accept the connection. Close this window and try again.',
-            null,
-          ),
-        )
+      // Surface only reasons we authored (HttpError detail) — never upstream
+      // bodies. "hl_no_location" (agency-level install) is the one users hit.
+      const reason =
+        err instanceof HttpError && typeof err.extra?.detail === 'string'
+          ? err.extra.detail
+          : 'HighLevel did not accept the connection. Close this window and try again.'
+      res.status(400).send(callbackPage(false, reason, null))
     }
   },
 )

@@ -17,9 +17,12 @@ export function sanitizeUpstreamError(err: unknown, path?: string): Record<strin
     return { status: err.status, path: safePath, body: truncate(err.bodyText, 500) }
   }
   if (err instanceof Error) {
-    return { name: err.name, message: truncate(err.message, 300), path: safePath }
+    // Keyed `detail`, not `message`: the functions logger merges this object
+    // into the entry where a `message` key would collide with the log label
+    // and silently drop the error text (observed in production).
+    return { name: err.name, detail: truncate(err.message, 300), path: safePath }
   }
-  return { message: truncate(String(err), 300), path: safePath }
+  return { detail: truncate(String(err), 300), path: safePath }
 }
 
 export function truncate(value: unknown, max: number): string {

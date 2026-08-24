@@ -1,0 +1,56 @@
+name: HighLevel-AI-App-Builder CI
+
+on:
+  push:
+    branches: [main]
+    paths: ['HighLevel-AI-App-Builder/**']
+  pull_request:
+    paths: ['HighLevel-AI-App-Builder/**']
+
+defaults:
+  run:
+    working-directory: HighLevel-AI-App-Builder
+
+jobs:
+  functions:
+    name: Functions (typecheck + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: HighLevel-AI-App-Builder/functions/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Cache Firestore emulator
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: firebase-emulators-${{ runner.os }}
+      - run: npm ci
+        working-directory: HighLevel-AI-App-Builder/functions
+      - run: npm run build
+        working-directory: HighLevel-AI-App-Builder/functions
+      - name: Unit + Firestore rules tests
+        run: npx firebase-tools emulators:exec --only firestore --project demo-genesis "npm --prefix functions test"
+
+  frontend:
+    name: Frontend (typecheck + build + tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: HighLevel-AI-App-Builder/frontend/package-lock.json
+      - run: npm ci
+        working-directory: HighLevel-AI-App-Builder/frontend
+      - run: npm run test:unit
+        working-directory: HighLevel-AI-App-Builder/frontend
+      - run: npm run build
+        working-directory: HighLevel-AI-App-Builder/frontend

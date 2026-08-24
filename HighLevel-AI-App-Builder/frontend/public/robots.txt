@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /$
+Allow: /sign-in
+Allow: /sign-up
+Disallow: /projects
+Disallow: /project/

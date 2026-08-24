@@ -8,7 +8,10 @@ Describe an app in plain English → Claude generates it live, streamed token-by
 
 - **App (Firebase Hosting):** https://genesis-hl-builder-sj.web.app
 - **Cloud Functions base:** https://us-central1-genesis-hl-builder-sj.cloudfunctions.net
+- **Health probe:** [`GET healthz`](https://healthz-rttqk4rz4q-uc.a.run.app) (liveness + Firestore readiness)
 - **Loom walkthrough:** _link goes here_
+
+> The full senior-engineer checklist — reliability, scalability, security, testing, observability, performance, accessibility — with per-item evidence lives in [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md).
 
 ## What it does
 
@@ -63,7 +66,10 @@ npm --prefix frontend run dev          # → http://localhost:5173
 
 # 5. Tests
 npm --prefix functions test            # parser / allowlist / paths / Firestore rules (39 tests)
+npm --prefix frontend run test:unit    # SSE client / srcdoc assembler / stores (40 tests)
 npm --prefix frontend run build        # vue-tsc type-check + production build
+# CI runs all of the above (rules against a real Firestore emulator) on every
+# push/PR: .github/workflows/highlevel-ai-app-builder-ci.yml
 
 # 6. Headless generation harness (SSE consumer with event-sequence assertions)
 node scripts/gen-test.mjs gen "build a contact dashboard with search"

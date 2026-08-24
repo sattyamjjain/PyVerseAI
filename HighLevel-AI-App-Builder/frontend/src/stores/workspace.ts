@@ -23,6 +23,7 @@ import type {
   SnapshotDoc,
 } from '@shared/models'
 import { getOrCreateModel, setModelValue, disposeAllModels, getModel } from '@/lib/models'
+import { usePreviewStore } from '@/stores/preview'
 
 export type FileRow = FileDoc & { docId: string }
 export type MessageRow = MessageDoc & { id: string }
@@ -170,6 +171,9 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     dirtyPaths.value = new Set()
     savingPaths.value = new Set()
     disposeAllModels()
+    // The preview holds the last-built srcdoc; without this, opening another
+    // project flashes the previous project's app until its files arrive.
+    usePreviewStore().reset()
   }
 
   /** Firestore is the source of truth for non-dirty, non-streaming files. */

@@ -114,6 +114,27 @@ export const usePreviewStore = defineStore('preview', () => {
     }, 1500)
   }
 
+  /**
+   * Clear all per-project state. Without this, switching projects briefly
+   * rendered the PREVIOUS project's app: the stale srcdoc stayed mounted
+   * until the new project's Firestore files arrived and triggered a rebuild.
+   * deviceMode survives — it is a viewer preference, not project content.
+   */
+  function reset() {
+    if (overlayTimer) clearTimeout(overlayTimer)
+    srcdoc.value = ''
+    srcdocKey.value++
+    updating.value = false
+    ready.value = false
+    hasBuilt.value = false
+    warnings.value = []
+    consoleEntries.value = []
+    consoleOpen.value = false
+    runtimeError.value = null
+    errorDismissed.value = false
+    errorAnnounced = false
+  }
+
   return {
     srcdoc,
     srcdocKey,
@@ -132,6 +153,7 @@ export const usePreviewStore = defineStore('preview', () => {
     clearConsole,
     dismissError,
     markLoaded,
+    reset,
   }
 })
 

@@ -1,5 +1,5 @@
 import { db, FieldValue, Timestamp } from '../lib/db.js'
-import { HL_CLIENT_ID, HL_CLIENT_SECRET, isMockMode } from '../lib/env.js'
+import { HL_CLIENT_ID, HL_CLIENT_SECRET, HL_REDIRECT_URI, isMockMode } from '../lib/env.js'
 import { HttpError } from '../lib/http.js'
 import { log, sanitizeUpstreamError, UpstreamError } from '../lib/log.js'
 import { HL_API_BASE, hlVersionFor } from '../shared/allowlist.js'
@@ -54,7 +54,13 @@ async function tokenRequest(fields: Record<string, string>): Promise<HlTokenResp
 
 export function exchangeAuthCode(code: string): Promise<HlTokenResponse> {
   if (isMockMode()) return Promise.resolve(MOCK_TOKENS)
-  return tokenRequest({ grant_type: 'authorization_code', code, user_type: 'Location' })
+  return tokenRequest({
+    grant_type: 'authorization_code',
+    code,
+    user_type: 'Location',
+    // Must byte-match the authorize request's redirect_uri or the exchange 400s.
+    redirect_uri: HL_REDIRECT_URI.value(),
+  })
 }
 
 function refreshTokens(refreshToken: string): Promise<HlTokenResponse> {

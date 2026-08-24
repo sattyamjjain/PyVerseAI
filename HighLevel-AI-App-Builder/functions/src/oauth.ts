@@ -80,7 +80,10 @@ export const hlAuthStart = onRequest(
 /** Tiny HTML page that reports the result to the opener and closes itself. */
 function callbackPage(ok: boolean, message: string, returnOrigin: string | null): string {
   const payload = JSON.stringify({ type: 'genesis:oauth', ok })
-  const target = JSON.stringify(returnOrigin ?? '')
+  // Success posts only to the state-validated origin. Failure carries no
+  // sensitive data, so it may post to '*' — otherwise the opener's dialog
+  // would hang on "Waiting for HighLevel…" forever.
+  const target = JSON.stringify(returnOrigin ?? (ok ? '' : '*'))
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><title>Genesis — HighLevel</title>
 <style>body{font-family:system-ui,sans-serif;background:#121419;color:#e6e8ee;display:grid;place-items:center;min-height:100vh;margin:0}main{text-align:center;max-width:420px;padding:24px}h1{font-size:18px}p{color:#99a0ad;font-size:14px}</style>

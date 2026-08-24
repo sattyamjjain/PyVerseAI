@@ -20,13 +20,15 @@ const failed = ref(false)
       @load="loaded = true"
       @error="failed = true"
     />
-    <!-- Placeholder until the capture lands (or if it is missing). -->
+    <!-- Placeholder until the capture lands; keeps the alt exposed if it never does. -->
     <div
       v-if="!loaded"
       class="absolute inset-0 flex items-center justify-center"
-      aria-hidden="true"
+      :role="failed ? 'img' : undefined"
+      :aria-label="failed ? alt : undefined"
+      :aria-hidden="failed ? undefined : 'true'"
     >
-      <Sparkles class="size-8 text-border" />
+      <Sparkles class="size-8 text-border" aria-hidden="true" />
     </div>
   </div>
 </template>

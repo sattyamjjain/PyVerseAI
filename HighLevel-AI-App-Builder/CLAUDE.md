@@ -20,7 +20,7 @@ generates it (streamed via SSE) → live preview shows real HighLevel CRM data.
 - SSE streams from `generate` are consumed at the function's DIRECT URL — never through Hosting rewrites (they buffer + 60s cap).
 - HighLevel tokens live ONLY in `hl_connections/{uid}` (rules deny-all; Admin SDK only). Client-visible status is mirrored to `users/{uid}.hl` by functions.
 - HL refresh tokens ROTATE: refresh only via the lease pattern in `functions/src/hl/client.ts`.
-- Generated code runs in `sandbox="allow-scripts"` srcdoc iframes with CSP `connect-src 'none'`; ALL data flows through the postMessage parent bridge → `hlProxy` → allowlist (`functions/src/shared/allowlist.ts` is the single source of truth).
+- Generated code runs in `sandbox="allow-scripts allow-forms"` srcdoc iframes with CSP `connect-src 'none'` (allow-forms only revives form events; submission stays double-blocked by `form-action 'none'` + a capture-phase preventDefault in the bootstrap); ALL data flows through the postMessage parent bridge → `hlProxy` → allowlist (`functions/src/shared/allowlist.ts` is the single source of truth).
 - Firestore file writes happen at file_complete boundaries only, never per token.
 - The system prompt (`functions/src/genesis/prompt.ts`) is byte-frozen for Anthropic prefix caching — never interpolate volatile values into it; project state goes into `messages` sorted-by-path.
 - Claude 5 family: never send temperature/top_p/top_k or assistant prefill (400 errors).

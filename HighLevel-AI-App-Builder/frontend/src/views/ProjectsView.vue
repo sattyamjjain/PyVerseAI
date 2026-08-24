@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import {
   ArchiveRestore,
+  ChevronRight,
   FolderOpen,
   Loader2,
   MoreHorizontal,
@@ -142,11 +143,15 @@ async function restore(project: ProjectRow) {
     </header>
 
     <main id="main" class="mx-auto max-w-6xl px-4 py-8">
-      <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 tabindex="-1" class="text-xl font-semibold outline-none">Projects</h1>
-          <p class="mt-0.5 text-[13px] text-muted-foreground">
-            Each project is an app Genesis builds and refines with you.
+          <h1 tabindex="-1" class="text-2xl font-semibold tracking-tight outline-none">Projects</h1>
+          <p class="mt-1 text-[13px] text-muted-foreground">
+            {{
+              projects.active.length === 0
+                ? 'Each project is an app Genesis builds and refines with you.'
+                : `${projects.active.length} ${projects.active.length === 1 ? 'app' : 'apps'} Genesis is building with you.`
+            }}
           </p>
         </div>
         <div class="flex items-center gap-2">
@@ -201,12 +206,25 @@ async function restore(project: ProjectRow) {
       <!-- Grid -->
       <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <li v-for="project in list" :key="project.id">
-          <Card class="group relative h-36 transition-colors hover:border-primary/40">
-            <CardContent class="flex h-full flex-col p-4">
+          <Card
+            class="group relative h-36 overflow-hidden transition-[border-color,transform] duration-150 hover:-translate-y-px hover:border-primary/40"
+          >
+            <!-- Status rail -->
+            <span
+              class="absolute inset-y-3 left-0 w-[2px] rounded-r"
+              :class="{
+                'bg-success': project.status === 'ready',
+                'genesis-activity-dot bg-primary': project.status === 'generating',
+                'bg-destructive': project.status === 'error',
+                'bg-border': project.status === 'draft',
+              }"
+              aria-hidden="true"
+            />
+            <CardContent class="flex h-full flex-col p-4 pl-5">
               <div class="flex items-start justify-between gap-2">
                 <RouterLink
                   :to="{ name: 'workspace', params: { id: project.id } }"
-                  class="min-w-0 flex-1 rounded-sm text-[14px] font-medium after:absolute after:inset-0 hover:underline"
+                  class="min-w-0 flex-1 rounded-sm text-[15px] font-medium after:absolute after:inset-0 hover:underline"
                 >
                   {{ project.name }}
                 </RouterLink>
@@ -240,12 +258,18 @@ async function restore(project: ProjectRow) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <p class="mt-1 line-clamp-2 flex-1 text-[13px] text-muted-foreground">
+              <p class="mt-1 line-clamp-1 flex-1 text-[13px] text-muted-foreground">
                 {{ project.description || 'No description' }}
               </p>
-              <p class="text-[11px] text-muted-foreground">
-                Updated {{ relativeTime(project.updatedAt) }}
-              </p>
+              <div class="flex items-center justify-between">
+                <p class="text-[11px] text-muted-foreground">
+                  Updated {{ relativeTime(project.updatedAt) }}
+                </p>
+                <ChevronRight
+                  class="size-3.5 text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                  aria-hidden="true"
+                />
+              </div>
             </CardContent>
           </Card>
         </li>

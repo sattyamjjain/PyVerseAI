@@ -54,10 +54,10 @@ function confirmRestore() {
 }
 const restoring = ref(false)
 
-const kindLabel: Record<string, string> = {
-  backup: 'Backup',
-  restore: 'Restored',
-  stopped: 'Stopped early',
+const kindMeta: Record<string, { label: string; class: string }> = {
+  backup: { label: 'Backup', class: 'border-info/50 text-info' },
+  restore: { label: 'Restored', class: 'border-success/50 text-success' },
+  stopped: { label: 'Stopped early', class: 'border-warning/50 text-warning' },
 }
 
 async function restore(snapshotId: string, isUndo = false) {
@@ -107,13 +107,13 @@ defineExpose({ restoring })
         </SheetTitle>
         <SheetDescription>
           {{ workspace.snapshots.length }}
-          {{ workspace.snapshots.length === 1 ? 'version' : 'versions' }} — every generation and
+          {{ workspace.snapshots.length === 1 ? 'version' : 'versions' }}. Every generation and
           restore is saved automatically.
         </SheetDescription>
       </SheetHeader>
       <ScrollArea class="min-h-0 flex-1">
         <p v-if="workspace.snapshots.length === 0" class="px-4 py-6 text-[13px] text-muted-foreground">
-          No snapshots yet — they appear after your first generation.
+          No snapshots yet. They appear after your first generation.
         </p>
         <ul v-else class="divide-y divide-border">
           <li
@@ -136,11 +136,11 @@ defineExpose({ restoring })
                   Current
                 </Badge>
                 <Badge
-                  v-else-if="kindLabel[snapshot.kind]"
+                  v-else-if="kindMeta[snapshot.kind]"
                   variant="outline"
-                  class="text-muted-foreground"
+                  :class="kindMeta[snapshot.kind]!.class"
                 >
-                  {{ kindLabel[snapshot.kind] }}
+                  {{ kindMeta[snapshot.kind]!.label }}
                 </Badge>
               </div>
               <p v-if="snapshot.promptExcerpt" class="mt-1 line-clamp-2 text-xs text-muted-foreground">
@@ -188,8 +188,8 @@ defineExpose({ restoring })
       <AlertDialogHeader>
         <AlertDialogTitle>Restore this snapshot?</AlertDialogTitle>
         <AlertDialogDescription>
-          This will replace the current files — a backup snapshot will be created first, so nothing
-          is lost.
+          This will replace the current files. A backup snapshot is created first, so nothing is
+          lost.
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>

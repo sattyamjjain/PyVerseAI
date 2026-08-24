@@ -32,7 +32,7 @@ export function streamGeneration(body: GenerateRequest, cb: StreamCallbacks): St
     if (stallTimer) clearTimeout(stallTimer)
     stallTimer = setTimeout(() => {
       ac.abort(new DOMException('stall', 'AbortError'))
-      cb.onTransportError(new Error('Connection stalled — no data for 30 seconds.'))
+      cb.onTransportError(new Error('Connection stalled. No data for 30 seconds.'))
     }, STALL_MS)
   }
 

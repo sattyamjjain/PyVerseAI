@@ -89,7 +89,7 @@ const showSummaryFooter = computed(() =>
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-lg border border-border bg-card">
+  <div class="overflow-hidden rounded-lg border border-border/70 bg-card">
     <!-- Header -->
     <div class="flex items-center gap-2 border-b border-border px-3 py-2">
       <Loader2 v-if="working" class="size-4 animate-spin text-primary" aria-hidden="true" />
@@ -119,8 +119,8 @@ const showSummaryFooter = computed(() =>
       <li v-for="file in generation.liveFiles" :key="file.path">
         <button
           type="button"
-          class="flex h-8 w-full items-center gap-2 px-3 text-left hover:bg-accent"
-          :aria-label="`Open ${file.path} — ${file.status === 'done' ? 'completed' : 'writing'}${file.truncated ? ', truncated' : ''}`"
+          class="flex h-[30px] w-full items-center gap-2 px-3 text-left transition-colors duration-150 hover:bg-accent"
+          :aria-label="`Open ${file.path}, ${file.status === 'done' ? 'completed' : 'writing'}${file.truncated ? ', truncated' : ''}`"
           @click="workspace.openFile(file.path)"
         >
           <FilePlus2
@@ -157,7 +157,7 @@ const showSummaryFooter = computed(() =>
       <li v-for="path in persistedFiles" :key="path">
         <button
           type="button"
-          class="flex h-8 w-full items-center gap-2 px-3 text-left hover:bg-accent"
+          class="flex h-[30px] w-full items-center gap-2 px-3 text-left transition-colors duration-150 hover:bg-accent"
           :aria-label="`Open ${path}`"
           @click="workspace.openFile(path)"
         >
@@ -196,7 +196,7 @@ const showSummaryFooter = computed(() =>
     <!-- Stopped footer -->
     <div v-else-if="live && generation.phase === 'stopped'" class="border-t border-border px-3 py-2">
       <p class="text-[13px] text-muted-foreground">
-        Stopped — kept {{ generation.liveFiles.filter((f) => f.status === 'done').length }} completed
+        Stopped. Kept {{ generation.liveFiles.filter((f) => f.status === 'done').length }} completed
         {{ generation.liveFiles.filter((f) => f.status === 'done').length === 1 ? 'file' : 'files' }}.
       </p>
       <div class="mt-2 flex gap-2">

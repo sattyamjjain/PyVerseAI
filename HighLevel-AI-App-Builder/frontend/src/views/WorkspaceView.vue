@@ -48,7 +48,7 @@ onBeforeUnmount(() => workspace.close())
 watch(
   () => workspace.project?.name,
   (name) => {
-    if (name) document.title = `${name} — Genesis`
+    if (name) document.title = `${name} - Genesis`
   },
 )
 

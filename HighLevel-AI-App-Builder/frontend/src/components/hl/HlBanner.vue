@@ -19,19 +19,24 @@ function dismiss() {
 <template>
   <div
     v-if="!auth.hlConnected && !dismissed"
-    class="flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/10 px-4 py-3"
+    class="flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/5 px-4 py-3"
   >
-    <Zap class="size-4 shrink-0 text-primary" aria-hidden="true" />
-    <p class="min-w-0 flex-1 text-[13px]">
-      <span class="font-medium">Connect your HighLevel account</span>
+    <div
+      class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-warning/10"
+      aria-hidden="true"
+    >
+      <Zap class="size-4 text-warning" />
+    </div>
+    <p class="min-w-0 flex-1 text-[13px] leading-snug">
+      <span class="font-medium">Connect your HighLevel account.</span>
       <span class="text-muted-foreground">
-        — Genesis needs a HighLevel location to generate working CRM apps.</span
+        Genesis needs a HighLevel location to generate working CRM apps.</span
       >
     </p>
     <Button size="sm" @click="ui.hlDialogOpen = true">Connect HighLevel</Button>
     <button
       type="button"
-      class="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+      class="flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
       aria-label="Dismiss for this session"
       @click="dismiss"
     >

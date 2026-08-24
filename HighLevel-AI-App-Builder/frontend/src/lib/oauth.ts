@@ -16,7 +16,7 @@ export async function connectHighLevel(): Promise<{ ok: boolean; reason?: string
     'genesis-hl-oauth',
     `width=${w},height=${h},left=${left},top=${top},noopener=no`,
   )
-  if (!popup) return { ok: false, reason: 'Popup was blocked — allow popups and try again.' }
+  if (!popup) return { ok: false, reason: 'Popup was blocked. Allow popups and try again.' }
 
   return new Promise((resolve) => {
     let settled = false

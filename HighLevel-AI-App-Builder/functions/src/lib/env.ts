@@ -13,7 +13,10 @@ export const APP_ORIGINS = defineString('APP_ORIGINS', {
 })
 export const HL_MOCK_MODE = defineString('HL_MOCK_MODE', { default: 'false' })
 // HighLevel webhook public keys (PEM, base64-encoded to survive env formats).
+// Ed25519 verifies the current x-ghl-signature; RSA verifies the legacy
+// x-wh-signature (HighLevel sends both until the legacy header retires).
 export const HL_WEBHOOK_PUBKEY_B64 = defineString('HL_WEBHOOK_PUBKEY_B64', { default: '' })
+export const HL_WEBHOOK_RSA_PUBKEY_B64 = defineString('HL_WEBHOOK_RSA_PUBKEY_B64', { default: '' })
 
 export function allowedOrigins(): string[] {
   return APP_ORIGINS.value()

@@ -47,7 +47,7 @@ watch(
   (len) => {
     const next = len > MAX_CHARS ? 'over' : len >= WARN_AT ? 'warn' : 'ok'
     if (next === limitState) return
-    if (next === 'over') announce('Character limit reached — shorten your prompt to send')
+    if (next === 'over') announce('Character limit reached. Shorten your prompt to send.')
     else if (next === 'warn' && limitState === 'ok')
       announce(`Approaching the character limit: ${len} of ${MAX_CHARS}`)
     limitState = next
@@ -117,14 +117,14 @@ defineExpose({
     >
       <TriangleAlert class="size-4 shrink-0 text-warning" aria-hidden="true" />
       <p class="min-w-0 flex-1 text-[13px]">
-        Connect HighLevel to generate — generated apps call the HighLevel API through your
+        Connect HighLevel to generate. Generated apps call the HighLevel API through your
         connection.
       </p>
       <Button size="sm" variant="secondary" @click="ui.hlDialogOpen = true">Connect</Button>
     </div>
 
     <div
-      class="rounded-lg border border-border bg-card transition-colors focus-within:border-primary/60"
+      class="rounded-lg border border-border/70 bg-card transition-colors duration-150 focus-within:border-primary/60"
     >
       <!-- readonly (not disabled) while streaming: stays focusable/readable
            and the draft is preserved. -->
@@ -158,8 +158,8 @@ defineExpose({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="fast">Fast — Sonnet</SelectItem>
-              <SelectItem value="best">Best — Opus</SelectItem>
+              <SelectItem value="fast">Fast (Sonnet)</SelectItem>
+              <SelectItem value="best">Best (Opus)</SelectItem>
             </SelectContent>
           </Select>
           <span

@@ -92,7 +92,7 @@ function syncModel() {
   const model = getOrCreateModel(path, row?.content ?? '')
   if (editor.getModel() !== model) {
     editor.setModel(model)
-    editor.updateOptions({ ariaLabel: `${path} — code editor` })
+    editor.updateOptions({ ariaLabel: `${path}, code editor` })
   }
 }
 

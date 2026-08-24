@@ -1,7 +1,7 @@
 import { onRequest } from 'firebase-functions/https'
-import { createPublicKey, verify as cryptoVerify } from 'node:crypto'
+import { createPublicKey, createVerify, verify as cryptoVerify } from 'node:crypto'
 import { db, FieldValue, Timestamp } from './lib/db.js'
-import { HL_WEBHOOK_PUBKEY_B64, REGION } from './lib/env.js'
+import { HL_WEBHOOK_PUBKEY_B64, HL_WEBHOOK_RSA_PUBKEY_B64, REGION } from './lib/env.js'
 import { log, truncate } from './lib/log.js'
 
 /** Webhook events we surface to the workspace + preview SDK. */
@@ -41,13 +41,25 @@ function title(p: Record<string, unknown>): unknown {
   return appt?.title ?? p.title ?? 'appointment'
 }
 
-function verifySignature(rawBody: Buffer, signatureB64: string): boolean {
+function verifyEd25519(rawBody: Buffer, signatureB64: string): boolean {
   const pem = Buffer.from(HL_WEBHOOK_PUBKEY_B64.value(), 'base64').toString('utf8')
   if (!pem.includes('BEGIN PUBLIC KEY')) return false
   try {
     const key = createPublicKey(pem)
-    // Current HighLevel webhooks sign with Ed25519 (x-ghl-signature).
     return cryptoVerify(null, rawBody, key, Buffer.from(signatureB64, 'base64'))
+  } catch {
+    return false
+  }
+}
+
+function verifyRsa(rawBody: Buffer, signatureB64: string): boolean {
+  const pem = Buffer.from(HL_WEBHOOK_RSA_PUBKEY_B64.value(), 'base64').toString('utf8')
+  if (!pem.includes('BEGIN PUBLIC KEY')) return false
+  try {
+    const verifier = createVerify('SHA256')
+    verifier.update(rawBody)
+    verifier.end()
+    return verifier.verify(pem, Buffer.from(signatureB64, 'base64'))
   } catch {
     return false
   }
@@ -67,16 +79,26 @@ export const hlWebhook = onRequest(
         res.status(405).send('method not allowed')
         return
       }
-      const signature = req.headers['x-ghl-signature']
-      const keyConfigured = HL_WEBHOOK_PUBKEY_B64.value().length > 0
-      if (keyConfigured) {
-        if (typeof signature !== 'string' || !verifySignature(req.rawBody, signature)) {
-          log.warn('webhook signature rejected')
+      // Prefer the current Ed25519 header; fall back to the legacy RSA one
+      // (HighLevel sends both during the transition period).
+      const ghlSig = req.headers['x-ghl-signature']
+      const whSig = req.headers['x-wh-signature']
+      const edConfigured = HL_WEBHOOK_PUBKEY_B64.value().length > 0
+      const rsaConfigured = HL_WEBHOOK_RSA_PUBKEY_B64.value().length > 0
+      if (edConfigured || rsaConfigured) {
+        const ok =
+          (edConfigured && typeof ghlSig === 'string' && verifyEd25519(req.rawBody, ghlSig)) ||
+          (rsaConfigured && typeof whSig === 'string' && verifyRsa(req.rawBody, whSig))
+        if (!ok) {
+          log.warn('webhook signature rejected', {
+            hasGhl: typeof ghlSig === 'string',
+            hasWh: typeof whSig === 'string',
+          })
           res.status(401).send('bad signature')
           return
         }
       } else {
-        log.warn('webhook accepted WITHOUT signature verification (HL_WEBHOOK_PUBKEY_B64 unset)')
+        log.warn('webhook accepted WITHOUT signature verification (no public keys configured)')
       }
 
       const payload = (req.body ?? {}) as Record<string, unknown>

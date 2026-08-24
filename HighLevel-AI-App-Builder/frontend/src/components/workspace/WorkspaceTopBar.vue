@@ -20,7 +20,7 @@ const { isOnline } = useNetwork()
 // Offline is announced, not just shown (WCAG 4.1.3).
 watch(isOnline, (online) => {
   if (online) announce('Back online')
-  else announceAlert('Connection lost — working offline')
+  else announceAlert('Connection lost. Working offline.')
 })
 
 const renaming = ref(false)
@@ -107,7 +107,7 @@ async function commitRename() {
         variant="outline"
         class="gap-1.5 border-warning/50 text-warning"
       >
-        <WifiOff class="size-3" aria-hidden="true" /> Offline — reconnecting…
+        <WifiOff class="size-3" aria-hidden="true" /> Offline, reconnecting…
       </Badge>
       <GenerationStatusPill v-else />
     </div>

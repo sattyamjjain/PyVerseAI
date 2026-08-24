@@ -115,7 +115,7 @@ async function seed() {
                 connected
                   ? `Location ${auth.hl?.locationId}`
                   : auth.hl?.status === 'needs_reconnect'
-                    ? 'Your connection expired — reconnect to continue.'
+                    ? 'Your connection expired. Reconnect to continue.'
                     : 'Connect a sandbox location to start generating.'
               }}
             </p>

@@ -38,8 +38,8 @@ Describe an app in plain English → Claude generates it live, streamed token-by
    `contacts.readonly contacts.write conversations.readonly conversations/message.readonly conversations/message.write calendars.readonly calendars/events.readonly calendars/events.write locations.readonly users.readonly`
 5. **Redirect URL** — add the deployed callback verbatim:
    `https://us-central1-<project-id>.cloudfunctions.net/hlAuthCallback`
-6. **Webhooks (optional bonus)** — set the webhook URL to
-   `https://us-central1-<project-id>.cloudfunctions.net/hlWebhook` and toggle on: ContactCreate, ContactUpdate, ContactDelete, InboundMessage, AppointmentCreate, AppointmentUpdate. Put HighLevel's Ed25519 public key (base64-encoded PEM) in `functions/.env` → `HL_WEBHOOK_PUBKEY_B64`.
+6. **Webhooks (optional bonus)** — in the app's Advanced Settings → Webhooks, set the webhook URL to
+   `https://us-central1-<project-id>.cloudfunctions.net/hlWebhook` and toggle on: ContactCreate, ContactUpdate, ContactDelete, InboundMessage, AppointmentCreate, AppointmentUpdate. Signature verification (current Ed25519 `x-ghl-signature` + legacy RSA `x-wh-signature`) ships enabled — both HighLevel public keys are baked into the per-project env file.
 7. **Sandbox** — developer portal → **Testing → Create App Test Account** (free, no trial needed). Create **one calendar** in it (Settings → Calendars) so appointment features have somewhere to book. In-app: **Connect HighLevel → Seed demo data** fills the sandbox with contacts, inbound SMS threads, and appointments.
 
 ## Local setup (Firebase emulators)

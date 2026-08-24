@@ -28,7 +28,7 @@ export async function callFn<T>(name: string, body: unknown, signal?: AbortSigna
     })
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') throw err
-    throw new ApiError(0, 'network', 'Network error — check your connection.')
+    throw new ApiError(0, 'network', 'Network error. Check your connection.')
   }
   let data: Record<string, unknown> = {}
   const text = await res.text()
@@ -57,16 +57,16 @@ function friendlyApiMessage(status: number, code: string): string {
     case 'hl_not_connected':
       return 'HighLevel is not connected.'
     case 'rate_limited':
-      return 'Rate limit reached — wait a moment and try again.'
+      return 'Rate limit reached. Wait a moment and try again.'
     case 'user_denied':
       return 'Request was denied.'
     case 'upstream_error':
       return 'HighLevel returned an error.'
     case 'network':
-      return 'Network error — check your connection.'
+      return 'Network error. Check your connection.'
   }
-  if (status === 401) return 'Your session expired — sign in again.'
+  if (status === 401) return 'Your session expired. Sign in again.'
   if (status === 403) return 'You don’t have access to that.'
-  if (status === 429) return 'Rate limit reached — wait a moment and try again.'
+  if (status === 429) return 'Rate limit reached. Wait a moment and try again.'
   return 'Something went wrong. Please try again.'
 }

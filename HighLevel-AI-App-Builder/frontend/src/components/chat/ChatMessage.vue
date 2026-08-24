@@ -68,6 +68,6 @@ async function copyContent() {
         {{ message.meta.error }}
       </p>
     </div>
-    <div v-else class="rounded-lg bg-secondary px-3 py-2 text-[14px] leading-[1.65] whitespace-pre-wrap">{{ message.content }}</div>
+    <div v-else class="rounded-lg bg-secondary/70 px-3 py-2 text-[14px] leading-[1.65] whitespace-pre-wrap">{{ message.content }}</div>
   </article>
 </template>

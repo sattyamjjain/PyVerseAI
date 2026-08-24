@@ -100,7 +100,7 @@ watch(
 
 function continueGeneration() {
   generation.reset()
-  void generation.send('Continue where you left off — finish the remaining files.')
+  void generation.send('Continue where you left off and finish the remaining files.')
 }
 
 defineExpose({
@@ -135,7 +135,7 @@ defineExpose({
         <SuggestionChips />
       </div>
 
-      <div v-else class="space-y-5">
+      <div v-else class="space-y-6">
         <!-- Interrupted-generation notice -->
         <div
           v-if="interruptedGeneration"
@@ -144,7 +144,7 @@ defineExpose({
           <Info class="mt-0.5 size-4 shrink-0 text-info" aria-hidden="true" />
           <div class="min-w-0 flex-1">
             <p class="text-[13px]">
-              A generation was interrupted —
+              A generation was interrupted.
               {{ interruptedGeneration.filesWritten.length }}
               {{ interruptedGeneration.filesWritten.length === 1 ? 'file' : 'files' }} landed safely.
             </p>

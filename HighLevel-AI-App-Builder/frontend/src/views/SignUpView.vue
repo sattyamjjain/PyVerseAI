@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { Eye, EyeOff, Loader2, Sparkles } from 'lucide-vue-next'
+import { Eye, EyeOff, Loader2 } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import AuthShell from '@/components/auth/AuthShell.vue'
 import { useAuthStore } from '@/stores/auth'
 import { authErrorMessage } from '@/lib/authErrors'
 
@@ -45,94 +45,90 @@ async function onSubmit() {
 </script>
 
 <template>
-  <main id="main" class="flex min-h-screen items-center justify-center bg-background p-4">
-    <Card class="w-full max-w-sm">
-      <CardHeader class="space-y-2 text-center">
-        <div
-          class="mx-auto flex size-12 items-center justify-center rounded-xl bg-secondary"
-          aria-hidden="true"
-        >
-          <Sparkles class="size-6 text-primary" />
-        </div>
-        <CardTitle>
-          <h1 tabindex="-1" class="text-2xl font-semibold outline-none">Create your account</h1>
-        </CardTitle>
-        <CardDescription>Genesis builds HighLevel apps from plain English.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form novalidate class="space-y-4" @submit.prevent="onSubmit">
-          <div
-            v-if="formError"
-            id="signup-error"
-            class="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-[13px] text-destructive-soft"
+  <AuthShell>
+    <h1 tabindex="-1" class="text-2xl font-semibold tracking-tight outline-none">
+      Create your account
+    </h1>
+    <p class="mt-1.5 text-[13px] text-muted-foreground">
+      Genesis builds HighLevel apps from plain English.
+    </p>
+
+    <form novalidate class="mt-8 space-y-4" @submit.prevent="onSubmit">
+      <div
+        v-if="formError"
+        id="signup-error"
+        class="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-[13px] text-destructive-soft"
+      >
+        {{ formError }}
+      </div>
+      <div class="space-y-1.5">
+        <Label for="signup-name">Name</Label>
+        <Input
+          id="signup-name"
+          v-model="displayName"
+          type="text"
+          autocomplete="name"
+          required
+          class="h-10"
+          :aria-invalid="!!formError || undefined"
+          :aria-describedby="formError ? 'signup-error' : undefined"
+        />
+      </div>
+      <div class="space-y-1.5">
+        <Label for="signup-email">Email</Label>
+        <Input
+          id="signup-email"
+          v-model="email"
+          type="email"
+          autocomplete="email"
+          required
+          class="h-10"
+          :aria-invalid="!!formError || undefined"
+          :aria-describedby="formError ? 'signup-error' : undefined"
+        />
+      </div>
+      <div class="space-y-1.5">
+        <Label for="signup-password">Password</Label>
+        <div class="relative">
+          <Input
+            id="signup-password"
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            autocomplete="new-password"
+            required
+            minlength="6"
+            class="h-10 pr-10"
+            aria-describedby="signup-password-hint"
+            :aria-invalid="!!formError || undefined"
+          />
+          <button
+            type="button"
+            class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground transition-colors duration-150 hover:text-foreground"
+            :aria-pressed="showPassword"
+            aria-label="Show password"
+            @click="showPassword = !showPassword"
           >
-            {{ formError }}
-          </div>
-          <div class="space-y-1.5">
-            <Label for="signup-name">Name</Label>
-            <Input
-              id="signup-name"
-              v-model="displayName"
-              type="text"
-              autocomplete="name"
-              required
-              :aria-invalid="!!formError || undefined"
-              :aria-describedby="formError ? 'signup-error' : undefined"
-            />
-          </div>
-          <div class="space-y-1.5">
-            <Label for="signup-email">Email</Label>
-            <Input
-              id="signup-email"
-              v-model="email"
-              type="email"
-              autocomplete="email"
-              required
-              :aria-invalid="!!formError || undefined"
-              :aria-describedby="formError ? 'signup-error' : undefined"
-            />
-          </div>
-          <div class="space-y-1.5">
-            <Label for="signup-password">Password</Label>
-            <div class="relative">
-              <Input
-                id="signup-password"
-                v-model="password"
-                :type="showPassword ? 'text' : 'password'"
-                autocomplete="new-password"
-                required
-                minlength="6"
-                class="pr-10"
-                aria-describedby="signup-password-hint"
-                :aria-invalid="!!formError || undefined"
-              />
-              <button
-                type="button"
-                class="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground hover:text-foreground"
-                :aria-pressed="showPassword"
-                aria-label="Show password"
-                @click="showPassword = !showPassword"
-              >
-                <EyeOff v-if="showPassword" class="size-4" aria-hidden="true" />
-                <Eye v-else class="size-4" aria-hidden="true" />
-              </button>
-            </div>
-            <p id="signup-password-hint" class="text-xs text-muted-foreground">
-              At least 6 characters.
-            </p>
-          </div>
-          <Button type="submit" class="w-full" :disabled="submitting">
-            <Loader2 v-if="submitting" class="size-4 animate-spin" aria-hidden="true" />
-            {{ submitting ? 'Creating account…' : 'Create account' }}
-          </Button>
-        </form>
-        <p class="mt-4 text-center text-[13px] text-muted-foreground">
-          Already have an account?
-          <RouterLink to="/sign-in" class="font-medium text-foreground underline-offset-4 hover:underline">
-            Sign in
-          </RouterLink>
+            <EyeOff v-if="showPassword" class="size-4" aria-hidden="true" />
+            <Eye v-else class="size-4" aria-hidden="true" />
+          </button>
+        </div>
+        <p id="signup-password-hint" class="text-xs text-muted-foreground">
+          At least 6 characters.
         </p>
-      </CardContent>
-    </Card>
-  </main>
+      </div>
+      <Button type="submit" class="h-10 w-full" :disabled="submitting">
+        <Loader2 v-if="submitting" class="size-4 animate-spin" aria-hidden="true" />
+        {{ submitting ? 'Creating account…' : 'Create account' }}
+      </Button>
+    </form>
+    <p class="mt-6 text-[13px] text-muted-foreground">
+      Already have an account?
+      <RouterLink
+        to="/sign-in"
+        class="font-medium text-foreground underline-offset-4 hover:underline"
+      >
+        Sign in
+      </RouterLink>
+    </p>
+  </AuthShell>
 </template>

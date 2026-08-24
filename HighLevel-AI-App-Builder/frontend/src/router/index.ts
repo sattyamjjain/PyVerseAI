@@ -4,36 +4,41 @@ import { auth } from '@/lib/firebase'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: { name: 'projects' } },
+    {
+      path: '/',
+      name: 'landing',
+      component: () => import('@/views/LandingView.vue'),
+      meta: { title: 'Genesis', guestOnly: true },
+    },
     {
       path: '/sign-in',
       name: 'sign-in',
       component: () => import('@/views/SignInView.vue'),
-      meta: { title: 'Sign in — Genesis', guestOnly: true },
+      meta: { title: 'Sign in - Genesis', guestOnly: true },
     },
     {
       path: '/sign-up',
       name: 'sign-up',
       component: () => import('@/views/SignUpView.vue'),
-      meta: { title: 'Create account — Genesis', guestOnly: true },
+      meta: { title: 'Create account - Genesis', guestOnly: true },
     },
     {
       path: '/projects',
       name: 'projects',
       component: () => import('@/views/ProjectsView.vue'),
-      meta: { title: 'Projects — Genesis', requiresAuth: true },
+      meta: { title: 'Projects - Genesis', requiresAuth: true },
     },
     {
       path: '/project/:id',
       name: 'workspace',
       component: () => import('@/views/WorkspaceView.vue'),
-      meta: { title: 'Workspace — Genesis', requiresAuth: true },
+      meta: { title: 'Workspace - Genesis', requiresAuth: true },
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue'),
-      meta: { title: 'Not found — Genesis' },
+      meta: { title: 'Not found - Genesis' },
     },
   ],
 })

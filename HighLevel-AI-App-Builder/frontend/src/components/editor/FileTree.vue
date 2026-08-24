@@ -134,12 +134,12 @@ function onSelect(node: TreeNode) {
         />
         <span class="min-w-0 flex-1 truncate">{{ item.value.name }}</span>
         <!-- Streaming state is part of the item's accessible name, not icon-only. -->
-        <span v-if="fileState.get(item.value.path) === 'writing'" class="sr-only">— writing</span>
-        <span v-else-if="fileState.get(item.value.path) === 'new'" class="sr-only">— new file</span>
+        <span v-if="fileState.get(item.value.path) === 'writing'" class="sr-only">, writing</span>
+        <span v-else-if="fileState.get(item.value.path) === 'new'" class="sr-only">, new file</span>
         <span
           v-else-if="fileState.get(item.value.path) === 'done' && generation.isActive"
           class="sr-only"
-          >— completed</span
+          >, completed</span
         >
         <span
           v-if="fileState.get(item.value.path) === 'writing'"

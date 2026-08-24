@@ -134,7 +134,7 @@ export const useGenerationStore = defineStore('generation', () => {
             case 'generation_start':
               activeGenerationId.value = event.generationId
               phase.value = 'planning'
-              announce('Generating — planning')
+              announce('Generating: planning')
               break
             case 'narration_delta':
               narration.value += event.text
@@ -213,7 +213,7 @@ export const useGenerationStore = defineStore('generation', () => {
           revertPartialFile()
           error.value = {
             code: 'network',
-            message: err.message || 'Connection lost — the generation may still be running.',
+            message: err.message || 'Connection lost. The generation may still be running.',
             recoverable: true,
           }
           phase.value = 'failed'

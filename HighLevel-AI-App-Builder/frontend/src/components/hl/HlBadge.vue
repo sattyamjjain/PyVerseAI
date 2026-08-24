@@ -28,7 +28,7 @@ const label = computed(() => {
     <TooltipTrigger as-child>
       <button
         type="button"
-        class="flex h-7 min-w-0 items-center gap-2 rounded-full border border-border bg-card px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent"
+        class="flex h-7 min-w-0 items-center gap-2 rounded-full border border-border bg-secondary/70 px-3 text-xs font-medium text-foreground transition-colors duration-150 hover:bg-accent"
         :aria-label="`HighLevel connection: ${label}`"
         @click="ui.hlDialogOpen = true"
       >

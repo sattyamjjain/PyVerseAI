@@ -23,7 +23,7 @@ function reportUnexpected(err: unknown, source: string) {
   const now = Date.now()
   if (now - lastErrorToastAt < 5000) return
   lastErrorToastAt = now
-  toast.error('Something went wrong. Your work is saved; try the action again.')
+  toast.error('Something went wrong. Completed work is saved; try the action again.')
 }
 
 app.config.errorHandler = (err) => reportUnexpected(err, 'vue')

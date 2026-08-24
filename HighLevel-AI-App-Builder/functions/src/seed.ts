@@ -113,13 +113,27 @@ export const seedSandbox = onRequest(
         notes.push('Could not inject inbound messages — check conversations/message.write scope.')
       }
 
-      // Appointments need an existing calendar (create one in the HL UI once).
+      // Appointments need an existing calendar (create one in the HL UI once)
+      // AND an assigned team member — HighLevel 422s without assignedUserId.
       let appointmentsCreated = 0
       const calendars = await hlFetch(uid, 'GET', url(`/calendars/?locationId=${conn.locationId}`))
       const calendarList = (calendars.data as { calendars?: Array<{ id: string; isActive?: boolean }> }).calendars ?? []
       const calendar = calendarList.find((c) => c.isActive !== false) ?? calendarList[0]
+
+      let assignedUserId: string | undefined
+      try {
+        const users = await hlFetch(uid, 'GET', url(`/users/?locationId=${conn.locationId}`))
+        assignedUserId = ((users.data as { users?: Array<{ id?: string }> }).users ?? []).find(
+          (u) => u.id,
+        )?.id
+      } catch (err) {
+        log.warn('seed users lookup failed', sanitizeUpstreamError(err, '/users/'))
+      }
+
       if (!calendar) {
         notes.push('No calendar found — create one calendar in HighLevel (Settings → Calendars), then seed again for appointments.')
+      } else if (!assignedUserId) {
+        notes.push('No team member found on the location — appointments need an assigned user; check the users.readonly scope.')
       } else {
         for (let i = 0; i < Math.min(4, contactIds.length); i++) {
           try {
@@ -129,6 +143,7 @@ export const seedSandbox = onRequest(
               calendarId: calendar.id,
               locationId: conn.locationId,
               contactId: contactIds[i],
+              assignedUserId,
               startTime: start.toISOString(),
               title: ['Discovery call', 'Onboarding session', 'Proposal review', 'Strategy check-in'][i],
               appointmentStatus: 'confirmed',

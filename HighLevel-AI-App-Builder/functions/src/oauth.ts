@@ -77,6 +77,14 @@ export const hlAuthStart = onRequest(
   },
 )
 
+function escapeHtml(s: string): string {
+  return s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+}
+
 /** Tiny HTML page that reports the result to the opener and closes itself. */
 function callbackPage(ok: boolean, message: string, returnOrigin: string | null): string {
   const payload = JSON.stringify({ type: 'genesis:oauth', ok })
@@ -84,12 +92,15 @@ function callbackPage(ok: boolean, message: string, returnOrigin: string | null)
   // sensitive data, so it may post to '*' — otherwise the opener's dialog
   // would hang on "Waiting for HighLevel…" forever.
   const target = JSON.stringify(returnOrigin ?? (ok ? '' : '*'))
+  // Auto-close only on success (WCAG 2.2.1): the failure text is the user's
+  // only instruction for fixing the problem and must not vanish on a timer.
+  const close = ok ? 'setTimeout(function () { window.close(); }, 800);' : ''
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><title>Genesis — HighLevel</title>
 <style>body{font-family:system-ui,sans-serif;background:#121419;color:#e6e8ee;display:grid;place-items:center;min-height:100vh;margin:0}main{text-align:center;max-width:420px;padding:24px}h1{font-size:18px}p{color:#99a0ad;font-size:14px}</style>
 </head><body><main>
 <h1>${ok ? 'HighLevel connected' : 'Connection failed'}</h1>
-<p>${message}</p>
+<p>${escapeHtml(message)}</p>
 <p>You can close this window.</p>
 <script>
   (function () {
@@ -97,7 +108,7 @@ function callbackPage(ok: boolean, message: string, returnOrigin: string | null)
     if (window.opener && target) {
       try { window.opener.postMessage(${payload}, target); } catch (e) {}
     }
-    setTimeout(function () { window.close(); }, ${ok ? 800 : 4000});
+    ${close}
   })();
 </script>
 </main></body></html>`

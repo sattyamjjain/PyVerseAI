@@ -62,18 +62,17 @@ export const seedSandbox = onRequest(
       const notes: string[] = []
       const url = (path: string) => new URL(path, HL_API_BASE)
 
-      // Skip contact creation when the location already has data.
-      const existing = await hlFetch(uid, 'GET', url(`/contacts/?locationId=${conn.locationId}&limit=1`))
-      const existingCount = (existing.data as { count?: number }).count ?? 0
+      // Skip contact creation when the location already has data. One page
+      // answers both questions (exists? which ids?) — do NOT trust a top-level
+      // `count` field: HL's list response doesn't reliably carry one, and the
+      // old count-based check made re-seeds attempt duplicate creates.
+      const page = await hlFetch(uid, 'GET', url(`/contacts/?locationId=${conn.locationId}&limit=10`))
+      const existingContacts = (page.data as { contacts?: Array<{ id: string }> }).contacts ?? []
 
-      const contactIds: string[] = []
+      const contactIds: string[] = existingContacts.map((c) => c.id)
       let contactsCreated = 0
-      if (existingCount >= 10) {
-        notes.push(`Location already has ${existingCount} contacts — skipped contact creation.`)
-        const page = await hlFetch(uid, 'GET', url(`/contacts/?locationId=${conn.locationId}&limit=10`))
-        for (const c of (page.data as { contacts?: Array<{ id: string }> }).contacts ?? []) {
-          contactIds.push(c.id)
-        }
+      if (contactIds.length > 0) {
+        notes.push(`Location already has ${contactIds.length}+ contacts — skipped contact creation.`)
       } else {
         for (const seed of SEED_CONTACTS) {
           try {

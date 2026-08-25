@@ -13,7 +13,7 @@ Describe an app in plain English → Claude generates it live, streamed token-by
 - **App (Firebase Hosting):** https://genesis-hl-builder-sj.web.app
 - **Cloud Functions base:** https://us-central1-genesis-hl-builder-sj.cloudfunctions.net
 - **Health probe:** [`GET healthz`](https://healthz-rttqk4rz4q-uc.a.run.app) (liveness + Firestore readiness)
-- **Loom walkthrough:** _link goes here_
+- **Loom walkthrough:** https://www.loom.com/share/00aeb314f20b4721849600a50451a47b
 
 > The full senior-engineer checklist — reliability, scalability, security, testing, observability, performance, accessibility — with per-item evidence lives in [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md). The threat model lives in [SECURITY.md](./SECURITY.md).
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArchiveRestore, FileQuestion, Loader2, Trash2 } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
@@ -62,7 +62,8 @@ const state = computed<'loading' | 'missing' | 'trashed' | 'ready'>(() => {
 // ── keyboard ────────────────────────────────────────────────────────────────
 function cyclePanels(dir: 1 | -1) {
   const targets = [...document.querySelectorAll<HTMLElement>('[data-panel-cycle]')].filter(
-    (el) => el.offsetParent !== null,
+    // offsetWidth check: a collapsed splitter panel keeps an offsetParent.
+    (el) => el.offsetParent !== null && el.offsetWidth > 0,
   )
   if (targets.length === 0) return
   const current = targets.findIndex((el) => el.contains(document.activeElement))
@@ -104,6 +105,26 @@ useShortcuts([
 ])
 
 const mobileDot = computed(() => generation.isActive)
+
+/**
+ * Panels collapse via the splitter's own API instead of v-if: the three
+ * panels stay mounted (Monaco and the preview iframe survive toggling) and
+ * sizes always sum to 100, which kills the "Invalid layout total size"
+ * console warning the unmount approach produced.
+ */
+const chatPanelRef = ref<{ collapse?: () => void; expand?: () => void } | null>(null)
+const previewPanelRef = ref<{ collapse?: () => void; expand?: () => void } | null>(null)
+
+function syncPanel(panel: typeof chatPanelRef, collapsed: boolean) {
+  if (collapsed) panel.value?.collapse?.()
+  else panel.value?.expand?.()
+}
+watch(() => ui.chatCollapsed, (c) => syncPanel(chatPanelRef, c))
+watch(() => ui.previewCollapsed, (c) => syncPanel(previewPanelRef, c))
+onMounted(() => {
+  syncPanel(chatPanelRef, ui.chatCollapsed)
+  syncPanel(previewPanelRef, ui.previewCollapsed)
+})
 </script>
 
 <template>
@@ -209,24 +230,30 @@ const mobileDot = computed(() => generation.isActive)
         <div class="hidden h-full lg:block">
           <ResizablePanelGroup direction="horizontal" auto-save-id="genesis-workspace">
             <ResizablePanel
-              v-if="!ui.chatCollapsed"
+              id="chat"
+              ref="chatPanelRef"
+              collapsible
+              :collapsed-size="0"
               :default-size="30"
               :min-size="20"
               :max-size="45"
               :order="1"
+              @collapse="ui.chatCollapsed = true"
+              @expand="ui.chatCollapsed = false"
             >
               <div
                 data-panel-cycle="chat"
                 role="region"
                 tabindex="-1"
-                class="h-full outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                :inert="ui.chatCollapsed"
+                class="h-full overflow-hidden outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                 aria-label="Chat panel"
               >
                 <ChatPanel ref="chatRef" />
               </div>
             </ResizablePanel>
-            <ResizableHandle v-if="!ui.chatCollapsed" with-handle aria-label="Resize chat panel" />
-            <ResizablePanel :default-size="40" :min-size="30" :order="2">
+            <ResizableHandle with-handle aria-label="Resize chat panel" />
+            <ResizablePanel id="editor" :default-size="40" :min-size="30" :order="2">
               <div
                 data-panel-cycle="editor"
                 role="region"
@@ -237,19 +264,25 @@ const mobileDot = computed(() => generation.isActive)
                 <EditorPanel @cycle="cyclePanels" />
               </div>
             </ResizablePanel>
-            <ResizableHandle v-if="!ui.previewCollapsed" with-handle aria-label="Resize preview panel" />
+            <ResizableHandle with-handle aria-label="Resize preview panel" />
             <ResizablePanel
-              v-if="!ui.previewCollapsed"
+              id="preview"
+              ref="previewPanelRef"
+              collapsible
+              :collapsed-size="0"
               :default-size="30"
               :min-size="20"
               :max-size="50"
               :order="3"
+              @collapse="ui.previewCollapsed = true"
+              @expand="ui.previewCollapsed = false"
             >
               <div
                 data-panel-cycle="preview"
                 role="region"
                 tabindex="-1"
-                class="h-full outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                :inert="ui.previewCollapsed"
+                class="h-full overflow-hidden outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                 aria-label="Preview panel"
               >
                 <PreviewPanel @focus-chat="chatRef?.focusInput()" />

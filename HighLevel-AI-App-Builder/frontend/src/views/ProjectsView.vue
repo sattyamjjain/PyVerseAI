@@ -64,6 +64,14 @@ const nameInput = ref<InstanceType<typeof Input> | null>(null)
 const renameTarget = ref<ProjectRow | null>(null)
 const renameDraft = ref('')
 const trashTarget = ref<ProjectRow | null>(null)
+/** Captured at menu-select: reka closes the AlertDialog (nulling trashTarget)
+ *  BEFORE the confirm button's @click runs, so the ref alone loses the target. */
+let pendingTrash: ProjectRow | null = null
+
+function queueTrash(project: ProjectRow) {
+  trashTarget.value = project
+  pendingTrash = project
+}
 const newProjectBtn = ref<InstanceType<typeof Button> | null>(null)
 
 const list = computed(() => (tab.value === 'all' ? projects.active : projects.trashed))
@@ -109,7 +117,8 @@ async function commitRename() {
 }
 
 async function moveToTrash() {
-  const target = trashTarget.value
+  const target = pendingTrash ?? trashTarget.value
+  pendingTrash = null
   trashTarget.value = null
   if (!target) return
   await projects.setTrashed(target.id, true)
@@ -129,8 +138,8 @@ async function restore(project: ProjectRow) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background">
-    <header class="border-b border-border" role="banner">
+  <div class="relative min-h-screen bg-background">
+    <header class="relative z-10 border-b border-border" role="banner">
       <div class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
         <div class="flex items-center gap-2">
           <div class="flex size-7 items-center justify-center rounded-lg bg-secondary" aria-hidden="true">
@@ -142,7 +151,13 @@ async function restore(project: ProjectRow) {
       </div>
     </header>
 
-    <main id="main" class="mx-auto max-w-6xl px-4 py-8">
+    <!-- Faint depth wash under the header so the page doesn't read as a flat void. -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-14 h-56 bg-gradient-to-b from-secondary/25 to-transparent"
+      aria-hidden="true"
+    />
+
+    <main id="main" class="relative mx-auto max-w-6xl px-4 py-8">
       <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 tabindex="-1" class="text-2xl font-semibold tracking-tight outline-none">Projects</h1>
@@ -175,7 +190,7 @@ async function restore(project: ProjectRow) {
 
       <!-- Loading skeletons -->
       <div v-if="projects.loading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
-        <Skeleton v-for="i in 6" :key="i" class="h-36 rounded-xl" />
+        <Skeleton v-for="i in 6" :key="i" class="h-44 rounded-xl" />
       </div>
 
       <!-- Empty states -->
@@ -207,27 +222,27 @@ async function restore(project: ProjectRow) {
       <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <li v-for="project in list" :key="project.id">
           <Card
-            class="group relative h-36 overflow-hidden transition-[border-color,transform] duration-150 hover:-translate-y-px hover:border-primary/40"
+            class="group relative overflow-hidden transition-[border-color,transform,box-shadow] duration-150 hover:-translate-y-px hover:border-primary/40 hover:shadow-[0_8px_24px_-12px_oklch(0_0_0/0.5)]"
           >
-            <!-- Status rail -->
-            <span
-              class="absolute inset-y-3 left-0 w-[2px] rounded-r"
-              :class="{
-                'bg-success': project.status === 'ready',
-                'genesis-activity-dot bg-primary': project.status === 'generating',
-                'bg-destructive': project.status === 'error',
-                'bg-border': project.status === 'draft',
-              }"
-              aria-hidden="true"
-            />
-            <CardContent class="flex h-full flex-col p-4 pl-5">
-              <div class="flex items-start justify-between gap-2">
-                <RouterLink
-                  :to="{ name: 'workspace', params: { id: project.id } }"
-                  class="min-w-0 flex-1 rounded-sm text-[15px] font-medium after:absolute after:inset-0 hover:underline"
+            <CardContent class="flex h-44 flex-col p-5">
+              <div class="flex items-start gap-3">
+                <div
+                  class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-[15px] font-semibold text-primary"
+                  aria-hidden="true"
                 >
-                  {{ project.name }}
-                </RouterLink>
+                  {{ project.name.trim().charAt(0).toUpperCase() || '?' }}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <RouterLink
+                    :to="{ name: 'workspace', params: { id: project.id } }"
+                    class="block truncate rounded-sm text-[15px] font-medium after:absolute after:inset-0 hover:underline"
+                  >
+                    {{ project.name }}
+                  </RouterLink>
+                  <p class="mt-0.5 text-[11px] text-muted-foreground">
+                    Updated {{ relativeTime(project.updatedAt) }}
+                  </p>
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
                     <button
@@ -247,7 +262,7 @@ async function restore(project: ProjectRow) {
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         class="text-destructive-soft"
-                        @select="trashTarget = project"
+                        @select="queueTrash(project)"
                       >
                         <Trash2 class="size-4" aria-hidden="true" /> Move to trash
                       </DropdownMenuItem>
@@ -258,17 +273,34 @@ async function restore(project: ProjectRow) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <p class="mt-1 line-clamp-1 flex-1 text-[13px] text-muted-foreground">
-                {{ project.description || 'No description' }}
+              <p class="mt-3 line-clamp-2 flex-1 text-[13px] leading-relaxed text-muted-foreground">
+                {{ project.description || 'No description yet.' }}
               </p>
-              <div class="flex items-center justify-between">
-                <p class="text-[11px] text-muted-foreground">
-                  Updated {{ relativeTime(project.updatedAt) }}
-                </p>
-                <ChevronRight
-                  class="size-3.5 text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+              <div class="flex items-center justify-between border-t border-border/60 pt-3">
+                <!-- Status shown only when it carries information; "ready" is the quiet default. -->
+                <span
+                  v-if="project.status === 'generating'"
+                  class="flex items-center gap-1.5 text-[11px] font-medium text-primary"
+                >
+                  <span class="genesis-activity-dot size-1.5 rounded-full bg-primary" aria-hidden="true" />
+                  Generating
+                </span>
+                <span
+                  v-else-if="project.status === 'error'"
+                  class="flex items-center gap-1.5 text-[11px] font-medium text-destructive-soft"
+                >
+                  <span class="size-1.5 rounded-full bg-destructive" aria-hidden="true" />
+                  Needs attention
+                </span>
+                <span v-else class="text-[11px] text-muted-foreground">
+                  {{ project.status === 'draft' ? 'Not generated yet' : 'Ready' }}
+                </span>
+                <span
+                  class="flex items-center gap-1 text-[11px] font-medium text-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100"
                   aria-hidden="true"
-                />
+                >
+                  Open <ChevronRight class="size-3" />
+                </span>
               </div>
             </CardContent>
           </Card>
